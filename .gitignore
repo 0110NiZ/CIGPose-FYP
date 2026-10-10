@@ -1,0 +1,17 @@
+# FYP local datasets and checkpoints
+data/
+checkpoints/
+work_dirs/
+outputs/
+
+# Model weights
+*.pth
+*.pt
+*.ckpt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
