@@ -48,6 +48,41 @@ class CausalInterventionModule(nn.Module):
         self.intervention_threshold = intervention_threshold
         self.canonical_features = nn.Embedding(num_keypoints, feature_dim)
 
+    def force_intervene(self, f_kpts: Tensor, joint_id: int):
+        """Force intervention on exactly one joint for diagnostic use.
+
+        Args:
+            f_kpts (Tensor): Keypoint features [B, K, C].
+            joint_id (int): Joint index to intervene on.
+
+        Returns:
+            Tuple[Tensor, Tensor]:
+            - f_prime_kpts: Intervened features [B, K, C].
+            - intervened_mask: Boolean mask [B, K].
+        """
+        if joint_id < 0 or joint_id >= self.num_keypoints:
+            raise ValueError(
+                f'joint_id must be in [0, {self.num_keypoints - 1}], '
+                f'but got {joint_id}')
+
+        B = f_kpts.shape[0]
+        device = f_kpts.device
+
+        intervened_mask = torch.zeros(
+            (B, self.num_keypoints),
+            dtype=torch.bool,
+            device=device)
+
+        intervened_mask[:, joint_id] = True
+
+        canonical_feat = self.canonical_features.weight[joint_id]
+        canonical_feat = canonical_feat.unsqueeze(0).expand(B, -1)
+
+        f_prime_kpts = f_kpts.clone()
+        f_prime_kpts[:, joint_id, :] = canonical_feat
+
+        return f_prime_kpts, intervened_mask
+
     def forward(self, f_kpts: Tensor, h_initial: Tuple[Tensor, Tensor]) -> Tuple[Tensor, Tensor]:
         """
         Args:
@@ -185,6 +220,65 @@ class CIGHead(RTMCCHead):
         pred_y = self.cls_gy(gcn_out)
 
         return pred_x, pred_y
+
+    @torch.no_grad()
+    def diagnostic_forward(self, feats: Tuple[Tensor, ...]) -> dict:
+        """Run single-joint counterfactual diagnostics.
+
+        Returns:
+            dict containing:
+            - confidence: initial prediction confidence [B, K]
+            - confound_score: 1 - confidence [B, K]
+            - top1_indices: joint selected by the original Top-1 rule [B]
+            - baseline: prediction without intervention
+            - forced: predictions obtained by forcing intervention on
+              each joint independently
+        """
+        # 1. Extract the same keypoint features as normal inference
+        x = self.final_layer(feats[-1])
+        x = torch.flatten(x, 2)
+
+        f_kpts_initial = self.mlp_pre_gau(x)
+        f_kpts = self.gau(f_kpts_initial)
+
+        # 2. Initial prediction used by CIGPose for joint selection
+        h_initial_x = self.initial_pred_x(f_kpts)
+        h_initial_y = self.initial_pred_y(f_kpts)
+
+        conf_x = h_initial_x.softmax(dim=-1).max(dim=-1)[0]
+        conf_y = h_initial_y.softmax(dim=-1).max(dim=-1)[0]
+
+        confidence = (conf_x + conf_y) / 2.0
+        confound_score = 1.0 - confidence
+
+        # Original CIGPose Top-1 choice
+        top1_indices = confound_score.argmax(dim=1)
+
+        # 3. Observational / no-intervention baseline
+        gcn_out_obs = self.gcn(f_kpts)
+        pred_x_obs = self.cls_gx(gcn_out_obs)
+        pred_y_obs = self.cls_gy(gcn_out_obs)
+
+        # 4. Force exactly one joint intervention at a time
+        forced_preds = []
+
+        for joint_id in range(self.cim.num_keypoints):
+            f_prime_kpts, _ = self.cim.force_intervene(
+                f_kpts, joint_id)
+
+            gcn_out = self.gcn(f_prime_kpts)
+            pred_x = self.cls_gx(gcn_out)
+            pred_y = self.cls_gy(gcn_out)
+
+            forced_preds.append((pred_x, pred_y))
+
+        return {
+            'confidence': confidence,
+            'confound_score': confound_score,
+            'top1_indices': top1_indices,
+            'baseline': (pred_x_obs, pred_y_obs),
+            'forced': forced_preds,
+        }
 
     def loss(self,
              feats: Tuple[Tensor],
