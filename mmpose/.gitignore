@@ -133,3 +133,6 @@ docs/**/modelzoo.md
 
 *.DS_Store
 analysis/results/
+
+# Local experiment outputs
+analysis/final_outputs/
