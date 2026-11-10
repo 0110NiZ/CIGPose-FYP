@@ -1,6 +1,6 @@
 {
   "source_annotation": "person_keypoints_train2017.json",
-  "split_sha256": "99b3f6283abecab254228cf92b8bdf5f05b2dcec60082822c69b98ba7538f214",
+  "split_sha256": "a1eaaef41a41c50ab9ad1cc4fcf35a8ef898afce7fbec385ce14c2ccdb4f5351",
   "filter_version": "supervision_filter_v2",
   "train_valid_ann_ids": [
     183014,
@@ -149818,5 +149818,12 @@
     2229582,
     2229588,
     2229605
-  ]
+  ],
+  "checksum_metadata_migration": {
+    "previous_method": "sha256-raw-file-bytes",
+    "previous_split_sha256": "99b3f6283abecab254228cf92b8bdf5f05b2dcec60082822c69b98ba7538f214",
+    "results_recomputed": false,
+    "note": "Only checksum metadata migrated; previous results retained."
+  },
+  "split_hash_method": "sha256-json-sort-keys-compact-utf8-v1"
 }

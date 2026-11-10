@@ -1,7 +1,7 @@
 import argparse
 import copy
-import hashlib
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -11,6 +11,10 @@ from oks_utility import COCO_SIGMAS, compute_instance_oks, compute_gain
 
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "scripts"))
+from fyp_data_common import (check_outputs, hash_metadata, read_json,
+                             verify_manifest, write_json)
+
 ATOL = 1e-12
 
 
@@ -36,8 +40,16 @@ def official_oks(pred, ann):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ann", required=True)
+    parser.add_argument("--ann", required=True, type=Path)
+    parser.add_argument("--split", type=Path, default=ROOT / "splits/train_dev_split.json")
+    parser.add_argument("--manifest", type=Path, default=ROOT / "splits/train_dev_valid_ann_ids_v2.json")
+    parser.add_argument("--out-dir", type=Path, default=ROOT / "experiments/oks")
+    parser.add_argument("--overwrite", action="store_true", help="Replace this validation report")
     args = parser.parse_args()
+    report_path = args.out_dir / "oks_validation.json"
+    if report_path.resolve() in {args.ann.resolve(), args.split.resolve(), args.manifest.resolve()}:
+        parser.error("Output must not replace an input")
+    check_outputs([report_path], args.overwrite)
 
     passed = []
     comparisons = []
@@ -165,21 +177,14 @@ def main():
 
     # Real COCO GT annotations, with constructed predictions.
     # These are numerical checks, not model-performance experiments.
-    ann_path = Path(args.ann)
-    with ann_path.open(encoding="utf-8") as f:
-        coco = json.load(f)
-
-    split_path = ROOT / "splits/train_dev_split.json"
-    manifest_path = ROOT / "splits/train_dev_valid_ann_ids_v2.json"
-    split_bytes = split_path.read_bytes()
-    split_hash = hashlib.sha256(split_bytes).hexdigest()
-
-    split = json.loads(split_bytes)
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    check(
-        "valid-person manifest matches split",
-        manifest["split_sha256"] == split_hash,
-    )
+    ann_path = args.ann
+    coco = read_json(ann_path)
+    split = read_json(args.split)
+    manifest = read_json(args.manifest)
+    if split["source_annotation"] != ann_path.name:
+        raise ValueError("Annotation basename differs from split source")
+    verify_manifest(split, manifest)
+    check("valid-person manifest matches split", True)
 
     valid_dev_ids = set(manifest["dev_valid_ann_ids"])
     dev_images = set(split["dev_image_ids"])
@@ -222,8 +227,10 @@ def main():
         "reference": "pycocotools.COCOeval.computeOks",
         "absolute_tolerance": ATOL,
         "numpy_version": np.__version__,
+        "split_file": args.split.name,
+        "manifest_file": args.manifest.name,
         "source_annotation": ann_path.name,
-        "split_sha256": split_hash,
+        **hash_metadata(split),
         "passed_checks": passed,
         "real_annotation_ids": [ann["id"] for ann in selected],
         "official_comparisons": comparisons,
@@ -234,13 +241,7 @@ def main():
             "still require integration validation."
         ),
     }
-    out = ROOT / "experiments/oks"
-    out.mkdir(parents=True, exist_ok=True)
-    report_path = out / "oks_validation.json"
-    report_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    write_json(report_path, report)
 
     print("\nALL CHECKS PASSED")
     print("Official comparisons:", len(comparisons))
