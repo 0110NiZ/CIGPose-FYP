@@ -1,0 +1,29 @@
+{
+  "scope": "Portability revision; no real CIGPose inference performed",
+  "validation_environment": {
+    "os": "Linux",
+    "python": "3.12.14"
+  },
+  "test_command": "python -m unittest discover -s tests -p test_lin_portability.py -v",
+  "tests_run": 8,
+  "tests_passed": 8,
+  "checks": [
+    "LF/CRLF, indentation, object key order and UTF-8 BOM do not change canonical split hash",
+    "Changed image IDs are rejected by manifest verification",
+    "Uploaded complete split and valid-person ID counts verified",
+    "Custom CLI input/output paths work; existing results require explicit overwrite",
+    "Split generation refuses to overwrite existing split",
+    "Legacy raw hashes verified before metadata migration",
+    "Official OKS regression comparisons passed (19 synthetic-fixture comparisons, max difference 0.0)",
+    "Refactored filter helper matches original on regression fixtures",
+    "Original split bytes, valid IDs, statistics and uploaded 19 OKS numeric results preserved"
+  ],
+  "split_sha256": "a1eaaef41a41c50ab9ad1cc4fcf35a8ef898afce7fbec385ce14c2ccdb4f5351",
+  "split_hash_method": "sha256-json-sort-keys-compact-utf8-v1",
+  "limitations": [
+    "Full COCO annotation JSON was not included in upload; full-data statistics were retained, not recomputed here.",
+    "Uploaded original real-GT OKS results were retained with explicit checksum-only migration provenance.",
+    "Native Windows execution must be rerun by the user; line-ending variants were tested on Linux.",
+    "Actual model P0/Pc outputs and training-loader split adherence remain pending."
+  ]
+}
