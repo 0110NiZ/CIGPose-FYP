@@ -42,7 +42,8 @@ SHA-256 可用 PowerShell `Get-FileHash -Algorithm SHA256` 获取（填写小写
 在 T 已运行 smoke test 的 CIGPose 环境运行，需该仓库的 MMPose、PyTorch、
 MMEngine/MMCV 和 COCO 数据依赖。NumPy-only 的缓存检查和单元测试不需 GPU。
 必须使用协议中的 checkpoint SHA-256；路径可换，文件内容不可换。
-GT-box 缓存只用于离线监督/开发，不能冒充检测框 benchmark。缓存没有 NMS 或 AP 计算。
+正式主实验也统一使用 GT 框和 single-view，详见 `evaluation.md`。缓存没有 NMS 或 AP
+计算；从缓存导出预测仍须核验覆盖范围，并执行统一评分和后处理。
 
 命令从仓库根目录执行；以下使用正斜杠，Windows/Linux 均可按实际路径替换。
 

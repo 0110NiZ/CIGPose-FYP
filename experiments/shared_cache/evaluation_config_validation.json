@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "flip_test": false,
+  "bbox_source": "GT",
+  "loaders": {
+    "val": {
+      "person_count": 6352,
+      "gt_bbox_score": 1.0,
+      "full_evaluation_image_count": 5000,
+      "score_mode": "bbox_keypoint",
+      "keypoint_score_thr": 0.2,
+      "nms_mode": "oks_nms",
+      "nms_thr": 0.9
+    },
+    "test": {
+      "person_count": 6352,
+      "gt_bbox_score": 1.0,
+      "full_evaluation_image_count": 5000,
+      "score_mode": "bbox_keypoint",
+      "keypoint_score_thr": 0.2,
+      "nms_mode": "oks_nms",
+      "nms_thr": 0.9
+    }
+  },
+  "scope": "Config inheritance, real dataset membership, GT box scores and evaluator construction; no model AP/AR run"
+}
