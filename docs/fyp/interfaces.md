@@ -27,8 +27,9 @@ This document defines the shared experimental settings, data fields, and common 
   images must not overlap; all candidates from one person stay in that person's split.
 - val2017 is development data, not an independent final test. Independent final
   evaluation, if available, is performed only after configuration selection.
-- Cache v1 uses GT boxes for offline supervision. It does not implement detected-box
-  benchmark inference; the formal AP/AR box protocol must be recorded separately.
+- Shared caches and formal controlled AP/AR evaluation both use GT boxes and single-view.
+  Evaluation always uses the full original val2017 annotation file; cache annotations
+  are not a replacement evaluation ground truth. See `evaluation.md`.
 
 ### 1.3 Reference pose and gain definition
 
@@ -74,7 +75,14 @@ The following settings must remain consistent within each controlled comparison:
 - pose-score computation
 - post-processing / NMS
 
-Any change to these settings must be recorded with the experiment.
+The fixed formal evaluation config is
+`mmpose/projects/cigpose/body_2d_keypoint/cigpose-m_coco-256x192_gt-single-view.py`.
+Both val/test loaders set `bbox_file=None` (GT boxes); GT bbox scores are 1.0.
+Both evaluators explicitly use `score_mode=bbox_keypoint`, `keypoint_score_thr=0.2`,
+`nms_mode=oks_nms`, and `nms_thr=0.9`. Run scoring/NMS exactly once and use
+original-image decoded keypoint scores, not initial confidence/uncertainty.
+See `evaluation.md` for commands, prediction file boundaries and CPU/GPU duties.
+Any change to these settings must be recorded as a separate protocol.
 
 ### 1.6 Fixed flip protocol
 
@@ -271,14 +279,15 @@ Each experiment or shared cache should record:
 - numeric precision
 - output location
 
-## 5. Items Requiring Team Confirmation
+## 5. Resolved decisions and remaining execution
 
-The following items must be confirmed before large-scale data generation:
-
-- bounding-box source for formal AP/AR evaluation
-- final cache serialization format
-- exact naming convention for shared cache files
-- whether any later protocol change from the submitted Proposal is approved by the full team
+- Formal main evaluation: GT boxes and single-view, fixed on 2026-11-12.
+- Shared cache format: float32/int64 NPZ shards, `run.json` and `status.json`;
+  filenames and full-data outputs are documented in `shared_cache.md`.
+- Full train2017/val2017 replaces the historical 90/10 split for current module work.
+- M still needs to deliver the CPU prediction-file evaluator and baseline result table;
+  N/T provide GPU inference exports. The configuration alone is not a completed evaluation.
+- Independent visual review and module label generation remain separate tasks.
 
 ## 6. Shared reference cache (N, 2C)
 
