@@ -18,11 +18,17 @@ This document defines the shared experimental settings, data fields, and common 
 
 ### 1.2 Data split
 
-- Module training and development use the fixed image-level split of COCO train2017 prepared by LIN.
-- Train and internal-dev images must not overlap.
-- All person instances from the same source image must remain in the same subset.
-- The fixed split files and valid-person annotation lists prepared by LIN are reused by all modules.
-- COCO val2017 is not used for hyperparameter tuning or model selection unless the team explicitly revises the protocol and records the change.
+- Protocol revision for shared-cache v1: use the complete valid-person set from
+  COCO train2017 for module training and COCO val2017 for development, model
+  selection and threshold tuning. This records the team's revised direction;
+  the submitted Proposal and older internal-dev experiment records use the old protocol.
+- The earlier 90/10 internal split is historical and must not restrict these caches.
+- LIN supplies separate full-split valid-person manifests. Training and validation
+  images must not overlap; all candidates from one person stay in that person's split.
+- val2017 is development data, not an independent final test. Independent final
+  evaluation, if available, is performed only after configuration selection.
+- Cache v1 uses GT boxes for offline supervision. It does not implement detected-box
+  benchmark inference; the formal AP/AR box protocol must be recorded separately.
 
 ### 1.3 Reference pose and gain definition
 
@@ -273,3 +279,11 @@ The following items must be confirmed before large-scale data generation:
 - final cache serialization format
 - exact naming convention for shared cache files
 - whether any later protocol change from the submitted Proposal is approved by the full team
+
+## 6. Shared reference cache (N, 2C)
+
+See `shared_cache.md` for the full-split manifest contract, commands, schema,
+resume checks, limitations, and real-model acceptance procedure. Cache generation
+uses the concrete head methods `extract_refinement_state`,
+`head.cim.apply_intervention`, and `predict_from_joint_features`; the high-level
+names in section 3 describe expected behaviour, not additional implemented methods.
