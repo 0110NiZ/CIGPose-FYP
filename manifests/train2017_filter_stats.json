@@ -1,0 +1,41 @@
+{
+  "dataset_split": "train2017",
+  "source_annotation": "person_keypoints_train2017.json",
+  "source_annotation_sha256": "7fc1549d934547c470384d8a207c38707ca33fc016d00e33b795e408603af83e",
+  "source_annotation_sha256_method": "sha256-raw-file-bytes",
+  "filter_version": "supervision_filter_v2",
+  "filter_implementation": "scripts/fyp_data_common.py::invalid_reasons",
+  "filter_implementation_sha256": "ec75a1063c973331f2e23add7f8eda8cc2e63f77acfa503e0370f1b671369845",
+  "total_images": 118287,
+  "annotations_before_filter": 262465,
+  "valid_persons_after_filter": 149813,
+  "filtered_annotations": 112652,
+  "images_with_valid_persons": 56599,
+  "images_without_valid_persons": 61688,
+  "filter_reason_counts_nonexclusive": {
+    "invalid_area": 1,
+    "invalid_bbox": 1,
+    "invalid_clipped_bbox": 1,
+    "iscrowd": 5212,
+    "no_labeled_keypoints": 112652,
+    "nonpositive_keypoint_coordinates": 112652,
+    "num_keypoints_zero": 112652
+  },
+  "checks": {
+    "valid_ids_are_integers": true,
+    "valid_ids_unique": true,
+    "valid_ids_sorted": true,
+    "counts_balance": true,
+    "source_unchanged_during_generation": true,
+    "old_90_10_split_used": false
+  },
+  "notes": [
+    "valid_ann_ids are person annotation IDs, not image IDs.",
+    "The entire specified annotation file was processed.",
+    "The original annotation file was not modified.",
+    "v=1 occluded but labeled keypoints are retained.",
+    "iscrowd filtering does not remove crowded-scene images.",
+    "Filter reasons can overlap; do not sum reason counts.",
+    "The original file-byte SHA-256 is not the old split checksum."
+  ]
+}
