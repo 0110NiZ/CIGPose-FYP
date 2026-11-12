@@ -83,6 +83,119 @@ class CausalInterventionModule(nn.Module):
 
         return f_prime_kpts, intervened_mask
 
+    def apply_intervention(
+        self,
+        f_kpts: Tensor,
+        joint_ids: Tensor,
+        alphas: Tensor,
+    ) -> Tuple[Tensor, Tensor]:
+        """Apply per-instance keypoint intervention with adaptive strength.
+
+        Args:
+            f_kpts (Tensor): Untouched keypoint features [B, K, C].
+            joint_ids (Tensor): Joint index for each person [B].
+            alphas (Tensor): Intervention strength for each person [B],
+                with values in [0, 1].
+
+        Returns:
+            Tuple[Tensor, Tensor]:
+            - f_prime_kpts: Independently intervened features [B, K, C].
+            - intervened_mask: Boolean intervention mask [B, K].
+
+        Notes:
+            alpha = 0 keeps the original feature exactly.
+            alpha = 1 performs full canonical-feature replacement.
+            Each person in the batch may use a different joint and alpha.
+            The input f_kpts is never modified in-place.
+        """
+        if f_kpts.ndim != 3:
+            raise ValueError(
+                f'f_kpts must have shape [B, K, C], '
+                f'but got {tuple(f_kpts.shape)}')
+
+        batch_size, num_keypoints, _ = f_kpts.shape
+
+        if num_keypoints != self.num_keypoints:
+            raise ValueError(
+                f'Expected {self.num_keypoints} keypoints, '
+                f'but got {num_keypoints}')
+
+        joint_ids = torch.as_tensor(
+            joint_ids,
+            device=f_kpts.device,
+            dtype=torch.long)
+
+        alphas = torch.as_tensor(
+            alphas,
+            device=f_kpts.device,
+            dtype=f_kpts.dtype)
+
+        if joint_ids.shape != (batch_size,):
+            raise ValueError(
+                f'joint_ids must have shape [{batch_size}], '
+                f'but got {tuple(joint_ids.shape)}')
+
+        if alphas.shape != (batch_size,):
+            raise ValueError(
+                f'alphas must have shape [{batch_size}], '
+                f'but got {tuple(alphas.shape)}')
+
+        if ((joint_ids < 0).any() or
+                (joint_ids >= self.num_keypoints).any()):
+            raise ValueError(
+                f'joint_ids must be in '
+                f'[0, {self.num_keypoints - 1}]')
+
+        if not torch.isfinite(alphas).all():
+            raise ValueError('alphas must contain only finite values')
+
+        if ((alphas < 0).any() or (alphas > 1).any()):
+            raise ValueError('alphas must be in [0, 1]')
+
+        # Always start from the untouched reference features.
+        f_prime_kpts = f_kpts.clone()
+
+        intervened_mask = torch.zeros(
+            (batch_size, self.num_keypoints),
+            dtype=torch.bool,
+            device=f_kpts.device)
+
+        # alpha = 0 must reproduce the reference feature exactly.
+        active = alphas != 0
+
+        if active.any():
+            batch_ids = torch.arange(
+                batch_size,
+                device=f_kpts.device)[active]
+
+            active_joint_ids = joint_ids[active]
+            active_alphas = alphas[active].unsqueeze(-1)
+
+            canonical = self.canonical_features(
+                active_joint_ids)
+
+            original = f_kpts[
+                batch_ids,
+                active_joint_ids
+            ]
+
+            blended = (
+                (1.0 - active_alphas) * original
+                + active_alphas * canonical
+            )
+
+            f_prime_kpts[
+                batch_ids,
+                active_joint_ids
+            ] = blended
+
+            intervened_mask[
+                batch_ids,
+                active_joint_ids
+            ] = True
+
+        return f_prime_kpts, intervened_mask
+
     def forward(self, f_kpts: Tensor, h_initial: Tuple[Tensor, Tensor]) -> Tuple[Tensor, Tensor]:
         """
         Args:
@@ -195,6 +308,87 @@ class CIGHead(RTMCCHead):
         self.cls_gx = nn.Linear(gcn_cfg['hidden_dim'], W)
         self.cls_gy = nn.Linear(gcn_cfg['hidden_dim'], H)
         
+    def predict_from_joint_features(
+        self,
+        f_kpts: Tensor,
+    ) -> Tuple[Tensor, Tensor]:
+        """Predict SimCC outputs from keypoint features.
+
+        This is the shared downstream path for both the
+        non-intervention reference P_0 and candidates P_c.
+
+        Args:
+            f_kpts (Tensor): Keypoint features [B, K, C].
+
+        Returns:
+            Tuple[Tensor, Tensor]:
+            - pred_x: SimCC x-axis logits [B, K, W]
+            - pred_y: SimCC y-axis logits [B, K, H]
+        """
+        gcn_out = self.gcn(f_kpts)
+        pred_x = self.cls_gx(gcn_out)
+        pred_y = self.cls_gy(gcn_out)
+
+        return pred_x, pred_y
+
+    @torch.no_grad()
+    def extract_refinement_state(
+        self,
+        feats: Tuple[Tensor, ...],
+    ) -> dict:
+        """Extract the shared pre-intervention refinement state.
+
+        P_0 is generated without feature intervention while using
+        the same downstream GNN and SimCC heads as intervention
+        candidates.
+
+        Args:
+            feats (Tuple[Tensor, ...]): Backbone/neck features.
+
+        Returns:
+            dict containing:
+            - features: untouched keypoint features [B, K, C]
+            - initial_pred: initial SimCC predictions
+            - confidence: predictive confidence [B, K]
+            - uncertainty: 1 - confidence [B, K]
+            - top1_indices: uncertainty Top-1 joint [B]
+            - p0_simcc: non-intervention SimCC prediction
+        """
+        x = self.final_layer(feats[-1])
+        x = torch.flatten(x, 2)
+
+        f_kpts_initial = self.mlp_pre_gau(x)
+        f_kpts = self.gau(f_kpts_initial)
+
+        h_initial_x = self.initial_pred_x(f_kpts)
+        h_initial_y = self.initial_pred_y(f_kpts)
+
+        conf_x = h_initial_x.softmax(dim=-1).max(dim=-1)[0]
+        conf_y = h_initial_y.softmax(dim=-1).max(dim=-1)[0]
+
+        confidence = (conf_x + conf_y) / 2.0
+        uncertainty = 1.0 - confidence
+        top1_indices = uncertainty.argmax(dim=1)
+
+        p0_x, p0_y = self.predict_from_joint_features(
+            f_kpts
+        )
+
+        return {
+            'features': f_kpts,
+            'initial_pred': (
+                h_initial_x,
+                h_initial_y,
+            ),
+            'confidence': confidence,
+            'uncertainty': uncertainty,
+            'top1_indices': top1_indices,
+            'p0_simcc': (
+                p0_x,
+                p0_y,
+            ),
+        }
+
     def forward(self, feats: Tuple[Tensor, ...]) -> Tuple[Tensor, Tensor]:
         """Forward pass (for predict). This method executes the complete CI-GNN inference pipeline."""
         # Initial feature processing
