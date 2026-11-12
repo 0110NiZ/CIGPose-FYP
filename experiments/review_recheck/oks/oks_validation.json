@@ -1,0 +1,175 @@
+{
+  "purpose": "Numerical validation, not model performance evaluation",
+  "reference": "pycocotools.COCOeval.computeOks",
+  "absolute_tolerance": 1e-12,
+  "numpy_version": "2.4.6",
+  "split_file": "train_dev_split.json",
+  "manifest_file": "train_dev_valid_ann_ids_v2.json",
+  "source_annotation": "person_keypoints_train2017.json",
+  "split_sha256": "a1eaaef41a41c50ab9ad1cc4fcf35a8ef898afce7fbec385ce14c2ccdb4f5351",
+  "split_hash_method": "sha256-json-sort-keys-compact-utf8-v1",
+  "passed_checks": [
+    "COCO sigmas match",
+    "v=1 is included",
+    "v=0 is ignored",
+    "larger error reduces OKS",
+    "positive gain",
+    "negative gain",
+    "identical poses give zero gain",
+    "reject no labeled keypoints",
+    "reject zero area",
+    "reject wrong prediction shape",
+    "reject nonfinite predictions",
+    "valid-person manifest matches split",
+    "five real GT samples selected",
+    "annotation 183080 belongs to dev",
+    "annotation 183091 belongs to dev",
+    "annotation 183108 belongs to dev",
+    "annotation 183131 belongs to dev",
+    "annotation 183152 belongs to dev"
+  ],
+  "real_annotation_ids": [
+    183080,
+    183091,
+    183108,
+    183131,
+    183152
+  ],
+  "official_comparisons": [
+    {
+      "case": "synthetic_perfect",
+      "annotation_id": 1,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "synthetic_shifted",
+      "annotation_id": 1,
+      "ours": 0.49666930564615724,
+      "official": 0.49666930564615724,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "synthetic_occluded",
+      "annotation_id": 1,
+      "ours": 0.9412125545144785,
+      "official": 0.9412125545144785,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "synthetic_unlabeled",
+      "annotation_id": 1,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183080_perfect",
+      "annotation_id": 183080,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183080_shifted",
+      "annotation_id": 183080,
+      "ours": 0.9786596261367305,
+      "official": 0.9786596261367305,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183080_noisy",
+      "annotation_id": 183080,
+      "ours": 0.9909514622277363,
+      "official": 0.9909514622277363,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183091_perfect",
+      "annotation_id": 183091,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183091_shifted",
+      "annotation_id": 183091,
+      "ours": 0.6408787626367545,
+      "official": 0.6408787626367545,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183091_noisy",
+      "annotation_id": 183091,
+      "ours": 0.9714649382699877,
+      "official": 0.9714649382699877,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183108_perfect",
+      "annotation_id": 183108,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183108_shifted",
+      "annotation_id": 183108,
+      "ours": 0.6485665035816763,
+      "official": 0.6485665035816763,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183108_noisy",
+      "annotation_id": 183108,
+      "ours": 0.9681164788549353,
+      "official": 0.9681164788549353,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183131_perfect",
+      "annotation_id": 183131,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183131_shifted",
+      "annotation_id": 183131,
+      "ours": 0.9177381000526703,
+      "official": 0.9177381000526703,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183131_noisy",
+      "annotation_id": 183131,
+      "ours": 0.9809587586896525,
+      "official": 0.9809587586896525,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183152_perfect",
+      "annotation_id": 183152,
+      "ours": 1.0,
+      "official": 1.0,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183152_shifted",
+      "annotation_id": 183152,
+      "ours": 0.35497842965200027,
+      "official": 0.35497842965200027,
+      "absolute_difference": 0.0
+    },
+    {
+      "case": "real_183152_noisy",
+      "annotation_id": 183152,
+      "ours": 0.8746606147372298,
+      "official": 0.8746606147372298,
+      "absolute_difference": 0.0
+    }
+  ],
+  "max_absolute_difference": 0.0,
+  "limitations": "Predictions are constructed from real GT. Actual P0/Pc coordinate conversion and person matching still require integration validation."
+}

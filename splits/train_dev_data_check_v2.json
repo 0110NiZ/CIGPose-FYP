@@ -1,0 +1,93 @@
+{
+  "source_annotation": "person_keypoints_train2017.json",
+  "split_file": "train_dev_split.json",
+  "split_sha256": "a1eaaef41a41c50ab9ad1cc4fcf35a8ef898afce7fbec385ce14c2ccdb4f5351",
+  "image_id_overlap": 0,
+  "full_image_coverage": true,
+  "split_unchanged": true,
+  "notes": [
+    "Statistics apply only to train2017 supervision.",
+    "No val2017 annotations are read or modified.",
+    "Occlusion fraction is v=1 divided by v>0, among valid persons.",
+    "Filter reasons can overlap; do not sum them as filtered persons.",
+    "Future data builders must use the valid annotation IDs."
+  ],
+  "statistics": {
+    "train": {
+      "image_count": 106458,
+      "total_person_annotations": 236161,
+      "valid_persons": 134701,
+      "filtered_persons": 101460,
+      "filter_reason_counts": {
+        "no_labeled_keypoints": 101460,
+        "num_keypoints_zero": 101460,
+        "nonpositive_keypoint_coordinates": 101460,
+        "iscrowd": 4691,
+        "invalid_area": 1,
+        "invalid_bbox": 1,
+        "invalid_clipped_bbox": 1
+      },
+      "labeled_keypoints": 1477631,
+      "occluded_labeled_keypoints": 166497,
+      "images_without_valid_persons": 55561,
+      "mean_valid_persons_per_image": 1.2652971124762817,
+      "occluded_fraction_among_labeled_keypoints": 0.11267833444209008,
+      "valid_persons_per_image_histogram": {
+        "0": 55561,
+        "1": 24360,
+        "2": 9782,
+        "3": 5142,
+        "4": 3308,
+        "5": 2144,
+        "6": 1573,
+        "7": 1168,
+        "8": 918,
+        "9": 702,
+        "10": 630,
+        "11": 499,
+        "12": 389,
+        "13": 282
+      }
+    },
+    "dev": {
+      "image_count": 11829,
+      "total_person_annotations": 26304,
+      "valid_persons": 15112,
+      "filtered_persons": 11192,
+      "filter_reason_counts": {
+        "no_labeled_keypoints": 11192,
+        "num_keypoints_zero": 11192,
+        "nonpositive_keypoint_coordinates": 11192,
+        "iscrowd": 521
+      },
+      "labeled_keypoints": 164652,
+      "occluded_labeled_keypoints": 18945,
+      "images_without_valid_persons": 6127,
+      "mean_valid_persons_per_image": 1.2775382534449236,
+      "occluded_fraction_among_labeled_keypoints": 0.11506085562276802,
+      "valid_persons_per_image_histogram": {
+        "0": 6127,
+        "1": 2687,
+        "2": 1150,
+        "3": 558,
+        "4": 374,
+        "5": 246,
+        "6": 176,
+        "7": 133,
+        "8": 95,
+        "9": 83,
+        "10": 67,
+        "11": 61,
+        "12": 46,
+        "13": 26
+      }
+    }
+  },
+  "checksum_metadata_migration": {
+    "previous_method": "sha256-raw-file-bytes",
+    "previous_split_sha256": "99b3f6283abecab254228cf92b8bdf5f05b2dcec60082822c69b98ba7538f214",
+    "results_recomputed": false,
+    "note": "Only checksum metadata migrated; previous results retained."
+  },
+  "split_hash_method": "sha256-json-sort-keys-compact-utf8-v1"
+}
