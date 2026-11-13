@@ -68,7 +68,7 @@ def _compute_oks_matrix(
     dx = kpts_a[:, None, :, 0] - kpts_b[None, :, :, 0]
     dy = kpts_a[:, None, :, 1] - kpts_b[None, :, :, 1]
     d2 = dx ** 2 + dy ** 2
-    area = np.maximum(areas_a[:, None], 1.0)
+    area = np.maximum((areas_a[:, None] + areas_b[None, :]) / 2.0, 1.0)
     e = d2 / (2.0 * area[..., None] * vars_[None, None, :])
     return np.exp(-e).mean(axis=-1)
 

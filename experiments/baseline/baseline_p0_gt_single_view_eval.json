@@ -1,0 +1,34 @@
+{
+  "exp_name": "baseline_p0_gt_single_view",
+  "protocol_label": "COCO val2017 / GT boxes / single-view",
+  "input_stage": "coco_json",
+  "timestamp": "2026-11-13T10:41:46",
+  "git_commit": "9980de3",
+  "flip_protocol": "single_view",
+  "flip_test": false,
+  "bbox_source": "gt_bbox",
+  "score_mode": "bbox_keypoint",
+  "keypoint_score_thr": 0.2,
+  "nms_mode": "oks_nms",
+  "nms_thr": 0.9,
+  "ann_file": "person_keypoints_val2017.json",
+  "audit": {
+    "num_output_predictions": 6337,
+    "num_unique_images": 2346
+  },
+  "metrics": {
+    "coco/AP": 0.7557379617259167,
+    "coco/AP .5": 0.9257838266033533,
+    "coco/AP .75": 0.8270857231484144,
+    "coco/AP (M)": 0.729745485553856,
+    "coco/AP (L)": 0.7998622191943782,
+    "coco/AR": 0.7835012594458438,
+    "coco/AR .5": 0.9346662468513854,
+    "coco/AR .75": 0.8469773299748111,
+    "coco/AR (M)": 0.7509969953564599,
+    "coco/AR (L)": 0.833221850613155
+  },
+  "meta": {
+    "pred_file": "p0\\predictions.keypoints.json"
+  }
+}
