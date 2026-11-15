@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "batches": [
+    {
+      "shard": "shard-000000000000.npz",
+      "count": 32,
+      "max_coordinate_abs_difference": 0.0,
+      "max_score_abs_difference": 6.556510925292969e-07,
+      "max_feature_abs_difference": 0.0,
+      "reload_checks": [
+        {
+          "equal_feature_values": true,
+          "logit_max_abs_difference": 2.384185791015625e-07,
+          "coordinate_max_abs_difference": 6.103515625e-05,
+          "score_max_abs_difference": 1.1920928955078125e-07
+        },
+        {
+          "equal_feature_values": true,
+          "logit_max_abs_difference": 2.384185791015625e-07,
+          "coordinate_max_abs_difference": 6.103515625e-05,
+          "score_max_abs_difference": 1.1920928955078125e-07
+        }
+      ]
+    },
+    {
+      "shard": "shard-000000052064.npz",
+      "count": 32,
+      "max_coordinate_abs_difference": 0.0,
+      "max_score_abs_difference": 1.043081283569336e-07,
+      "max_feature_abs_difference": 0.0,
+      "reload_checks": [
+        {
+          "equal_feature_values": true,
+          "logit_max_abs_difference": 4.76837158203125e-07,
+          "coordinate_max_abs_difference": 6.103515625e-05,
+          "score_max_abs_difference": 1.4901161193847656e-07
+        },
+        {
+          "equal_feature_values": true,
+          "logit_max_abs_difference": 7.301568984985352e-07,
+          "coordinate_max_abs_difference": 6.103515625e-05,
+          "score_max_abs_difference": 3.129243850708008e-07
+        }
+      ]
+    },
+    {
+      "shard": "shard-000000104096.npz",
+      "count": 29,
+      "max_coordinate_abs_difference": 0.0,
+      "max_score_abs_difference": 5.140900611877441e-06,
+      "max_feature_abs_difference": 0.0,
+      "reload_checks": [
+        {
+          "equal_feature_values": true,
+          "logit_max_abs_difference": 8.046627044677734e-07,
+          "coordinate_max_abs_difference": 6.103515625e-05,
+          "score_max_abs_difference": 2.384185791015625e-07
+        },
+        {
+          "equal_feature_values": true,
+          "logit_max_abs_difference": 6.109476089477539e-07,
+          "coordinate_max_abs_difference": 6.103515625e-05,
+          "score_max_abs_difference": 2.384185791015625e-07
+        }
+      ]
+    }
+  ],
+  "checked_count": 93,
+  "cross_process_tolerance": {
+    "feature_atol": 1e-05,
+    "feature_rtol": 1e-05,
+    "coordinate_atol": 0.1,
+    "coordinate_rtol": 0,
+    "score_atol": 1e-05,
+    "score_rtol": 1e-06
+  },
+  "note": "Cache bytes roundtrip exactly. GPU recomputation is checked within explicit float32 tolerance; decoded argmax is not bitwise reproducible. No scoring-threshold or Top-1 changes permitted in sampled comparisons.",
+  "checks": [
+    "live features",
+    "uncertainty",
+    "top1",
+    "P0/original coords and scores",
+    "alpha0",
+    "mixed candidate reload"
+  ]
+}

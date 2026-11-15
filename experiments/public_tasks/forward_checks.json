@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checked_count": 32,
+  "alpha0_and_cache_reload": true,
+  "mixed_joint_alpha_cache_vs_live": true,
+  "candidate_independence": true,
+  "source_id_bbox_score_alignment": true,
+  "image_decoding": true
+}

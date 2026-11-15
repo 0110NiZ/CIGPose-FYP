@@ -1,12 +1,19 @@
+# 公共任务使用说明
+
+结果总览见 [公共任务结果](../../experiments/public_tasks/README.md)。
+
 # Detection-box public pipeline handoff
 
 ## Scope and lineage
 
-Integration branch: feature/detection-public-pipeline.
+Integration branch: public-tasks.
 - L input adapter/tests: lin, 7092688 (imported unchanged).
 - T protocol: feature/intervention-interface, c720e00; head API remains 6fd5b3c.
 - M CPU evaluator: mai/eval-and-module-c, 9b76955, with integration corrections below.
 - N GT cache baseline: feature/shared-cache, 345a814.
+- Y branch f0cdb95 contains PASS reports for prior GT-box 2D/3/5; retained under
+  experiments/public_tasks/prior_gt_validation. These are existing GT
+  checks, not evidence that detection-box acceptance had already been performed.
 
 Only public infrastructure is implemented here; A/B/C decision models are not trained.
 Full test-dev inference is not run before model selection.

@@ -1,0 +1,8 @@
+{
+  "count": 104125,
+  "joint_mismatch_count": 0,
+  "prediction_difference_count": 96962,
+  "max_coordinate_abs_difference": 1.6282958984375,
+  "max_score_abs_difference": 7.072091102600098e-05,
+  "exact_prediction_equivalence": false
+}

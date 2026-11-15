@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "sample-only offline diagnostics",
+  "matching_rule": "independent highest bbox IoU >= 0.5; not a training matcher or evaluation filter",
+  "rows": [
+    {
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000000",
+      "image_id": 532481,
+      "diagnostic_match_iou": 0.818398750425863,
+      "gt_annotation_id": 508910,
+      "oks_p0": 0.9219595738707463,
+      "oks_pc": 0.9206839521063926,
+      "gain": -0.001275621764353696,
+      "official_oks_matches": true
+    },
+    {
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000001",
+      "image_id": 532481,
+      "diagnostic_match_iou": 0.0,
+      "gt_annotation_id": null
+    },
+    {
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000018",
+      "image_id": 66231,
+      "diagnostic_match_iou": 0.9387775305026723,
+      "gt_annotation_id": 495704,
+      "oks_p0": 0.9686800524936061,
+      "oks_pc": 0.9670817144726875,
+      "gain": -0.0015983380209185771,
+      "official_oks_matches": true
+    },
+    {
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000019",
+      "image_id": 66231,
+      "diagnostic_match_iou": 0.8574952346026578,
+      "gt_annotation_id": 538194,
+      "oks_p0": 0.8956031497706142,
+      "oks_pc": 0.8984938014373962,
+      "gain": 0.0028906516667820403,
+      "official_oks_matches": true
+    },
+    {
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000038",
+      "image_id": 458755,
+      "diagnostic_match_iou": 0.9120220726748989,
+      "gt_annotation_id": 186574,
+      "oks_p0": 0.7643835217346613,
+      "oks_pc": 0.7728569216744664,
+      "gain": 0.008473399939805115,
+      "official_oks_matches": true
+    },
+    {
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000039",
+      "image_id": 458755,
+      "diagnostic_match_iou": 0.9311425214312374,
+      "gt_annotation_id": 203334,
+      "oks_p0": 0.897462444839271,
+      "oks_pc": 0.897462444839271,
+      "gain": 0.0,
+      "official_oks_matches": true
+    }
+  ]
+}

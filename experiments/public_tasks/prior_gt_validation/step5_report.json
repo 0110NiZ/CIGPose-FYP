@@ -1,0 +1,56 @@
+{
+  "task": "Step 5 Full Shared-Cache Validation",
+  "checked_at_utc": "2026-11-15T14:32:40.849247+00:00",
+  "cache_source": "/kaggle/input/datasets/yxxx99/cigpose/CIGPose共享缓存交接/CIGPose_shared_cache_full_20261112/CIGPose_shared_cache_full_20261112",
+  "validator_sha256": "0174304b14a2d6dec4cb5f2594577b039880062356b950b37a9cb8f735ceef64",
+  "overall": "PASS",
+  "splits": {
+    "train2017": {
+      "expected_instances": 149813,
+      "verified_instances": 149813,
+      "unique_images": 56599,
+      "shard_count": 4682,
+      "invalid_shards": 0,
+      "status_complete": true,
+      "fingerprint_match": true,
+      "manifest_gt_sha256_match": true,
+      "protocol": {
+        "dataset_split": "train2017",
+        "scope": "full",
+        "bbox_source": "gt",
+        "flip_protocol": "single_view",
+        "flip_test": false,
+        "precision": "float32",
+        "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+        "config_sha256": "8bcc57a54b7521dd23e23bfdb288d22aa5687be8491772400c3f32f5409f094b",
+        "git_commit": "6fd5b3c310d483c86ae0eeca15486ccfb123d4a2"
+      }
+    },
+    "val2017": {
+      "expected_instances": 6352,
+      "verified_instances": 6352,
+      "unique_images": 2346,
+      "shard_count": 199,
+      "invalid_shards": 0,
+      "status_complete": true,
+      "fingerprint_match": true,
+      "manifest_gt_sha256_match": true,
+      "protocol": {
+        "dataset_split": "val2017",
+        "scope": "full",
+        "bbox_source": "gt",
+        "flip_protocol": "single_view",
+        "flip_test": false,
+        "precision": "float32",
+        "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+        "config_sha256": "8bcc57a54b7521dd23e23bfdb288d22aa5687be8491772400c3f32f5409f094b",
+        "git_commit": "6fd5b3c310d483c86ae0eeca15486ccfb123d4a2"
+      }
+    }
+  },
+  "train_val_annotation_overlap": 0,
+  "train_val_image_overlap": 0,
+  "protocol_consistent_between_splits": true,
+  "error_count": 0,
+  "errors": []
+}

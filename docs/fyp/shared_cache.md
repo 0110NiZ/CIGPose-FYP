@@ -1,4 +1,4 @@
-> Protocol update 2026-11-16: this document describes the existing GT-box cache. Train GT caches remain valid; GT val caches are diagnostic only. Main val evaluation now uses detection boxes; see detection_public_pipeline.md and evaluation.md.
+> Protocol update 2026-11-16: this document describes the existing GT-box cache. Train GT caches remain valid; GT val caches are diagnostic only. Main val evaluation now uses detection boxes; see public_tasks.md and evaluation.md.
 
 # N 的 2C：共享参考缓存
 

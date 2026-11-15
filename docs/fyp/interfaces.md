@@ -322,6 +322,6 @@ The upstream detector config/weights are not established by this artifact. Match
 val/test-dev detector provenance remains a final-test prerequisite, not a completed
 item. Do not infer detector identity from the AP_H_56 filename.
 
-Detection cache v1 is documented in detection_public_pipeline.md. Historical GT cache
+Detection cache v1 is documented in public_tasks.md. Historical GT cache
 v1 remains supported without regeneration. Any later crop augmentation needs newly
 computed features/labels for the augmented crop.

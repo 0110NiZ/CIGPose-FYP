@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "train_count": 149813,
+  "train_manifest_match": true,
+  "original_train_val_image_sets_disjoint": true,
+  "train_shards_validated": 4682,
+  "train_annotation_sha256": "7fc1549d934547c470384d8a207c38707ca33fc016d00e33b795e408603af83e",
+  "val_count": 104125,
+  "val_images": 3893,
+  "val_shards_validated": 3254,
+  "all_detection_ids_boxes_scores_match": true,
+  "all_image_paths_exist": true,
+  "source_detection_sha256": "53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59"
+}

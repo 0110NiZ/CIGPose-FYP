@@ -1,0 +1,149 @@
+{
+  "original": {
+    "reference_metrics": {
+      "coco/AP": 0.7354021675321071,
+      "coco/AP .5": 0.8973288251444551,
+      "coco/AP .75": 0.8049898839588582,
+      "coco/AP (M)": 0.7031632782530048,
+      "coco/AP (L)": 0.7981310069460256,
+      "coco/AR": 0.7897040302267003,
+      "coco/AR .5": 0.9360831234256927,
+      "coco/AR .75": 0.8517002518891688,
+      "coco/AR (M)": 0.7466266047527996,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "cpu_pre_nms_metrics": {
+      "coco/AP": 0.7354021675321071,
+      "coco/AP .5": 0.8973288251444551,
+      "coco/AP .75": 0.8049898839588582,
+      "coco/AP (M)": 0.7031632782530048,
+      "coco/AP (L)": 0.7981310069460256,
+      "coco/AR": 0.7897040302267003,
+      "coco/AR .5": 0.9360831234256927,
+      "coco/AR .75": 0.8517002518891688,
+      "coco/AR (M)": 0.7466266047527996,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "cpu_final_metrics": {
+      "coco/AP": 0.7354021675321071,
+      "coco/AP .5": 0.8973288251444551,
+      "coco/AP .75": 0.8049898839588582,
+      "coco/AP (M)": 0.7031632782530048,
+      "coco/AP (L)": 0.7981310069460256,
+      "coco/AR": 0.7897040302267003,
+      "coco/AR .5": 0.9360831234256927,
+      "coco/AR .75": 0.8517002518891688,
+      "coco/AR (M)": 0.7466266047527996,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "audit": {
+      "num_output_predictions": 77438,
+      "evaluation_image_count": 5000,
+      "num_unique_images": 3893,
+      "num_input_instances": 104125
+    },
+    "all_10_metrics_match": true,
+    "postprocessing_records_match": true,
+    "input_count": 104125,
+    "box_protocol": "detection",
+    "flip_test": false
+  },
+  "p0": {
+    "reference_metrics": {
+      "coco/AP": 0.7362229928153036,
+      "coco/AP .5": 0.8974915523808263,
+      "coco/AP .75": 0.8048379197696303,
+      "coco/AP (M)": 0.7034782005723281,
+      "coco/AP (L)": 0.7997554007654557,
+      "coco/AR": 0.7897670025188918,
+      "coco/AR .5": 0.9362405541561712,
+      "coco/AR .75": 0.8507556675062973,
+      "coco/AR (M)": 0.7469270691068014,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "cpu_pre_nms_metrics": {
+      "coco/AP": 0.7362229928153036,
+      "coco/AP .5": 0.8974915523808263,
+      "coco/AP .75": 0.8048379197696303,
+      "coco/AP (M)": 0.7034782005723281,
+      "coco/AP (L)": 0.7997554007654557,
+      "coco/AR": 0.7897670025188918,
+      "coco/AR .5": 0.9362405541561712,
+      "coco/AR .75": 0.8507556675062973,
+      "coco/AR (M)": 0.7469270691068014,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "cpu_final_metrics": {
+      "coco/AP": 0.7362229928153036,
+      "coco/AP .5": 0.8974915523808263,
+      "coco/AP .75": 0.8048379197696303,
+      "coco/AP (M)": 0.7034782005723281,
+      "coco/AP (L)": 0.7997554007654557,
+      "coco/AR": 0.7897670025188918,
+      "coco/AR .5": 0.9362405541561712,
+      "coco/AR .75": 0.8507556675062973,
+      "coco/AR (M)": 0.7469270691068014,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "audit": {
+      "num_output_predictions": 76930,
+      "evaluation_image_count": 5000,
+      "num_unique_images": 3893,
+      "num_input_instances": 104125
+    },
+    "all_10_metrics_match": true,
+    "postprocessing_records_match": true,
+    "input_count": 104125,
+    "box_protocol": "detection",
+    "flip_test": false
+  },
+  "top1_alpha1": {
+    "reference_metrics": {
+      "coco/AP": 0.7354021675321071,
+      "coco/AP .5": 0.8973288251444551,
+      "coco/AP .75": 0.8049898839588582,
+      "coco/AP (M)": 0.7031632782530048,
+      "coco/AP (L)": 0.7981310069460256,
+      "coco/AR": 0.7897040302267003,
+      "coco/AR .5": 0.9360831234256927,
+      "coco/AR .75": 0.8517002518891688,
+      "coco/AR (M)": 0.7466266047527996,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "cpu_pre_nms_metrics": {
+      "coco/AP": 0.7354021675321071,
+      "coco/AP .5": 0.8973288251444551,
+      "coco/AP .75": 0.8049898839588582,
+      "coco/AP (M)": 0.7031632782530048,
+      "coco/AP (L)": 0.7981310069460256,
+      "coco/AR": 0.7897040302267003,
+      "coco/AR .5": 0.9360831234256927,
+      "coco/AR .75": 0.8517002518891688,
+      "coco/AR (M)": 0.7466266047527996,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "cpu_final_metrics": {
+      "coco/AP": 0.7354021675321071,
+      "coco/AP .5": 0.8973288251444551,
+      "coco/AP .75": 0.8049898839588582,
+      "coco/AP (M)": 0.7031632782530048,
+      "coco/AP (L)": 0.7981310069460256,
+      "coco/AR": 0.7897040302267003,
+      "coco/AR .5": 0.9360831234256927,
+      "coco/AR .75": 0.8517002518891688,
+      "coco/AR (M)": 0.7466266047527996,
+      "coco/AR (L)": 0.851802303976217
+    },
+    "audit": {
+      "num_output_predictions": 77438,
+      "evaluation_image_count": 5000,
+      "num_unique_images": 3893,
+      "num_input_instances": 104125
+    },
+    "all_10_metrics_match": true,
+    "postprocessing_records_match": true,
+    "input_count": 104125,
+    "box_protocol": "detection",
+    "flip_test": false
+  }
+}

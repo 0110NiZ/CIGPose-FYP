@@ -1,0 +1,16 @@
+{
+  "checked_date": "2026-11-16",
+  "searched": [
+    "WSL /home/nzd",
+    "D:/15790/FYP",
+    "D:/15790 (limited depth)",
+    "C:/Users/15790/Desktop",
+    "C:/Users/15790/Downloads"
+  ],
+  "found_test2017_images": false,
+  "found_test_image_info": false,
+  "found_test_dev_detections": false,
+  "scope": "No matching artifacts in searched locations; not an exhaustive audit of all drives",
+  "downloaded": false,
+  "detector_provenance": "Fixed val artifact known; upstream config/checkpoint and matching test-dev detector not established"
+}

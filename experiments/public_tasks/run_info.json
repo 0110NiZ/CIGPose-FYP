@@ -1,0 +1,35 @@
+{
+  "branch": "public-tasks",
+  "date": "2026-11-16",
+  "environment": "WSL Ubuntu-22.04 / conda cigpose",
+  "gpu": "RTX 4060 Laptop 8GB",
+  "upstream": {
+    "L": "7092688",
+    "T": "c720e00 (head API 6fd5b3c)",
+    "M": "9b76955",
+    "Y": "f0cdb95"
+  },
+  "runtime": "/home/nzd/projects/cig-detection-public-20261116",
+  "train_cache": "/home/nzd/projects/cig-shared-cache-run-20261112/train2017",
+  "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+  "detection_sha256": "53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59",
+  "tasks_2B_through_5": "completed for fixed val detection protocol",
+  "tests_passed": 30,
+  "commands": [
+    "build_detection_cache.py --detections DATA/person_detection_results/COCO_val2017_detections_AP_H_56_person.json --ann DATA/annotations/person_keypoints_val2017.json --images DATA/val2017 --checkpoint CHECKPOINT --output RUN/val2017-detection --workers 2",
+    "audit_shared_caches.py --train-cache TRAIN_CACHE --val-cache RUN/val2017-detection --data DATA --output RUN/full_audit.json",
+    "check_detection_cache_live.py --cache RUN/val2017-detection --data DATA --checkpoint CHECKPOINT --output RUN/live_recheck.json",
+    "evaluate_detection_cache.py --cache RUN/val2017-detection --ann DATA/annotations/person_keypoints_val2017.json --output RUN/baselines"
+  ],
+  "paths": {
+    "DATA": "/home/nzd/projects/CIGPose/data/coco",
+    "CHECKPOINT": "/home/nzd/projects/CIGPose/checkpoints/cigpose-m_coco_256x192.pth",
+    "RUN": "/home/nzd/projects/cig-detection-public-20261116"
+  },
+  "limitations": [
+    "val2017 is used for development, not independent test",
+    "upstream fixed detector config/checkpoint and test-dev data still pending",
+    "Original and public Top-1 have identical AP/AR but not bitwise predictions",
+    "GPU recomputation tolerances and observed differences recorded in numerical_notes.json"
+  ]
+}
