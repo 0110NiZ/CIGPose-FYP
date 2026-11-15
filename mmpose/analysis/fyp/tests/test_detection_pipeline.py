@@ -82,6 +82,12 @@ class EvaluatorTests(unittest.TestCase):
             with self.assertRaises(ValueError):ev.add_records([r])
             ev.reset();r['input_scale']=[12.5,25];ev.add_records([r])
             with self.assertRaises(ValueError):ev.add_records([r])
+            # COCO loadRes uses supplied bbox for detection area. Dropping it
+            # changes area-range handling of unmatched detections.
+            ev.evaluate_coco_results=lambda results: ({}, {})
+            ev.evaluate()
+            self.assertEqual(ev.last_coco_results[0]['bbox'], [0.,0.,10.,20.])
+            self.assertEqual(ev.last_coco_results[0]['score'], .5)
 
 
 if __name__=='__main__':unittest.main()

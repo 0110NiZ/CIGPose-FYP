@@ -64,6 +64,8 @@ Do not modify code in the isolated run snapshot while resuming a run.
 - Match reference keypoint-score accumulation/order, retaining score precision for sorting.
 - Reject missing/duplicate per-instance record IDs, including duplicate IDs across batches.
 - Use the reference float32 sigmas in COCOeval and preserve all 5,000 evaluation images.
+- Retain the original prediction bbox in final JSON, matching COCO's handling of
+  unmatched detection area ranges; do not replace it with a keypoint-derived area.
 
 Regression tests include resume, protocol mismatch, duplicate IDs, wrong-image identity,
 GT-field rejection, lock/roundtrip and unequal/small-area NMS.

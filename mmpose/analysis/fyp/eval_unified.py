@@ -187,6 +187,7 @@ class UnifiedPoseEvaluator:
 
             self._per_image[int(image_ids[i])].append({
                 'coords': coords_np[i],
+                'bbox': bboxes_np[i],
                 'scores': kpt_s,
                 'area': float(areas_np[i]),
                 'pose_score': pose_score,
@@ -287,6 +288,9 @@ class UnifiedPoseEvaluator:
                     'category_id': 1,
                     'keypoints': kpts_3.reshape(-1).tolist(),
                     'score': float(it['pose_score']),
+                    'bbox': [float(it['bbox'][0]), float(it['bbox'][1]),
+                             float(it['bbox'][2]-it['bbox'][0]),
+                             float(it['bbox'][3]-it['bbox'][1])],
                 })
 
         if not coco_results:

@@ -84,6 +84,7 @@ def main():
         for a, b in zip(cpu.last_coco_results, final_records):
             assert a['image_id'] == b['image_id']
             np.testing.assert_array_equal(a['keypoints'], b['keypoints'])
+            np.testing.assert_array_equal(a['bbox'], b['bbox'])
             np.testing.assert_allclose(a['score'], b['score'], rtol=0, atol=1e-12)
         assert audit['evaluation_image_count'] == 5000
         result = dict(reference_metrics=official, cpu_pre_nms_metrics=pre, cpu_final_metrics=final,
