@@ -16,13 +16,28 @@ This document defines the shared experimental settings, data fields, and common 
 - Checkpoint SHA-256: `3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0`
 - The repository checkpoint path is a symbolic link on the current development machine; the SHA-256 identifies the actual weight file independently of its local storage path.
 
-### 1.2 Data split
+### 1.2 Dataset usage
 
-- Module training and development use the fixed image-level split of COCO train2017 prepared by LIN.
-- Train and internal-dev images must not overlap.
-- All person instances from the same source image must remain in the same subset.
-- The fixed split files and valid-person annotation lists prepared by LIN are reused by all modules.
-- COCO val2017 is not used for hyperparameter tuning or model selection unless the team explicitly revises the protocol and records the change.
+The current main experimental protocol uses the official COCO datasets as follows.
+
+#### Training and supervision
+
+- Modules A, B, and C use the full COCO train2017 set for training and supervision-data generation.
+- Training and gain-label generation use ground-truth person bounding boxes.
+- Each GT person instance remains directly associated with its annotation ID, GT keypoints, and GT area.
+- The previous internal 90/10 train-development split is retained only as a historical project artifact and is not used as the main protocol.
+
+#### Validation, model selection, and ablation
+
+- COCO val2017 is used for hyperparameter tuning, model selection, ablation studies, and the main validation benchmark.
+- Formal val2017 evaluation uses a fixed set of person detection boxes.
+- All compared methods must use exactly the same detection results and the same filtering and post-processing rules.
+
+#### Final test
+
+- COCO test-dev2017 is reserved for the final independent test after the model configuration has been fixed.
+- test-dev2017 must use the same detector and detection-processing protocol as val2017.
+- test-dev results must not be used to tune model parameters or decision thresholds.
 
 ### 1.3 Reference pose and gain definition
 
@@ -63,6 +78,10 @@ The following settings must remain consistent within each controlled comparison:
 - preprocessing
 - flip_protocol
 - flip_test
+- box_protocol
+- bbox_source
+- detector config / checkpoint
+- detection filtering / NMS rule
 - coordinate restoration
 - decoding
 - pose-score computation
@@ -101,6 +120,28 @@ For the first version of shared cache generation:
 - Candidate generation must never continue from features modified by a previous candidate.
 - Different persons in the same batch may use different joint IDs and different alpha values.
 - The frozen base CIGPose model must remain in evaluation mode.
+
+### 1.8 Bounding-box protocol
+
+The project uses different box sources for training and formal evaluation.
+
+- `train2017`: ground-truth person boxes
+- `val2017`: fixed person detection boxes
+- `test-dev2017`: person detection boxes generated with the same detector protocol as val2017
+- Main AP/AR comparisons must never mix GT-box and detection-box results in the same matched comparison.
+- Original CIGPose, P_0, Controlled Reference, A/B/C single modules, pairwise combinations, and A+B+C must use identical detection boxes during formal val/test evaluation.
+- GT-box diagnostic results may be retained as separate analysis results, but they must be clearly labelled and must not replace the detection-box main benchmark.
+- GT-box and detection-box caches must be stored and identified separately.
+
+The detection protocol must record:
+- detector name and configuration
+- detector checkpoint or checkpoint hash
+- detection score threshold
+- NMS / filtering rule
+- bounding-box format
+- detection instance identifier
+- bbox score
+- dataset split
 
 ## 2. Shared Data Schema
 
@@ -262,6 +303,10 @@ Each experiment or shared cache should record:
 - random seed
 - flip_protocol
 - flip_test
+- box_protocol
+- bbox_source
+- detector config / checkpoint
+- detection filtering / NMS rule
 - numeric precision
 - output location
 
@@ -269,7 +314,11 @@ Each experiment or shared cache should record:
 
 The following items must be confirmed before large-scale data generation:
 
-- bounding-box source for formal AP/AR evaluation
+- exact detector configuration and checkpoint for val/test-dev
+- detection score threshold and NMS / filtering rule
+- exact val2017 detection-box file / generation command
+- test-dev detection-box generation procedure
+
 - final cache serialization format
 - exact naming convention for shared cache files
 - whether any later protocol change from the submitted Proposal is approved by the full team
