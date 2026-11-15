@@ -25,8 +25,8 @@
 | 真实模型联调 | train/val 各 8 人，缓存重载 P0 和混合干预候选匹配实时路径 |
 | 真实 OKS 联调 | 16 人的 P0/Pc 与 COCOeval 计算差异为 0；alpha=0 最大绝对 gain 约 2.31e-7 |
 
-报告：`实验结果/共享缓存/full_validation_report.json`、
-`实验结果/共享缓存/real_oks_smoke_report.json`。
+报告：`experiments/shared_cache/full_validation_report.json`、
+`experiments/shared_cache/real_oks_smoke_report.json`。
 全量生成总耗时约 27.7 分钟，batch size 32，workers 2。
 真实候选和 OKS 联调是 16 人测试；未给全部人体生成候选收益标签。
 

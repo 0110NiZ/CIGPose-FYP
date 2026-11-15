@@ -1,7 +1,7 @@
 """Build GT-box single-view reference caches using T's public head interface.
 
 Run in the existing CIGPose environment. No model training, gain labels or GT
-keypoints are written into the model-input cache. See 说明文档/公共任务/shared_cache.md.
+keypoints are written into the model-input cache. See docs/fyp/shared_cache.md.
 """
 import argparse
 from copy import deepcopy

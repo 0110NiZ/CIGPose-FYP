@@ -1,24 +1,3 @@
-# 毕设公共任务
-
-大家先看 [公共任务完成情况与基线结果](实验结果/公共任务/README.md)，具体使用方法见 [公共任务说明](说明文档/公共任务/public_tasks.md)。
-
-| 文件夹 | 放什么 |
-|---|---|
-| [说明文档/公共任务](说明文档/公共任务/) | 实验规则、接口约定、缓存与评估使用说明 |
-| [实验结果/公共任务](实验结果/公共任务/) | 这次公共任务的基线成绩、检查报告和样例图 |
-| [实验结果/共享缓存](实验结果/共享缓存/) | 之前 GT 框缓存的检查记录 |
-| [论文配图](论文配图/) | 原论文展示用的图片 |
-| [manifests](manifests/) | 数据清单：哪些人体可以用于训练 |
-| [scripts](scripts/) | 数据处理脚本：生成清单、读取检测框 |
-| [tests](tests/) | 数据处理脚本的检查程序 |
-| [mmpose](mmpose/) | 模型代码；我们的缓存、评估程序在其中的 [analysis/fyp](mmpose/analysis/fyp/) |
-
-程序依赖的目录保留原名。这次只整理分支中的目录和引用，桌面交接包不变；大缓存和完整预测文件仍从交接包获取。
-
-下面保留原项目介绍，表格中的原论文成绩与我们的公共任务成绩分开查看。
-
----
-
 <div align="center">
 <h1>CIGPose: Causal Intervention Graph Neural Network for Whole-Body Pose Estimation </h1>
 <p>
@@ -59,7 +38,7 @@ It is implemented as an [MMPose](https://github.com/open-mmlab/mmpose) project u
 ### 1) Overall results + typical failure case of confounding
 
 <div align="center">
-  <img src="论文配图/result_contrast.png" width="100%" />
+  <img src="resources/result_contrast.png" width="100%" />
 </div>
 
 - **(a) Quantitative comparison** on COCO-WholeBody val: CIGPose achieves strong accuracy while remaining data-efficient.
@@ -68,7 +47,7 @@ It is implemented as an [MMPose](https://github.com/open-mmlab/mmpose) project u
 ### 2) Qualitative comparison on challenging scenes
 
 <div align="center">
-  <img src="论文配图/contrast.png" width="100%" />
+  <img src="resources/contrast.png" width="100%" />
 </div>
 
 - **From left to right**: input image, RTMPose-x, CIGPose-x.
@@ -77,7 +56,7 @@ It is implemented as an [MMPose](https://github.com/open-mmlab/mmpose) project u
 ### 3) More qualitative results
 
 <div align="center">
-  <img src="论文配图/more_contrast.png" width="100%" />
+  <img src="resources/more_contrast.png" width="100%" />
 </div>
 
 - Additional examples further illustrating the robustness gains and improved anatomical consistency brought by causal intervention + hierarchical graph reasoning.
