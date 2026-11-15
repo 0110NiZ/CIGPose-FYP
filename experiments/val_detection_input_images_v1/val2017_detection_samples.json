@@ -1,0 +1,189 @@
+{
+  "metadata": {
+    "schema_version": "val2017_fixed_detection_v1",
+    "dataset_split": "val2017",
+    "box_protocol": "detection",
+    "source_detection_file": "COCO_val2017_detections_AP_H_56_person.json",
+    "source_detection_sha256": "53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59",
+    "source_annotation": "person_keypoints_val2017.json",
+    "source_annotation_sha256": "788e2dae83c86bd547be7fab269d6399df5671063d29a61360cdb2cc370d2b14",
+    "bbox_source": "fixed_precomputed_COCO_val2017_detections_AP_H_56_person",
+    "source_record_count": 104125,
+    "selected_record_count": 104125,
+    "score_threshold": 0.0,
+    "additional_score_filtering": false,
+    "additional_bbox_nms": false,
+    "additional_deduplication": false,
+    "bbox_format": "xywh",
+    "bbox_coordinates": "original_image",
+    "bbox_clipping_applied": false,
+    "id_rule": "val2017:det:<full raw-file sha256>:<zero-based source index, width 6>",
+    "upstream_detector_config": null,
+    "upstream_detector_checkpoint": null,
+    "upstream_nms": "not inferred; preserve the supplied fixed detector output",
+    "pose_scoring_and_pose_nms": "handled separately by the shared evaluator",
+    "old_90_10_split_used": false,
+    "gt_person_list_used_for_filtering": false
+  },
+  "sample_only": true,
+  "sampling_rule": "First distinct images in source order; first boxes_per_image records per image",
+  "sample_image_files_checked": true,
+  "instances": [
+    {
+      "dataset_split": "val2017",
+      "image_id": 532481,
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000000",
+      "instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000000",
+      "source_detection_index": 0,
+      "category_id": 1,
+      "bbox": [
+        249.8199079291458,
+        175.21093805640606,
+        74.00419360691592,
+        55.626325589288854
+      ],
+      "bbox_format": "xywh",
+      "bbox_xyxy": [
+        249.8199079291458,
+        175.21093805640606,
+        323.82410153606173,
+        230.83726364569492
+      ],
+      "bbox_score": 0.9992738366127014,
+      "image_file_name": "000000532481.jpg",
+      "image_width": 640,
+      "image_height": 426,
+      "image_path": "F:\\FYP_Pose\\coco\\val2017\\val2017\\000000532481.jpg"
+    },
+    {
+      "dataset_split": "val2017",
+      "image_id": 532481,
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000001",
+      "instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000001",
+      "source_detection_index": 1,
+      "category_id": 1,
+      "bbox": [
+        284.07836701140275,
+        370.43747059580454,
+        13.844297577440784,
+        17.42933096343188
+      ],
+      "bbox_format": "xywh",
+      "bbox_xyxy": [
+        284.07836701140275,
+        370.43747059580454,
+        297.92266458884353,
+        387.8668015592364
+      ],
+      "bbox_score": 0.983318567276001,
+      "image_file_name": "000000532481.jpg",
+      "image_width": 640,
+      "image_height": 426,
+      "image_path": "F:\\FYP_Pose\\coco\\val2017\\val2017\\000000532481.jpg"
+    },
+    {
+      "dataset_split": "val2017",
+      "image_id": 66231,
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000018",
+      "instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000018",
+      "source_detection_index": 18,
+      "category_id": 1,
+      "bbox": [
+        330.0742824400971,
+        139.6959348073712,
+        116.53429474347212,
+        282.68910638419186
+      ],
+      "bbox_format": "xywh",
+      "bbox_xyxy": [
+        330.0742824400971,
+        139.6959348073712,
+        446.6085771835692,
+        422.38504119156306
+      ],
+      "bbox_score": 0.9997300505638123,
+      "image_file_name": "000000066231.jpg",
+      "image_width": 640,
+      "image_height": 427,
+      "image_path": "F:\\FYP_Pose\\coco\\val2017\\val2017\\000000066231.jpg"
+    },
+    {
+      "dataset_split": "val2017",
+      "image_id": 66231,
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000019",
+      "instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000019",
+      "source_detection_index": 19,
+      "category_id": 1,
+      "bbox": [
+        1.0000664517162476,
+        200.64174134245349,
+        73.39619700372248,
+        216.10587157178668
+      ],
+      "bbox_format": "xywh",
+      "bbox_xyxy": [
+        1.0000664517162476,
+        200.64174134245349,
+        74.39626345543873,
+        416.74761291424016
+      ],
+      "bbox_score": 0.9994833469390869,
+      "image_file_name": "000000066231.jpg",
+      "image_width": 640,
+      "image_height": 427,
+      "image_path": "F:\\FYP_Pose\\coco\\val2017\\val2017\\000000066231.jpg"
+    },
+    {
+      "dataset_split": "val2017",
+      "image_id": 458755,
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000038",
+      "instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000038",
+      "source_detection_index": 38,
+      "category_id": 1,
+      "bbox": [
+        87.8406681598337,
+        50.4353080214051,
+        495.17573544967166,
+        417.3405927129501
+      ],
+      "bbox_format": "xywh",
+      "bbox_xyxy": [
+        87.8406681598337,
+        50.4353080214051,
+        583.0164036095053,
+        467.7759007343552
+      ],
+      "bbox_score": 0.999855637550354,
+      "image_file_name": "000000458755.jpg",
+      "image_width": 640,
+      "image_height": 480,
+      "image_path": "F:\\FYP_Pose\\coco\\val2017\\val2017\\000000458755.jpg"
+    },
+    {
+      "dataset_split": "val2017",
+      "image_id": 458755,
+      "detection_instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000039",
+      "instance_id": "val2017:det:53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59:000039",
+      "source_detection_index": 39,
+      "category_id": 1,
+      "bbox": [
+        563.9672795407839,
+        2.5439143430181277,
+        75.19479869634961,
+        86.01757911706144
+      ],
+      "bbox_format": "xywh",
+      "bbox_xyxy": [
+        563.9672795407839,
+        2.5439143430181277,
+        639.1620782371335,
+        88.56149346007957
+      ],
+      "bbox_score": 0.9947616598339069,
+      "image_file_name": "000000458755.jpg",
+      "image_width": 640,
+      "image_height": 480,
+      "image_path": "F:\\FYP_Pose\\coco\\val2017\\val2017\\000000458755.jpg"
+    }
+  ]
+}

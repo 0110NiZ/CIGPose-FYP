@@ -1,0 +1,46 @@
+{
+  "status": "inspection_only_not_final_protocol",
+  "detection_file": "COCO_val2017_detections_AP_H_56_person.json",
+  "detection_file_sha256": "53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59",
+  "annotation_file": "person_keypoints_val2017.json",
+  "total_val_images": 5000,
+  "raw_detection_records": 104125,
+  "category_counts": {
+    "1": 104125
+  },
+  "structurally_valid_person_records": 104125,
+  "invalid_records": 0,
+  "invalid_reason_counts_nonexclusive": {},
+  "exact_duplicate_records_among_valid": 0,
+  "candidate_threshold_statistics": {
+    "0.0": {
+      "records": 104125,
+      "images_with_detections": 3893
+    },
+    "0.1": {
+      "records": 44346,
+      "images_with_detections": 3102
+    },
+    "0.2": {
+      "records": 31748,
+      "images_with_detections": 3009
+    },
+    "0.3": {
+      "records": 24848,
+      "images_with_detections": 2948
+    },
+    "0.5": {
+      "records": 14381,
+      "images_with_detections": 2854
+    }
+  },
+  "notes": [
+    "Threshold statistics use score >= threshold.",
+    "No source records were modified or removed.",
+    "No additional NMS was performed.",
+    "Duplicate counts are informational; no deduplication applied.",
+    "GT image metadata was used only to check image membership.",
+    "No GT person list was used to filter detections.",
+    "Final threshold and filtering/NMS require team confirmation."
+  ]
+}
