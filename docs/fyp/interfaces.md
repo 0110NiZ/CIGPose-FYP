@@ -16,20 +16,28 @@ This document defines the shared experimental settings, data fields, and common 
 - Checkpoint SHA-256: `3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0`
 - The repository checkpoint path is a symbolic link on the current development machine; the SHA-256 identifies the actual weight file independently of its local storage path.
 
-### 1.2 Data split
+### 1.2 Dataset usage
 
-- Protocol revision for shared-cache v1: use the complete valid-person set from
-  COCO train2017 for module training and COCO val2017 for development, model
-  selection and threshold tuning. This records the team's revised direction;
-  the submitted Proposal and older internal-dev experiment records use the old protocol.
-- The earlier 90/10 internal split is historical and must not restrict these caches.
-- LIN supplies separate full-split valid-person manifests. Training and validation
-  images must not overlap; all candidates from one person stay in that person's split.
-- val2017 is development data, not an independent final test. Independent final
-  evaluation, if available, is performed only after configuration selection.
-- Shared caches and formal controlled AP/AR evaluation both use GT boxes and single-view.
-  Evaluation always uses the full original val2017 annotation file; cache annotations
-  are not a replacement evaluation ground truth. See `evaluation.md`.
+The current main experimental protocol uses the official COCO datasets as follows.
+
+#### Training and supervision
+
+- Modules A, B, and C use the full COCO train2017 set for training and supervision-data generation.
+- Training and gain-label generation use ground-truth person bounding boxes.
+- Each GT person instance remains directly associated with its annotation ID, GT keypoints, and GT area.
+- The previous internal 90/10 train-development split is retained only as a historical project artifact and is not used as the main protocol.
+
+#### Validation, model selection, and ablation
+
+- COCO val2017 is used for hyperparameter tuning, model selection, ablation studies, and the main validation benchmark.
+- Formal val2017 evaluation uses a fixed set of person detection boxes.
+- All compared methods must use exactly the same detection results and the same filtering and post-processing rules.
+
+#### Final test
+
+- COCO test-dev2017 is reserved for the final independent test after the model configuration has been fixed.
+- test-dev2017 must use the same detector and detection-processing protocol as val2017.
+- test-dev results must not be used to tune model parameters or decision thresholds.
 
 ### 1.3 Reference pose and gain definition
 
@@ -70,19 +78,16 @@ The following settings must remain consistent within each controlled comparison:
 - preprocessing
 - flip_protocol
 - flip_test
+- box_protocol
+- bbox_source
+- detector config / checkpoint
+- detection filtering / NMS rule
 - coordinate restoration
 - decoding
 - pose-score computation
 - post-processing / NMS
 
-The fixed formal evaluation config is
-`mmpose/projects/cigpose/body_2d_keypoint/cigpose-m_coco-256x192_gt-single-view.py`.
-Both val/test loaders set `bbox_file=None` (GT boxes); GT bbox scores are 1.0.
-Both evaluators explicitly use `score_mode=bbox_keypoint`, `keypoint_score_thr=0.2`,
-`nms_mode=oks_nms`, and `nms_thr=0.9`. Run scoring/NMS exactly once and use
-original-image decoded keypoint scores, not initial confidence/uncertainty.
-See `evaluation.md` for commands, prediction file boundaries and CPU/GPU duties.
-Any change to these settings must be recorded as a separate protocol.
+Any change to these settings must be recorded with the experiment.
 
 ### 1.6 Fixed flip protocol
 
@@ -115,6 +120,28 @@ For the first version of shared cache generation:
 - Candidate generation must never continue from features modified by a previous candidate.
 - Different persons in the same batch may use different joint IDs and different alpha values.
 - The frozen base CIGPose model must remain in evaluation mode.
+
+### 1.8 Bounding-box protocol
+
+The project uses different box sources for training and formal evaluation.
+
+- `train2017`: ground-truth person boxes
+- `val2017`: fixed person detection boxes
+- `test-dev2017`: person detection boxes generated with the same detector protocol as val2017
+- Main AP/AR comparisons must never mix GT-box and detection-box results in the same matched comparison.
+- Original CIGPose, P_0, Controlled Reference, A/B/C single modules, pairwise combinations, and A+B+C must use identical detection boxes during formal val/test evaluation.
+- GT-box diagnostic results may be retained as separate analysis results, but they must be clearly labelled and must not replace the detection-box main benchmark.
+- GT-box and detection-box caches must be stored and identified separately.
+
+The detection protocol must record:
+- detector name and configuration
+- detector checkpoint or checkpoint hash
+- detection score threshold
+- NMS / filtering rule
+- bounding-box format
+- detection instance identifier
+- bbox score
+- dataset split
 
 ## 2. Shared Data Schema
 
@@ -276,23 +303,25 @@ Each experiment or shared cache should record:
 - random seed
 - flip_protocol
 - flip_test
+- box_protocol
+- bbox_source
+- detector config / checkpoint
+- detection filtering / NMS rule
 - numeric precision
 - output location
 
-## 5. Resolved decisions and remaining execution
+## 5. Fixed val input and remaining final-test provenance
 
-- Formal main evaluation: GT boxes and single-view, fixed on 2026-11-12.
-- Shared cache format: float32/int64 NPZ shards, `run.json` and `status.json`;
-  filenames and full-data outputs are documented in `shared_cache.md`.
-- Full train2017/val2017 replaces the historical 90/10 split for current module work.
-- M still needs to deliver the CPU prediction-file evaluator and baseline result table;
-  N/T provide GPU inference exports. The configuration alone is not a completed evaluation.
-- Independent visual review and module label generation remain separate tasks.
+The fixed val input is COCO_val2017_detections_AP_H_56_person.json, SHA-256
+53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59.
+All 104,125 records are retained, without additional score filtering, bbox NMS,
+deduplication, clipping or GT-person-list filtering. See evaluation.md and
+val_detection_reader.md for identity and scoring rules.
 
-## 6. Shared reference cache (N, 2C)
+The upstream detector config/weights are not established by this artifact. Matching
+val/test-dev detector provenance remains a final-test prerequisite, not a completed
+item. Do not infer detector identity from the AP_H_56 filename.
 
-See `shared_cache.md` for the full-split manifest contract, commands, schema,
-resume checks, limitations, and real-model acceptance procedure. Cache generation
-uses the concrete head methods `extract_refinement_state`,
-`head.cim.apply_intervention`, and `predict_from_joint_features`; the high-level
-names in section 3 describe expected behaviour, not additional implemented methods.
+Detection cache v1 is documented in detection_public_pipeline.md. Historical GT cache
+v1 remains supported without regeneration. Any later crop augmentation needs newly
+computed features/labels for the augmented crop.
