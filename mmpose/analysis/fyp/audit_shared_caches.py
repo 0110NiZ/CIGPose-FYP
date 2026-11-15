@@ -38,13 +38,16 @@ def main():
         assert val_seen==set(range(len(records)))
         for path in val.shards():
             batch=val.load_shard(path)
-            for i,idx in enumerate(batch['source_detection_index']):
-                r=records[int(idx)]
-                assert int(batch['image_id'][i])==r['image_id']
-                assert val.instance_id(idx)==r['detection_instance_id']
-                np.testing.assert_array_equal(batch['bbox'][i],np.asarray(r['bbox_xyxy'],np.float32))
-                assert batch['bbox_score'][i]==np.float32(r['bbox_score'])
-                assert (a.data/'val2017'/r['image_file_name']).is_file()
+            rows=[records[int(idx)] for idx in batch['source_detection_index']]
+            np.testing.assert_array_equal(batch['image_id'], [r['image_id'] for r in rows])
+            np.testing.assert_array_equal(batch['bbox'], np.asarray([r['bbox_xyxy'] for r in rows],np.float32))
+            np.testing.assert_array_equal(batch['bbox_score'], np.asarray([r['bbox_score'] for r in rows],np.float32))
+            assert [val.instance_id(idx) for idx in batch['source_detection_index']]==[r['detection_instance_id'] for r in rows]
+        # Check each image once, rather than stat'ing a mounted Windows path
+        # for each of its many detections.
+        names={r['image_file_name'] for r in records}
+        existing={p.name for p in (a.data/'val2017').iterdir() if p.suffix.lower()=='.jpg' and p.is_file()}
+        assert names.issubset(existing), 'Missing detection input images'
         assert not set(train.expected.values()).intersection(val.expected.values())
         report.update(val_count=len(val_seen),val_images=len(set(val.expected.values())),
             val_shards_validated=len(val.shards()),all_detection_ids_boxes_scores_match=True,
