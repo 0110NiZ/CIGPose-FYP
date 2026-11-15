@@ -1,0 +1,20 @@
+{
+  "task": "Step 3 Integration Validation",
+  "train_persons": 149813,
+  "val_persons": 6352,
+  "train_gt_sha256_match": true,
+  "val_gt_sha256_match": true,
+  "train_val_person_overlap": 0,
+  "train_val_image_overlap": 0,
+  "train_val_source_image_overlap": 0,
+  "smoke_shards": 4,
+  "smoke_instances": 16,
+  "smoke_unique_pairs": 16,
+  "smoke_fingerprints": 1,
+  "smoke_status_complete": true,
+  "real_model_generation_log_pass": true,
+  "git_commit": "6fd5b3c310d483c86ae0eeca15486ccfb123d4a2",
+  "error_count": 0,
+  "errors": [],
+  "overall": "PASS"
+}

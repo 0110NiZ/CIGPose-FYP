@@ -1,0 +1,12 @@
+loading annotations into memory...
+Done (t=0.00s)
+creating index...
+index created!
+Loads checkpoint by local backend from path: /kaggle/working/recovered_baseline/checkpoints/cigpose-m_coco_256x192_official.pth
+PASS: reloaded P0 and mixed-action candidate match live path
+Cached 4/16
+Cached 8/16
+Cached 12/16
+Cached 16/16
+PASS: smoke cache complete (16 instances)
+

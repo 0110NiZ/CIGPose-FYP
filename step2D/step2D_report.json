@@ -1,0 +1,29 @@
+{
+  "task": "Step 2D Full Validation",
+  "expected_persons": 6352,
+  "validated_persons": 6352,
+  "unique_annotation_ids": 6352,
+  "gt_sha256_match": true,
+  "interface_tests": [
+    {
+      "test": "check_intervention_interface.py",
+      "passed": true
+    },
+    {
+      "test": "check_topdown_alignment.py",
+      "passed": true
+    }
+  ],
+  "lin_comparison": "PASS",
+  "max_difference_vs_lin": 0.0,
+  "mean_oks_p0": 0.8512510779507413,
+  "mean_oks_pc": 0.8508575414359014,
+  "mean_gain": -0.0003935365148398556,
+  "positive_gain_count": 2130,
+  "negative_gain_count": 2475,
+  "near_zero_gain_count": 1747,
+  "git_commit": "6fd5b3c310d483c86ae0eeca15486ccfb123d4a2",
+  "error_count": 0,
+  "errors": [],
+  "overall": "PASS"
+}
