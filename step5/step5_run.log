@@ -1,0 +1,20 @@
+Cache source: /kaggle/input/datasets/yxxx99/cigpose/CIGPose共享缓存交接/CIGPose_shared_cache_full_20261112/CIGPose_shared_cache_full_20261112
+train2017: checked 500/4682 shards, unique persons=16000
+train2017: checked 1000/4682 shards, unique persons=32000
+train2017: checked 1500/4682 shards, unique persons=48000
+train2017: checked 2000/4682 shards, unique persons=64000
+train2017: checked 2500/4682 shards, unique persons=80000
+train2017: checked 3000/4682 shards, unique persons=96000
+train2017: checked 3500/4682 shards, unique persons=112000
+train2017: checked 4000/4682 shards, unique persons=128000
+train2017: checked 4500/4682 shards, unique persons=143989
+train2017: checked 4682/4682 shards, unique persons=149813
+val2017: checked 199/199 shards, unique persons=6352
+
+STEP 5 FINAL SUMMARY
+train_val_annotation_overlap: 0
+train_val_image_overlap: 0
+protocol_consistent_between_splits: True
+error_count: 0
+overall: PASS
+Report: /kaggle/working/CIGPose-FYP/validation_results/step5/step5_report.json
