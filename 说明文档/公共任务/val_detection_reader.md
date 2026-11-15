@@ -33,7 +33,7 @@ load_detection_instances(detection_path, annotation_path, image_root=None) 返�
 ```cmd
 cd /d F:\FYP\CIGPose-FYP-git
 py -m unittest discover -s tests -p test_val_detection_reader.py -v
-py scripts\read_val_detection_boxes.py --detections "F:\FYP\data\coco\person_detection_results\COCO_val2017_detections_AP_H_56_person.json" --ann "F:\FYP\data\coco\annotations\person_keypoints_val2017.json" --out-dir "experiments\val_detection_input_v1"
+py scripts\read_val_detection_boxes.py --detections "F:\FYP\data\coco\person_detection_results\COCO_val2017_detections_AP_H_56_person.json" --ann "F:\FYP\data\coco\annotations\person_keypoints_val2017.json" --out-dir "实验结果\val_detection_input_v1"
 ```
 
 第一次不传 image-root，只生成真实检测记录和图片相对文件名，没有检查本机图片存在。生成数量应该为 104125 个检测实例、3893 张有检测的图片，ID 数 104125。
@@ -44,7 +44,7 @@ py scripts\read_val_detection_boxes.py --detections "F:\FYP\data\coco\person_det
 - val2017_detection_report.json：协议、数量和读取检查结果。
 - val2017_detection_samples.json：默认首3张不同图片，各最多2条原始记录。仅为联调子集，不改变完整输入。
 
-找到本机 val2017 JPG 目录后，增加 --image-root 参数并换一个输出目录，例如 --out-dir experiments\val_detection_input_images_v1。脚本会检查导出的样例图片文件是否存在，但不解码图片或检查全部图片，也不完成模型前向。
+找到本机 val2017 JPG 目录后，增加 --image-root 参数并换一个输出目录，例如 --out-dir 实验结果\val_detection_input_images_v1。脚本会检查导出的样例图片文件是否存在，但不解码图片或检查全部图片，也不完成模型前向。
 
 输出目录已有同名文件时拒绝覆盖。重新检查请使用新的输出目录。
 

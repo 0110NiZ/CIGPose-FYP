@@ -1,7 +1,7 @@
 """
 Unified AP/AR Evaluation Entry for CIGPose FYP (Role M).
 
-Strictly aligned with docs/fyp/evaluation.md:
+Strictly aligned with 说明文档/公共任务/evaluation.md:
 - Fixed protocol: COCO val2017 / detection boxes / single-view (flip_test=False)
 - Supports BOTH input stages:
   1) pre_nms: instance-level predictions -> bbox_keypoint scoring (thr=0.2)
@@ -98,7 +98,7 @@ def _oks_nms(
 
 
 class UnifiedPoseEvaluator:
-    """Unified AP/AR evaluator aligned with docs/fyp/evaluation.md."""
+    """Unified AP/AR evaluator aligned with 说明文档/公共任务/evaluation.md."""
 
     def __init__(
         self,
@@ -467,7 +467,7 @@ def main() -> None:
         print(f'  {k}: {v:.5f}')
 
     out_path = args.out_json or (
-        REPO_ROOT / 'experiments' / 'baseline' / f'{args.exp_name}_eval.json'
+        REPO_ROOT / '实验结果' / '基线评估' / f'{args.exp_name}_eval.json'
     )
     saved = save_eval_report(
         metrics=metrics,

@@ -49,8 +49,8 @@ float32 差异，argmax 解码可放大近似相等峰值的差异。先前严�
 ## 文件怎么用
 
 - 代码在 scripts/ 和 mmpose/analysis/fyp/。
-- 小报告、CSV 与测试日志在 experiments/public_tasks/。
-- 详细运行命令见 docs/fyp/evaluation.md，缓存字段见 docs/fyp/public_tasks.md。
+- 小报告、CSV 与测试日志在 实验结果/公共任务/。
+- 详细运行命令见 说明文档/公共任务/evaluation.md，缓存字段见 说明文档/公共任务/public_tasks.md。
 - 桌面的 val_detection_cache.zip 是新 val 缓存，后续 ABC 验证会用到。
 - baseline_results.zip 包含三组正式预测、原始实例预测、配置、日志、校验报告与样例图。
 - code.zip 是代码快照。图片与 checkpoint 不包含在交接包中。
