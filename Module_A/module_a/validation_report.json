@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "coverage_complete": true,
+  "verified_shards": 4682,
+  "declared_shards": 4682,
+  "source_shards": 4682,
+  "verified_persons": 149813,
+  "expected_persons": 149813,
+  "gain_count": 2546821,
+  "positive_gains": 828848,
+  "negative_gains": 1694009,
+  "zero_gains": 23964,
+  "issues": [],
+  "scope": "Schema, IDs, hashes, coverage, Gain formula, cached P0 and independently recalculated OKS_before. Does not re-run the model for OKS_after."
+}
