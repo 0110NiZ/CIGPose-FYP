@@ -11,7 +11,7 @@ from a_contract import label_metadata_template, model_inputs, require_train_cach
 from a_runtime import (ROOT, load_frozen_base, require_cache_model, require_val_cache, setup)
 from build_shared_cache import candidate_from_cache
 from detection_cache import ReferenceCache as DetectionCache
-from gain_predictor import GainPredictor, to_device
+from model import MLP as GainPredictor, to_device
 from predict_a import predict_batch, prediction_records
 from shared_cache import ReferenceCache, atomic_json, hash_file
 

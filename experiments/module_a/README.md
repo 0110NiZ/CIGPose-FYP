@@ -2,6 +2,12 @@
 
 更新：2026-11-16，基于 public-tasks@66edb12，分支 feature/module-a。最新状态见 docs/fyp/project_status_20261116.md。
 
+## Module_A 目录整理与旧代码清理
+
+实际模型和训练入口已移至根目录 Module_A，命名为 model.py、config.py、data.py、train.py、evaluate.py；common.py 负责连接公共代码。原 train_a.py 和 gain_predictor.py 删除，相关引用改为使用新模型，必要公共依赖保留。
+
+layout/ 保存清理记录及全量预检查日志。清理后 18 项 A 测试和 6 项精度测试通过，全部入口可导入并共用一个 MLP 定义。没有运行训练或新 AP/AR。历史源码哈希和早期检查报告保留，只对应其生成时版本。
+
 ## 当前 V2
 
 正式采用旧 TF32 精度 + 全局确定性。全量标签 4,682 分片、149,813 人、2,546,821 Gain；独立 GPU 复验 51,680 候选，最大 OKS 差 4.44e-16，最佳关节变化 0。

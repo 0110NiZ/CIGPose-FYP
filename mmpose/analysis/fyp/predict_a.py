@@ -12,7 +12,7 @@ from a_contract import model_inputs
 from a_runtime import (ROOT, load_a_checkpoint, load_frozen_base, require_val_cache, setup)
 from build_shared_cache import candidate_from_cache
 from detection_cache import ReferenceCache
-from gain_predictor import select_joint, to_device
+from model import select_joint, to_device
 from shared_cache import atomic_json, hash_file
 from precision_policy import assert_legacy_precision, runtime_record
 

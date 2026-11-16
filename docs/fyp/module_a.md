@@ -2,6 +2,11 @@
 
 Base: `public-tasks` commit `66edb12`. Development branch: `feature/module-a`.
 
+Current editable training code lives in [`Module_A/`](../../Module_A/README.md).
+The old `mmpose/analysis/fyp/train_a.py` and `gain_predictor.py` have been removed.
+Public data checks, label tools and evaluation helpers remain dependencies; do not
+delete them. The layout cleanup did not train a model or change caches/labels.
+
 ## Scope and status
 
 N implements the input reader/encoder, MLP, training entry, and detection-val export.
@@ -21,18 +26,23 @@ predicted gains do not trigger fallback to P0 (that would introduce C).
 
 ## Files owned by N
 
-Under `mmpose/analysis/fyp/`:
+The daily-use files are under `Module_A/`; shared dependencies stay under
+`mmpose/analysis/fyp/`:
 
 | File | Responsibility |
 |---|---|
-| a_contract.py | Label format, provenance/identity checks and model-input whitelist |
-| a_dataset.py | Memory-bounded train reading, ID join and metadata template export |
-| gain_predictor.py | Input encoding and shared signed-gain MLP |
-| a_runtime.py | Frozen base loading, cache/model compatibility and checkpoint helpers |
-| train_a.py | Preflight by default; explicit opt-in for training and full-val selection |
-| predict_a.py | A-only candidate export and reuse of the unified evaluator |
-| check_a_interface.py | Read-only cache checks and GPU forward readiness, no training |
-| tests/test_module_a.py | Synthetic contract, identity, model and gradient tests |
+| Module_A/model.py | Actual MLP definition, class MLP; also used by shared A helpers |
+| Module_A/config.py | Default data paths and training settings |
+| Module_A/data.py | Reuses the audited a_dataset reader |
+| Module_A/train.py | Training loop, preflight by default, explicit opt-in for optimization |
+| Module_A/evaluate.py | Standalone full-val evaluation using this directory's MLP |
+| Module_A/common.py | Locates the shared project code |
+| mmpose/analysis/fyp/a_contract.py | Label format, provenance/identity checks and input whitelist |
+| mmpose/analysis/fyp/a_dataset.py | Memory-bounded reading, ID join and metadata template |
+| mmpose/analysis/fyp/a_runtime.py | Frozen base, compatibility and checkpoint helpers |
+| mmpose/analysis/fyp/predict_a.py | Shared candidate export and unified evaluation functions |
+| mmpose/analysis/fyp/check_a_interface.py | Read-only cache and forward checks |
+| mmpose/analysis/fyp/tests/test_module_a.py | Contract, identity, model and gradient tests |
 
 `build_a_labels_legacy.py` generates the independent V2 label version;
 `verify_a_labels_legacy.py` audits it before marking metadata complete.
@@ -150,6 +160,7 @@ changed code, data, settings or labels. Mid-epoch interruption repeats that epoc
 
 Environment: `/home/nzd/miniconda3/envs/cigpose/bin/python`.
 N working copy: `/home/nzd/projects/cig-module-a-n/code`.
+Daily-use directory: `/home/nzd/projects/cig-module-a-n/code/Module_A`.
 Original shared runs and data remain read-only inputs:
 
 ```text
@@ -187,8 +198,8 @@ The full V2 labels have passed preflight. To repeat preflight (still no training
 
 ```bash
 A_LABELS=/home/nzd/projects/cig-module-a-n/labels/train2017_legacy_deterministic_v2_20261116
-A_RUN=/home/nzd/projects/cig-module-a-n/runs/mlp-v1
-$A_PY $A_FYP/train_a.py --train-cache "$A_TRAIN" --labels "$A_LABELS" \
+A_RUN=/home/nzd/projects/cig-module-a-n/runs/module_a_mlp_seed42
+$A_PY Module_A/train.py --train-cache "$A_TRAIN" --labels "$A_LABELS" \
   --val-cache "$A_VAL" --val-ann "$A_ANN" --base-checkpoint "$A_BASE" --output "$A_RUN"
 ```
 
@@ -196,6 +207,11 @@ Only when training is explicitly intended, add `--run-training`. To resume the
 same run, add both `--run-training --resume` with identical settings. This delivery
 has not enabled training or resume. A stale `.training.lock` after process termination must
 only be removed after verifying no process is writing.
+
+For this machine, `config.py` already supplies these defaults. From `Module_A/`,
+`python train.py` is sufficient for preflight; `python train.py --run-training`
+starts optimization only when explicitly requested. The new trainer imports the
+actual `Module_A/model.py`; it is not a launcher for the deleted trainer.
 
 Train outputs: settings.json, history.json, last.pt, best.pt and full validation
 folders. Best is selected among the configured validation epochs. Each val folder
@@ -206,14 +222,15 @@ raw needs scoring/NMS once; final COCO JSON must not be postprocessed again.
 Standalone full validation after obtaining a trained checkpoint:
 
 ```bash
-$A_PY $A_FYP/predict_a.py --cache "$A_VAL" --a-checkpoint "$A_RUN/best.pt" \
-  --base-checkpoint "$A_BASE" --ann "$A_ANN" --output "$A_RUN/standalone-val"
+$A_PY Module_A/evaluate.py --checkpoint "$A_RUN/best.pt" --output "$A_RUN/standalone-val"
 ```
 
 The validation input has no annotation IDs. Export preserves source detection index,
 full string instance ID, image ID, box, detector score and input_scale. All detections
 are retained before standard postprocessing. Use full val annotations for evaluation,
 never a GT-matched subset. Test-dev is outside this first implementation.
+Standalone evaluation takes cache, annotation and base-model paths from
+`Module_A/config.py`; update those paths when using a different machine.
 
 ## N/Y next handoff
 

@@ -2,6 +2,8 @@
 
 更新日期：2026-11-16。本文依据本机公共任务记录、当前代码和 V2 标签验收结果整理。
 
+目录更新：实际可编辑的 MLP、参数和训练入口已集中到仓库根目录 `Module_A/`。旧 `train_a.py`、`gain_predictor.py` 及其 WSL 字节码缓存已清理，必要的公共依赖保留。原来生成的 Windows 阅读包和 V2 交付 ZIP 是历史快照，不会自动随新目录更新；新代码以本分支为准。
+
 **当前结论：可以开始全量 MLP 训练的下一阶段，但本次只整理方案，没有启动训练。** 标签验收通过代表数据可用于约定协议下的训练，不代表 A 已提升 AP。
 
 ## 1. 项目要做什么
@@ -223,6 +225,7 @@ val 用于选模和调参，因此最终泛化结论仍应在设置锁定后由 
 |---|---|
 | Python 环境 | `/home/nzd/miniconda3/envs/cigpose/bin/python` |
 | 当前代码 | `/home/nzd/projects/cig-module-a-n/code` |
+| 日常使用的 A 目录 | `/home/nzd/projects/cig-module-a-n/code/Module_A` |
 | train GT 缓存 | `/home/nzd/projects/cig-shared-cache-run-20261112/train2017` |
 | val detection 缓存 | `/home/nzd/projects/cig-detection-public-20261116/val2017-detection` |
 | 正式 V2 标签 | `/home/nzd/projects/cig-module-a-n/labels/train2017_legacy_deterministic_v2_20261116` |
@@ -230,7 +233,7 @@ val 用于选模和调参，因此最终泛化结论仍应在设置锁定后由 
 | COCO 数据 | `/home/nzd/projects/CIGPose/data/coco` |
 | V2 接口检查 | `/home/nzd/projects/cig-module-a-n/checks/legacy_deterministic_v2_20261116` |
 
-WSL 当前代码是本地快照，没有 .git。Windows 项目中的 CIGPose-FYP 用于 Git 交付；本次按公共精度设置、A 模块两次提交发布到 feature/module-a，具体提交号以分支历史为准。
+WSL 当前代码是本地快照，没有 .git。Windows 项目中的 CIGPose-FYP 用于 Git 交付；公共精度设置和 A 模块已分开提交，本次继续把目录整理及清理作为后续提交发布到 feature/module-a，具体提交号以分支历史为准。
 
 ### Windows 交付
 
@@ -247,16 +250,23 @@ WSL 当前代码是本地快照，没有 .git。Windows 项目中的 CIGPose-FYP
 
 Y 原始包仍位于 `C:/Users/15790/Desktop/Module_A_Train2017_Labels.zip`，校验值与验收记录一致。旧缓存和失败 V1 也未删除。
 
-关键代码在代码目录的 `mmpose/analysis/fyp/`：
+常用代码在 `Module_A/`，公共依赖在 `mmpose/analysis/fyp/`：
 
 | 文件 | 功能 |
 |---|---|
-| precision_policy.py | 统一精度和确定性设置 |
-| build_a_labels_legacy.py / verify_a_labels_legacy.py | V2 标签生成/验收 |
-| a_contract.py / a_dataset.py | 输入白名单、标签匹配、全量读取 |
-| gain_predictor.py | 当前 MLP |
-| train_a.py | 默认预检查，显式开启才训练 |
-| predict_a.py | A-only 全量 val 预测与统一评估 |
+| Module_A/model.py | 当前 MLP，类名 MLP |
+| Module_A/config.py | 路径与训练参数 |
+| Module_A/data.py | 复用公共数据读取器 |
+| Module_A/train.py | 默认预检查，显式开启才训练 |
+| Module_A/evaluate.py | 单独完整 val 评估 |
+| mmpose/analysis/fyp/precision_policy.py | 统一精度和确定性设置 |
+| mmpose/analysis/fyp/build_a_labels_legacy.py / verify_a_labels_legacy.py | V2 标签生成/验收 |
+| mmpose/analysis/fyp/a_contract.py / a_dataset.py | 输入白名单、标签匹配、全量读取 |
+| mmpose/analysis/fyp/predict_a.py | A-only 候选生成和统一评估辅助函数 |
+
+在 WSL 激活 cigpose 后，进入 `/home/nzd/projects/cig-module-a-n/code/Module_A`，运行 `python train.py` 只预检查，确定训练时才加 `--run-training`。默认输出目录为 `/home/nzd/projects/cig-module-a-n/runs/module_a_mlp_seed42`。运行方法见本目录 README。
+
+清理后重新通过 18 项 A 测试、6 项精度测试，以及 train 149,813 / val 104,125 的全量预检查；检查没有优化器更新。记录见 `experiments/module_a/layout/`。
 
 ## 12. 目前未做与下一步顺序
 

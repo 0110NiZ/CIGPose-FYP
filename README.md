@@ -8,6 +8,12 @@
 </p>
 </div>
 
+## FYP Module A
+
+本项目新增的关节选择 MLP 位于 [Module_A](Module_A/README.md)。常用文件为 `model.py`、`config.py`、`train.py` 和 `evaluate.py`，运行方法见目录说明。旧 A 训练入口和模型定义已清理，公共依赖仍保留。
+
+当前 V2 标签已验收，尚未训练 MLP；[完整进展与训练验证方案](docs/fyp/project_status_20261116.md)。原论文介绍及结果如下，不代表新增 A 模块的实验结果。
+
 ## Abstract
 
 State-of-the-art whole-body pose estimators often lack robustness, producing anatomically implausible predictions in challenging scenes. We posit this failure stems from spurious correlations learned from visual context, a problem we formalize using a Structural Causal Model (SCM). The SCM identifies visual context as a confounder that creates a non-causal backdoor path, corrupting the model's reasoning. We introduce the **C**ausal **I**ntervention **G**raph **Pose** (CIGPose) framework to address this by approximating the true causal effect between visual evidence and pose. The core of CIGPose is a novel Causal Intervention Module: it first identifies confounded keypoint representations via predictive uncertainty and then replaces them with learned, context-invariant canonical embeddings. These deconfounded embeddings are processed by a hierarchical graph neural network that reasons over the human skeleton at both local and global semantic levels to enforce anatomical plausibility. Extensive experiments show CIGPose achieves a new state-of-the-art on COCO-WholeBody. Notably, our CIGPose-x model achieves 67.0% AP, surpassing prior methods that rely on extra training data. With the additional UBody dataset, CIGPose-x is further boosted to 67.5% AP, demonstrating superior robustness and data efficiency.

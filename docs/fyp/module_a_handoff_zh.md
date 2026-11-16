@@ -2,6 +2,8 @@
 
 更新：2026-11-16。Y 已提供原始全量标签；N 完成诊断，在用户批准的“旧 TF32 精度 + 全局确定性”下重生成独立 V2 标签并通过验收。**不再等待标签；尚未训练，没有 A 的 AP 提升结论。**
 
+代码已整理到仓库根目录 [Module_A](../../Module_A/README.md)：model.py 是实际网络，config.py 配置参数，train.py 训练，evaluate.py 验证。旧 train_a.py 和 gain_predictor.py 已删除；公共数据校验、标签生成验收和评估辅助代码仍保留。历史命令请改用 `python Module_A/train.py`，默认仍仅预检查。
+
 ## 正式版本
 
 使用 train2017_legacy_deterministic_v2_20261116：4,682 分片、149,813 人、2,546,821 个 Gain。Y 原包和严格旧开关下未通过复验的 V1 均保留，不混用。

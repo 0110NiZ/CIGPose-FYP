@@ -9,7 +9,9 @@ import torch
 
 from a_contract import CHECKPOINT_SCHEMA, INPUT_SCHEMA
 from build_shared_cache import EXPECTED_CHECKPOINT
-from gain_predictor import GainPredictor
+# A 的网络只保留 Module_A/model.py 这一份。
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'Module_A'))
+from model import MLP as GainPredictor
 from shared_cache import hash_file
 from precision_policy import configure_legacy_precision, assert_legacy_precision, require_profile
 

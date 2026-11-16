@@ -11,13 +11,14 @@ import torch
 
 FYP = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(FYP))
+sys.path.insert(0, str(FYP.parents[2] / 'Module_A'))
 from a_contract import (GainLabels, INPUT_KEYS, label_metadata_template, model_inputs,
                         validate_label_arrays)
 from a_dataset import ATrainingData
-from gain_predictor import GainPredictor, select_joint, to_device
+from model import MLP as GainPredictor, select_joint, to_device
 from shared_cache import ReferenceCache, CacheWriter, hash_file, atomic_json
-from train_a import gain_loss
-import train_a
+from train import gain_loss
+import train as train_a
 from a_runtime import load_a_checkpoint, EXPECTED_CHECKPOINT
 from predict_a import prediction_records
 
@@ -225,7 +226,7 @@ class ModuleATest(unittest.TestCase):
                 patch.object(train_a, 'DetectionCache', return_value=val), \
                 patch.object(train_a, 'require_cache_model'), patch.object(train_a, 'require_val_cache'), \
                 patch.object(train_a, 'hash_file', return_value=EXPECTED_CHECKPOINT), \
-                patch.object(train_a, 'GainPredictor', side_effect=AssertionError('model constructed')), \
+                patch.object(train_a, 'MLP', side_effect=AssertionError('model constructed')), \
                 patch.object(train_a.torch.optim, 'AdamW', side_effect=AssertionError('optimizer constructed')), \
                 patch.object(train_a, 'load_frozen_base', side_effect=AssertionError('base loaded')):
             train_a.main()
