@@ -1,0 +1,59 @@
+{
+  "schema_version": "b-gain-regressor-v1",
+  "scope": "full",
+  "script_sha256": "1592ed3cfa972a7a535f8225ac832cb3d83ccd4e9dcd4e5db197014e5ac9c359",
+  "source_cache_run_sha256": "310197b81eccae15e74086e5caa34909802c11b3ad87c9d4031783f8c4ae9c60",
+  "labels_fingerprint": "ac64a02c3cabe2f22c074b3b86cfba24f99f4163f9fb9c24e41467892a3ee205",
+  "labels_summary_sha256": "75f502d02e867cdfbaef6e8080a88c7525c62118494ff4f631371ed09c45b76b",
+  "label_files_digest": "60351139497201ea36a3851f039acda720c8c5428a5dc1f549196dbb607ab4ae",
+  "split_sha256": "dcaf7ea883ef58315436eb483ae6543dfb4b29971fd0e5dc86f782c201529d1d",
+  "feature_spec": {
+    "name": "b_source_features_v1",
+    "dimension": 563,
+    "fields": [
+      "selected_joint_feature[256]",
+      "mean_joint_feature[256]",
+      "uncertainty[17]",
+      "confidence[17]",
+      "selected_joint_one_hot[17]"
+    ],
+    "excludes": [
+      "GT",
+      "gain",
+      "candidate_predictions",
+      "oracle_alpha"
+    ]
+  },
+  "network": "563-128-ReLU-Dropout(0.1)-64-ReLU-4",
+  "alphas": [
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "loss": "SmoothL1(beta=1) on each of four gains multiplied by 1000; retain ties",
+  "gain_scale": 1000.0,
+  "optimizer": {
+    "type": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001
+  },
+  "model_selection": "maximum mean selected gain on image-disjoint train2017 development",
+  "epochs": 30,
+  "batch_size": 512,
+  "seed": 42,
+  "device": "cuda:0",
+  "torch_version": "2.0.1+cu118",
+  "numpy_version": "1.24.4",
+  "python": "3.10.22 (main, Oct 29 2026, 20:33:25) [GCC 14.3.0]",
+  "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+  "frozen_cigpose": true,
+  "ground_truth_in_inputs": false,
+  "val2017_used": false,
+  "limitations": [
+    "Smoke results only validate training flow.",
+    "Development OKS gains are not formal COCO AP/AR.",
+    "B selects only positive intervention strengths; no reject action.",
+    "Official COCO evaluation requires matching current-runtime P0/Top-1 controls."
+  ]
+}

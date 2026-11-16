@@ -1,0 +1,38 @@
+{
+  "training_completed": true,
+  "scope": "full",
+  "flow_check_only": false,
+  "run_fingerprint": "31b45b266d9f0ab29146751db5f081849261f2ce259233d1572d8ed1b6486936",
+  "instances": 149813,
+  "train_people": 135252,
+  "development_people": 14561,
+  "images_disjoint": true,
+  "gt_in_inputs": false,
+  "val2017_used": false,
+  "best_epoch": 3,
+  "best_checkpoint_sha256": "8d4025b9ec23f13924741951cad0cc69b491f59a88aced0f1f5b1753c49ef2be",
+  "development": {
+    "selected_mean_gain": -4.561162837681366e-06,
+    "oracle_mean_gain": 0.001287248346987232,
+    "mean_oracle_regret": 0.0012918095098249137,
+    "mean_gain_vs_fixed_from_train": 3.315985521933776e-05,
+    "fixed_from_train_alpha": 0.25,
+    "fixed_alpha_mean_gains": {
+      "0.25": -3.772101805701913e-05,
+      "0.5": -0.0001641942205383349,
+      "0.75": -0.000362712973232281,
+      "1.0": -0.00042740556960549234
+    },
+    "selected_alpha_counts": {
+      "0.25": 6701,
+      "0.5": 3260,
+      "0.75": 1571,
+      "1.0": 3029
+    },
+    "selected_negative_people": 4808,
+    "all_candidate_negative_people": 2703,
+    "exact_best_tie_people": 6763
+  },
+  "beats_train_selected_fixed": true,
+  "formal_coco_ap_evaluated": false
+}

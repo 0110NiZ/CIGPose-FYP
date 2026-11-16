@@ -1,0 +1,25 @@
+{
+  "files": {
+    "labels/run.json": "cbfe86e39e1540194587ffab8820418521387c81cd4fbb5545acc9e55a1fcaa6",
+    "labels/summary.json": "75f502d02e867cdfbaef6e8080a88c7525c62118494ff4f631371ed09c45b76b",
+    "labels/resolved_config.py": "e1de9e96cfa2a0664cf3c1d9e320f6b2b781d5861e48d9c693247fa915e722c5",
+    "train/run.json": "5f55946cbc98c15749adcce432b169c3daf699f993a2da24dae316beb5d5184f",
+    "train/summary.json": "432fc6fef258691ad5ffc6617dfa5bbf563d179a4acc12f78c237f92238e0344",
+    "train/split.json": "00122f99b8cc33ccc02dbe99c98b8e352ec3378d5a43cb05bb43c98de23596bf",
+    "train/history.json": "d27d987e472d4bb60885072f265f1028fb813d8fa963d7602a00f93872db9995",
+    "train/best.pt": "8d4025b9ec23f13924741951cad0cc69b491f59a88aced0f1f5b1753c49ef2be",
+    "evaluate/run.json": "491452939dcb575667d3a1335978ee299248410f158008383d176c4b4e120bb9",
+    "evaluate/summary.json": "97071b110cc3cd7cd1a2b0ca7cb0291f52db4fc4a46fed32d20985365814a045",
+    "evaluate/p0_current/metrics.json": "2501e67752266b89320f213fdbda2d95eb542c9e6f68479bf9dbec2744285fea",
+    "evaluate/fixed_alpha025/metrics.json": "c88fdee76b1e7b111344d3b75240a5fec0abf1b85cc3f63895adfe02922e7eb1",
+    "evaluate/top1_alpha1_current/metrics.json": "bbbf13cfba928e956e9f234d0ab341ab972b2433112ebcfb48dc66b797a78e45",
+    "evaluate/b_current/metrics.json": "1f108ac569be7ee20b4eb9407ae88ff6f47b904672e2500592d27bb9e0a6f6b0"
+  },
+  "history_sha256": "0a16f516bba41015344d74ad9632a3897bee87e1e4056bf92fbce7e4f67a0837",
+  "original_directories": {
+    "labels": "/mnt/e/fyp_module_b/full_train_v4",
+    "train": "/mnt/e/fyp_module_b/train_b_full_v1",
+    "evaluate": "/mnt/e/fyp_module_b/eval_b_full_v1"
+  },
+  "note": "Original files copied byte for byte. No report fingerprints or weights changed."
+}

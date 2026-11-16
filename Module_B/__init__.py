@@ -1,0 +1,1 @@
+"""CIGPose intervention strength module."""

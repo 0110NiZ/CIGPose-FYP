@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "development_sample_only": false,
+  "fingerprint": "ac64a02c3cabe2f22c074b3b86cfba24f99f4163f9fb9c24e41467892a3ee205",
+  "scope": "full",
+  "supervision_reference": "P0 recomputed from unchanged cached features under current runtime",
+  "old_cache_strict_coordinate_tolerance_passed": false,
+  "old_cache_near_tie_components": 42,
+  "old_cache_near_tie_shards": 42,
+  "old_cache_strict_score_tolerance_passed": false,
+  "old_cache_score_exceeded_elements": 26,
+  "old_cache_score_threshold_changes": 0,
+  "old_cache_score_max_error": 3.904104232788086e-05,
+  "old_cache_coordinate_max_error": 2.05279541015625,
+  "old_cache_max_abs_oks_difference": 0.0020611701345323308,
+  "oracle_mean_gain": 0.0012542686371395193,
+  "all_negative_people": 28075,
+  "exact_best_tie_people": 71006,
+  "reused_v3_shards": 1761,
+  "selected_shards": 4682,
+  "instances": 149813,
+  "candidate_records": 599252,
+  "alpha0_max_abs_gain": 0.0,
+  "alpha0_max_coordinate_error": 0.0,
+  "alpha0_max_score_error": 0.0,
+  "alpha1_full_replacement_features_equal": true,
+  "source_arrays_unchanged": true,
+  "gain_summary": {
+    "0.25": {
+      "mean_gain": -3.745441011337343e-05,
+      "positive": 41574,
+      "negative": 44229,
+      "zero": 64010
+    },
+    "0.5": {
+      "mean_gain": -0.00023662966836239418,
+      "positive": 46066,
+      "negative": 52823,
+      "zero": 50924
+    },
+    "0.75": {
+      "mean_gain": -0.0003814539879687275,
+      "positive": 48677,
+      "negative": 56832,
+      "zero": 44304
+    },
+    "1.0": {
+      "mean_gain": -0.0004828803315419942,
+      "positive": 50312,
+      "negative": 59292,
+      "zero": 40209
+    }
+  },
+  "oracle_best_alpha_counts": {
+    "0.25": 88511,
+    "0.5": 20344,
+    "0.75": 17188,
+    "1.0": 23770
+  },
+  "best_fixed_alpha": "0.25",
+  "oracle_improvement_over_best_fixed": 0.0012917230472528928
+}
