@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "f5a94fb",
+    "git_commit": "e835435",
     "dtype": "float32",
     "mixed_precision": false,
     "tf32_enabled": false,
@@ -22,99 +22,34 @@
     "negative_ratio": 0.39117174959871587,
     "mean_gain_matched": -0.0005815404275730339
   },
-  "threshold_sweep": [
-    {
-      "tau": 0.3,
-      "metrics": {
-        "coco/AP": 0.7356475279261435,
-        "coco/AP .5": 0.897721360565268,
-        "coco/AP .75": 0.8052829966209047,
-        "coco/AP (M)": 0.703222919866097,
-        "coco/AP (L)": 0.7981997300261652,
-        "coco/AR": 0.7897040302267003,
-        "coco/AR .5": 0.9363979848866498,
-        "coco/AR .75": 0.8518576826196473,
-        "coco/AR (M)": 0.7465719748702541,
-        "coco/AR (L)": 0.8519137866963954
-      },
-      "audit": {
-        "num_output_predictions": 77518,
-        "evaluation_image_count": 5000,
-        "num_unique_images": 3893,
-        "num_input_instances": 104125
-      },
-      "decision_analysis": {
-        "accept_rate_all": 0.7026938775510204,
-        "accept_rate_matched": 0.7107544141252007,
-        "harmful_elimination_rate": 0.29093147312269185,
-        "false_acceptance_rate": 0.7097323600973237,
-        "false_rejection_rate": 0.28726415094339625,
-        "mean_realized_gain": -0.0004531688149450804,
-        "mean_gain_accepted": -0.0006375884636648263,
-        "mean_gain_rejected_if_applied": -0.0004438152867215037
-      }
+  "oracle_c_only": {
+    "metrics": {
+      "coco/AP": 0.7383355719372385,
+      "coco/AP .5": 0.8982065518384923,
+      "coco/AP .75": 0.8065437706433952,
+      "coco/AP (M)": 0.7056712243924275,
+      "coco/AP (L)": 0.801770589744641,
+      "coco/AR": 0.7915931989924433,
+      "coco/AR .5": 0.9365554156171285,
+      "coco/AR .75": 0.8521725440806045,
+      "coco/AR (M)": 0.7489756897022671,
+      "coco/AR (L)": 0.8533259011519881
     },
-    {
-      "tau": 0.5,
-      "metrics": {
-        "coco/AP": 0.7355419508795134,
-        "coco/AP .5": 0.897299021346296,
-        "coco/AP .75": 0.8050529073339394,
-        "coco/AP (M)": 0.7026453303815627,
-        "coco/AP (L)": 0.7991620417498378,
-        "coco/AR": 0.789515113350126,
-        "coco/AR .5": 0.9362405541561712,
-        "coco/AR .75": 0.8513853904282116,
-        "coco/AR (M)": 0.7462441955749795,
-        "coco/AR (L)": 0.852099591230026
-      },
-      "audit": {
-        "num_output_predictions": 77493,
-        "evaluation_image_count": 5000,
-        "num_unique_images": 3893,
-        "num_input_instances": 104125
-      },
-      "decision_analysis": {
-        "accept_rate_all": 0.5021368547418967,
-        "accept_rate_matched": 0.5136436597110754,
-        "harmful_elimination_rate": 0.48379154698399673,
-        "false_acceptance_rate": 0.5136253041362531,
-        "false_rejection_rate": 0.4863207547169811,
-        "mean_realized_gain": -0.00035776377982361566,
-        "mean_gain_accepted": -0.0006965213588441016,
-        "mean_gain_rejected_if_applied": -0.00046010842095012375
-      }
+    "audit": {
+      "num_output_predictions": 76988,
+      "evaluation_image_count": 5000,
+      "num_unique_images": 3893,
+      "num_input_instances": 104125
     },
-    {
-      "tau": 0.7,
-      "metrics": {
-        "coco/AP": 0.7357717588953037,
-        "coco/AP .5": 0.8973313004997475,
-        "coco/AP .75": 0.8051833116534233,
-        "coco/AP (M)": 0.7034693341781676,
-        "coco/AP (L)": 0.798823984135549,
-        "coco/AR": 0.7897040302267003,
-        "coco/AR .5": 0.9362405541561712,
-        "coco/AR .75": 0.8515428211586902,
-        "coco/AR (M)": 0.7468178093417099,
-        "coco/AR (L)": 0.851802303976217
-      },
-      "audit": {
-        "num_output_predictions": 77364,
-        "evaluation_image_count": 5000,
-        "num_unique_images": 3893,
-        "num_input_instances": 104125
-      },
-      "decision_analysis": {
-        "accept_rate_all": 0.3004081632653061,
-        "accept_rate_matched": 0.30658105939004815,
-        "harmful_elimination_rate": 0.6951169470660649,
-        "false_acceptance_rate": 0.3068126520681265,
-        "false_rejection_rate": 0.6938679245283019,
-        "mean_realized_gain": -0.00027376715414009105,
-        "mean_gain_accepted": -0.0008929682566977839,
-        "mean_gain_rejected_if_applied": -0.00044384895682574846
-      }
+    "decision_analysis": {
+      "accept_rate_all": 0.02036014405762305,
+      "accept_rate_matched": 0.3402889245585875,
+      "harmful_elimination_rate": 1.0,
+      "false_acceptance_rate": 0.0,
+      "false_rejection_rate": 0.0,
+      "mean_realized_gain": 0.0012570568545560077,
+      "mean_gain_accepted": 0.0036940868886244935,
+      "mean_gain_rejected_if_applied": -0.002786973495781977
     }
-  ]
+  }
 }
