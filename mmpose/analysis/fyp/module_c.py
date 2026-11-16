@@ -6,14 +6,14 @@ Aligned with Proposal Section 4.1.3 & 4.3, docs/fyp/interfaces.md, and public-ta
 - Offline GT matching (for supervision & error analysis ONLY; never deletes FP detections)
 - Uses LIN's oks_utility.compute_gain for binary acceptance labels (gain > 0 -> 1, else 0)
 - Scale-normalized pose-change feature encoder & lightweight MLP classifier
-- Threshold-based fallback (p_acc > tau -> P_c, else P_0) & UnifiedPoseEvaluator AP/AR
+- Threshold-based fallback (p_acc > tau -> P_c, else P_0), threshold sweep & UnifiedPoseEvaluator AP/AR
 """
 
 import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence
 
 import numpy as np
 import torch
@@ -25,12 +25,8 @@ REPO_ROOT = FYP_DIR.parents[2]
 if str(FYP_DIR) not in sys.path:
     sys.path.insert(0, str(FYP_DIR))
 
-from eval_unified import UnifiedPoseEvaluator, save_eval_report  # noqa: E402
+from eval_unified import UnifiedPoseEvaluator  # noqa: E402
 from oks_utility import compute_gain  # noqa: E402
-
-
-def _xyxy_to_xywh(box: np.ndarray) -> np.ndarray:
-    return np.array([box[0], box[1], box[2] - box[0], box[3] - box[1]], dtype=np.float64)
 
 
 def _box_iou_xyxy(box_a: np.ndarray, box_b: np.ndarray) -> float:
@@ -72,20 +68,17 @@ def match_detections_to_gt_and_compute_gains(
     """Offline GT matching & OKS gain labeling (for supervision/analysis ONLY)."""
     coco_gt = COCO(ann_file)
 
-    # Group detection indices by image_id
     img_to_det_indices: Dict[int, List[int]] = {}
     for idx, r in enumerate(p0_records):
         img_to_det_indices.setdefault(int(r['image_id']), []).append(idx)
 
     gains = np.full(len(p0_records), np.nan, dtype=np.float64)
     labels = np.full(len(p0_records), -1, dtype=np.int64)
-    matched_iou = np.zeros(len(p0_records), dtype=np.float64)
 
     for img_id, det_indices in img_to_det_indices.items():
         ann_ids = coco_gt.getAnnIds(imgIds=[img_id], iscrowd=False)
         anns = coco_gt.loadAnns(ann_ids)
 
-        # Keep valid GT persons (labeled keypoints > 0 and positive area)
         valid_gts = []
         for ann in anns:
             kpts = np.asarray(ann['keypoints'], dtype=np.float64).reshape(17, 3)
@@ -101,7 +94,6 @@ def match_detections_to_gt_and_compute_gains(
         if not valid_gts:
             continue
 
-        # Sort detections by bbox_score descending for standard greedy matching
         sorted_dets = sorted(
             det_indices,
             key=lambda i: float(p0_records[i].get('bbox_score', 1.0)),
@@ -127,7 +119,6 @@ def match_detections_to_gt_and_compute_gains(
                 g = compute_gain(pc_kpts, p0_kpts, gt['kpts'], gt['area'])
                 gains[det_i] = g
                 labels[det_i] = 1 if g > 0.0 else 0
-                matched_iou[det_i] = best_iou
 
     matched_mask = labels >= 0
     matched_gains = gains[matched_mask]
@@ -166,30 +157,17 @@ def encode_module_c_features(
     alphas: torch.Tensor,
     uncertainty: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    """Encode scale-normalized pose change & intervention metadata for Module C.
-
-    Args:
-        p0_coords: [B, 17, 2]
-        pc_coords: [B, 17, 2]
-        bboxes_xyxy: [B, 4]
-        p0_scores: [B, 17]
-        pc_scores: [B, 17]
-        joint_ids: [B] (0..16)
-        alphas: [B]
-        uncertainty: optional [B, 17]
-    Returns:
-        Feature tensor [B, D] (D=120 with uncertainty, D=103 without)
-    """
+    """Encode scale-normalized pose change & intervention metadata for Module C."""
     cx = (bboxes_xyxy[:, 0] + bboxes_xyxy[:, 2]) * 0.5
     cy = (bboxes_xyxy[:, 1] + bboxes_xyxy[:, 3]) * 0.5
-    center = torch.stack([cx, cy], dim=-1).unsqueeze(1)  # [B, 1, 2]
+    center = torch.stack([cx, cy], dim=-1).unsqueeze(1)
     w = torch.clamp(bboxes_xyxy[:, 2] - bboxes_xyxy[:, 0], min=1.0)
     h = torch.clamp(bboxes_xyxy[:, 3] - bboxes_xyxy[:, 1], min=1.0)
-    scale = torch.maximum(w, h).view(-1, 1, 1)  # [B, 1, 1]
+    scale = torch.maximum(w, h).view(-1, 1, 1)
 
-    p0_norm = ((p0_coords - center) / scale).reshape(p0_coords.size(0), -1)        # [B, 34]
-    delta_norm = ((pc_coords - p0_coords) / scale).reshape(p0_coords.size(0), -1)  # [B, 34]
-    delta_scores = pc_scores - p0_scores                                            # [B, 17]
+    p0_norm = ((p0_coords - center) / scale).reshape(p0_coords.size(0), -1)
+    delta_norm = ((pc_coords - p0_coords) / scale).reshape(p0_coords.size(0), -1)
+    delta_scores = pc_scores - p0_scores
     joint_onehot = torch.nn.functional.one_hot(joint_ids.long(), num_classes=17).float()
     alpha_feat = alphas.float().view(-1, 1)
 
@@ -291,11 +269,110 @@ def evaluate_acceptance_policy(
     return result
 
 
+def load_acceptance_probs(
+    probs_file: str,
+    p0_records: Sequence[Dict[str, Any]],
+) -> np.ndarray:
+    """Load predicted acceptance probabilities p_acc [N] from .npy/.npz/.pt/.pth/.json."""
+    path = Path(probs_file)
+    suffix = path.suffix.lower()
+    if suffix == '.npy':
+        data = np.load(path, allow_pickle=False)
+    elif suffix == '.npz':
+        npz = np.load(path, allow_pickle=False)
+        key = 'p_acc' if 'p_acc' in npz else ('probs' if 'probs' in npz else npz.files[0])
+        data = npz[key]
+        if 'detection_instance_id' in npz:
+            expected = [r.get('detection_instance_id') for r in p0_records]
+            if list(npz['detection_instance_id']) != expected:
+                raise ValueError('detection_instance_id mismatch in probs npz file.')
+    elif suffix in ('.pt', '.pth'):
+        obj = torch.load(path, map_location='cpu')
+        if isinstance(obj, dict):
+            if 'detection_instance_id' in obj:
+                expected = [r.get('detection_instance_id') for r in p0_records]
+                if list(obj['detection_instance_id']) != expected:
+                    raise ValueError('detection_instance_id mismatch in probs pt file.')
+            for k in ('p_acc', 'probs', 'scores', 'pred_probs'):
+                if k in obj:
+                    obj = obj[k]
+                    break
+        data = obj.detach().cpu().numpy() if isinstance(obj, torch.Tensor) else np.asarray(obj)
+    elif suffix == '.json':
+        with open(path, 'r', encoding='utf-8') as f:
+            obj = json.load(f)
+        if isinstance(obj, dict):
+            for k in ('p_acc', 'probs', 'scores', 'pred_probs'):
+                if k in obj:
+                    obj = obj[k]
+                    break
+        data = np.asarray(obj)
+    else:
+        raise ValueError(f'Unsupported probs file format: {suffix}')
+
+    probs = np.asarray(data, dtype=np.float64).reshape(-1)
+    if len(probs) != len(p0_records):
+        raise ValueError(f'Probability length {len(probs)} != detections {len(p0_records)}')
+    if not np.isfinite(probs).all():
+        raise ValueError('Predicted probabilities contain NaN or Inf.')
+    return probs
+
+
+def sweep_acceptance_thresholds(
+    p0_records: Sequence[Dict[str, Any]],
+    pc_records: Sequence[Dict[str, Any]],
+    p_acc: np.ndarray,
+    taus: Sequence[float],
+    ann_file: str,
+    gains: np.ndarray,
+    matched_mask: np.ndarray,
+) -> List[Dict[str, Any]]:
+    """Sweep decision threshold tau and evaluate AP/AR + Proposal 4.3 error rates."""
+    sweep_results: List[Dict[str, Any]] = []
+    print('\n=== Module C Threshold Sweep ===')
+    header = (
+        f"{'tau':>6} | {'AP':>8} | {'AR':>8} | {'Accept%':>7} | "
+        f"{'HarmElim%':>9} | {'FalseAcc%':>9} | {'FalseRej%':>9} | {'MeanGain':>10}"
+    )
+    print(header)
+    print('-' * len(header))
+
+    for tau in taus:
+        accept_mask = p_acc > float(tau)
+        res = evaluate_acceptance_policy(
+            p0_records=p0_records,
+            pc_records=pc_records,
+            accept_mask=accept_mask,
+            ann_file=ann_file,
+            gains=gains,
+            matched_mask=matched_mask,
+        )
+        m = res['metrics']
+        d = res['decision_analysis']
+        print(
+            f"{tau:6.2f} | {m['coco/AP']:8.5f} | {m['coco/AR']:8.5f} | "
+            f"{d['accept_rate_all'] * 100:7.2f} | "
+            f"{d['harmful_elimination_rate'] * 100:9.2f} | "
+            f"{d['false_acceptance_rate'] * 100:9.2f} | "
+            f"{d['false_rejection_rate'] * 100:9.2f} | "
+            f"{d['mean_realized_gain']:+10.6f}"
+        )
+        sweep_results.append({
+            'tau': float(tau),
+            'metrics': m,
+            'audit': res['audit'],
+            'decision_analysis': d,
+        })
+    return sweep_results
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Module C Audit, Oracle & Threshold Analysis')
+    parser = argparse.ArgumentParser(description='Module C Audit, Oracle & Threshold Sweep')
     parser.add_argument('--p0-file', type=str, required=True)
     parser.add_argument('--pc-file', type=str, required=True)
     parser.add_argument('--ann-file', type=str, required=True)
+    parser.add_argument('--probs-file', type=str, default=None, help='Predicted p_acc [N] for tau sweep')
+    parser.add_argument('--taus', type=str, default='0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9')
     parser.add_argument('--out-json', type=str, default=None)
     parser.add_argument('--run-oracle', action='store_true', help='Evaluate Oracle acceptance upper bound')
     args = parser.parse_args()
@@ -321,7 +398,6 @@ def main() -> None:
     payload: Dict[str, Any] = {'label_audit': audit_res['stats']}
 
     if args.run_oracle:
-        # Oracle: accept iff matched and gain > 0; otherwise fall back to P_0
         oracle_accept = audit_res['matched_mask'] & (audit_res['gains'] > 0.0)
         print('\nRunning UnifiedPoseEvaluator for Oracle Acceptance (all 104,125 detections)...')
         oracle_eval = evaluate_acceptance_policy(
@@ -338,13 +414,27 @@ def main() -> None:
         print(f"  coco/AR: {oracle_eval['metrics']['coco/AR']:.6f}")
         print(f"  decision_analysis: {oracle_eval['decision_analysis']}")
 
+    if args.probs_file:
+        p_acc = load_acceptance_probs(args.probs_file, p0_records)
+        taus = [float(t.strip()) for t in args.taus.split(',') if t.strip()]
+        sweep_res = sweep_acceptance_thresholds(
+            p0_records=p0_records,
+            pc_records=pc_records,
+            p_acc=p_acc,
+            taus=taus,
+            ann_file=args.ann_file,
+            gains=audit_res['gains'],
+            matched_mask=audit_res['matched_mask'],
+        )
+        payload['threshold_sweep'] = sweep_res
+
     out_path = Path(args.out_json) if args.out_json else (
         REPO_ROOT / 'experiments' / 'module_c' / 'c_only_audit_and_oracle.json'
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
-    print(f'\nSaved Module C audit report to: {out_path}')
+    print(f'\nSaved Module C report to: {out_path}')
 
 
 if __name__ == '__main__':
