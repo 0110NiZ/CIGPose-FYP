@@ -24,3 +24,4 @@ DEVICE = 'cuda:0'
 
 LABELS = WORK / 'labels/train2017_c_labels.npz'
 TRAIN_DATA = WORK / 'data/train2017_c_features.npz'
+VAL_DATA = WORK / 'data/val2017_c_features.npz'
