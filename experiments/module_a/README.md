@@ -2,6 +2,12 @@
 
 更新：2026-11-16，基于 public-tasks@66edb12，分支 feature/module-a。最新状态见 docs/fyp/project_status_20261116.md。
 
+## 第一轮真实训练
+
+用户已完成 seed 42、20 轮全量训练。最佳第 10 轮，AP 73.5190、AR 78.9814。见 [seed42_v2 结果及对照](seed42_v2/README.md)，history.json、settings.json 和逐轮指标均保留；模型权重仅记录哈希，不上传 Git。
+
+下面各节中的“不训练”只描述之前的接口、标签验收和目录整理阶段，不是当前训练进展。
+
 ## Module_A 目录整理与旧代码清理
 
 实际模型和训练入口已移至根目录 Module_A，命名为 model.py、config.py、data.py、train.py、evaluate.py；common.py 负责连接公共代码。原 train_a.py 和 gain_predictor.py 删除，相关引用改为使用新模型，必要公共依赖保留。

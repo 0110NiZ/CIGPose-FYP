@@ -1,0 +1,23 @@
+{
+  "run_path": "/home/nzd/projects/cig-module-a-n/runs/module_a_mlp_seed42",
+  "artifacts": {
+    "best.pt": {
+      "bytes": 1104061,
+      "sha256": "f98c1a5604e07b8ccd12e630df168f8b2da02d0c7935985d4bc557ef1622cd94"
+    },
+    "last.pt": {
+      "bytes": 1104957,
+      "sha256": "567b689c2b4e85dbe88b1753bec914a811568d2ae60843dd527da603f59230a3"
+    },
+    "history.json": {
+      "bytes": 4939,
+      "sha256": "3277919546cc7bf08c0841df8f05ab990d68d3ac76b95350fee2b61baeb91e27"
+    },
+    "settings.json": {
+      "bytes": 2920,
+      "sha256": "5f3c434285be80b00b87f26e14b64dcce8d81d43a06787e71631c3e9dc476fb2"
+    }
+  },
+  "weights_in_git": false,
+  "training_run_by_user": true
+}

@@ -9,11 +9,17 @@ delete them. The layout cleanup did not train a model or change caches/labels.
 
 ## Scope and status
 
+Update: the user has now completed the full seed-42, 20-epoch run. The best
+validation checkpoint is epoch 10, AP 73.5190 and AR 78.9814 on the 0–100 scale.
+See [run results and controlled comparison](../../experiments/module_a/seed42_v2/README.md).
+The label acceptance and layout checks described below were earlier, non-training stages.
+
 N implements the input reader/encoder, MLP, training entry, and detection-val export.
 Y implements candidate generation, gain-label generation, and independent label audit.
 Y's original labels were audited, then N regenerated and accepted the full V2
-labels under the approved deterministic precision profile. No optimization was started. No
-trained A checkpoint or A AP improvement is claimed. Synthetic unit-test labels are
+labels under the approved deterministic precision profile. That acceptance did not
+perform optimization; the subsequent user-run training is reported separately. No
+AP improvement is inferred from interface tests. Synthetic unit-test labels are
 temporary fixtures only. The real-cache interface check uses an untrained network,
 does not save its weights, and does not report AP/AR.
 
@@ -205,7 +211,7 @@ $A_PY Module_A/train.py --train-cache "$A_TRAIN" --labels "$A_LABELS" \
 
 Only when training is explicitly intended, add `--run-training`. To resume the
 same run, add both `--run-training --resume` with identical settings. This delivery
-has not enabled training or resume. A stale `.training.lock` after process termination must
+does not enable optimization by default. A stale `.training.lock` after process termination must
 only be removed after verifying no process is writing.
 
 For this machine, `config.py` already supplies these defaults. From `Module_A/`,
@@ -238,8 +244,8 @@ Standalone evaluation takes cache, annotation and base-model paths from
 2. Use the accepted V2 labels; preserve Y's original archive and rejected V1 separately.
 3. N's full-label preflight and real-data interface checks have passed; Y can assist
    with selection analysis and visualization without blocking training readiness.
-4. Training starts only on a subsequent explicit instruction; compare A-only against
-   uncertainty Top-1 and cached P0 under the same current protocol using full-val AP.
+4. First training is complete. Compare A-only against uncertainty Top-1 and cached
+   P0 under the same V2 protocol using full-val AP; further training requires a new experiment.
 
 Changing the A network alone does not require regenerating labels. Changing base
 weights, candidate mechanism/alpha, crop inputs or reference definition does.

@@ -3,6 +3,7 @@ import common
 import config
 
 import argparse
+import contextlib
 import json
 from pathlib import Path
 import time
@@ -17,6 +18,7 @@ from a_runtime import (EXPECTED_CHECKPOINT, load_frozen_base, require_cache_mode
                        require_val_cache, save_checkpoint, setup)
 from detection_cache import ReferenceCache as DetectionCache
 from model import MLP, to_device
+from result import print_epoch, show_summary
 from shared_cache import atomic_json, hash_file
 
 
@@ -76,7 +78,7 @@ def main():
         raise ValueError('Train overlaps validation images without detections')
     # 保存真正使用的源码哈希，断点恢复时防止误用改过的模型。
     code_paths = {n: Path(__file__).with_name(n) for n in
-                  ['common.py', 'config.py', 'data.py', 'model.py', 'train.py', 'evaluate.py']}
+                  ['common.py', 'config.py', 'data.py', 'model.py', 'train.py', 'evaluate.py', 'result.py']}
     for n in ['a_contract.py', 'a_dataset.py', 'a_runtime.py', 'predict_a.py',
               'eval_unified.py', 'build_shared_cache.py', 'precision_policy.py']:
         code_paths['public/' + n] = common.PUBLIC / n
@@ -91,11 +93,11 @@ def main():
         base_checkpoint_sha256=EXPECTED_CHECKPOINT, input_schema=INPUT_SCHEMA,
         code_hashes={n: hash_file(path) for n, path in code_paths.items()},
         torch_version=torch.__version__, numpy_version=np.__version__)
-    print(json.dumps(dict(preflight='PASS', train_count=len(data.cache.expected),
-                          val_detection_count=len(val.expected),
-                          optimization_enabled=args.run_training), indent=2), flush=True)
+    print('数据检查通过')
+    print(f'训练人体数量：{len(data.cache.expected):,}')
+    print(f'验证检测数量：{len(val.expected):,}')
     if not args.run_training:
-        print('No training performed. Add --run-training only when ready.')
+        print('本次只检查数据，没有训练。加 --run-training 才开始训练。', flush=True)
         return
 
     # 3. 创建 MLP。优化器里只有 MLP 参数，不包含 CIGPose。
@@ -121,10 +123,17 @@ def main():
         mean, std = fit_input_statistics(data.cache)
         model.set_input_statistics(mean, std)
     if start_epoch >= args.epochs:
-        print('Requested epochs already complete; no updates performed.')
+        print('计划轮数已完成，没有进行新的训练。')
+        show_summary(history, output, args.epochs)
         return
     # 基础 CIGPose 冻结，只在验证时为选中的关节计算候选。
-    base = load_frozen_base(args.base_checkpoint, args.device)
+    print(f'准备训练，共 {args.epochs} 轮，每 {args.eval_every} 轮验证一次', flush=True)
+    print(f'结果保存到：{output}', flush=True)
+    print('正在加载冻结的基础 CIGPose 模型', flush=True)
+    from mmengine.logging import MMLogger
+    MMLogger.get_current_instance()
+    with (output / 'model_loading.log').open('a') as log, contextlib.redirect_stdout(log):
+        base = load_frozen_base(args.base_checkpoint, args.device)
     from predict_a import validate_a
     lock = output / '.training.lock'
     with lock.open('x') as f:
@@ -134,6 +143,7 @@ def main():
         atomic_json(output / 'settings.json', settings)
         # 4. 每轮读取全量 train，预测 17 个 Gain，再计算误差。
         for epoch in range(start_epoch + 1, args.epochs + 1):
+            print(f'\n开始第 {epoch} 轮训练', flush=True)
             begin = time.monotonic()
             model.train()
             total, loss_sum, error_sum = 0, 0., 0.
@@ -162,8 +172,10 @@ def main():
                 while folder.exists():
                     attempt += 1
                     folder = output / ('val-epoch-%03d-attempt-%02d' % (epoch, attempt))
-                result = validate_a(model.eval(), base, val, args.val_ann, folder, args.device,
-                                    dict(epoch=epoch, label_fingerprint=data.labels.fingerprint))
+                print('正在验证完整 val2017，共 5,000 张图片，请稍候', flush=True)
+                with (output / 'validation_console.log').open('a') as log, contextlib.redirect_stdout(log):
+                    result = validate_a(model.eval(), base, val, args.val_ann, folder, args.device,
+                                        dict(epoch=epoch, label_fingerprint=data.labels.fingerprint))
                 row['validation'] = result['metrics']
                 ap = result['metrics']['coco/AP']
                 improved = best_ap is None or ap > best_ap
@@ -181,7 +193,8 @@ def main():
             if improved:
                 save_checkpoint(output / 'best.pt', payload)
             atomic_json(output / 'history.json', history)
-            print(json.dumps(row), flush=True)
+            print_epoch(row, args.epochs, improved)
+        show_summary(history, output, args.epochs)
     finally:
         lock.unlink()
 

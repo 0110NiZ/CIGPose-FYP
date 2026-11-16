@@ -1,0 +1,85 @@
+{
+  "metrics": {
+    "coco/AP": 0.7351903072406191,
+    "coco/AP .5": 0.89638234937499,
+    "coco/AP .75": 0.804700527489746,
+    "coco/AP (M)": 0.7026311855993197,
+    "coco/AP (L)": 0.7981141905777139,
+    "coco/AR": 0.7898142317380353,
+    "coco/AR .5": 0.9363979848866498,
+    "coco/AR .75": 0.8515428211586902,
+    "coco/AR (M)": 0.7472002185195301,
+    "coco/AR (L)": 0.8515421776291341
+  },
+  "audit": {
+    "num_output_predictions": 77576,
+    "evaluation_image_count": 5000,
+    "num_unique_images": 3893,
+    "num_input_instances": 104125
+  },
+  "method": "A-only",
+  "alpha": 1.0,
+  "precision": {
+    "precision_profile": {
+      "profile_id": "cigpose-legacy-cache-fp32-tf32conv-deterministic-v2",
+      "model_dtype": "float32",
+      "autocast": false,
+      "matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "deterministic_algorithms": true,
+      "cublas_workspace_config": ":4096:8",
+      "base_model_frozen": true,
+      "base_model_eval": true,
+      "flip_test": false,
+      "input_size_wh": [
+        192,
+        256
+      ],
+      "simcc_split_ratio": 2.0,
+      "use_dark": false,
+      "inference_batch_size": 32,
+      "inference_batch_rule": "original source shard order and batch; do not merge 17 actions",
+      "p0_reference": "source_cache.P_0_coords",
+      "candidate_decoder": "public head.decode and shared_cache.restore_coords",
+      "supervision_oks_dtype": "float64"
+    },
+    "precision_profile_sha256": "56be859584de8c0420d7eccba85d2564c5cdba2d6822d06463dff3d611edb330",
+    "torch_version": "2.0.1+cu118",
+    "numpy_version": "1.24.4",
+    "python": "3.8.20 (default, Oct  3 2024, 15:24:27) \n[GCC 11.2.0]",
+    "cuda_build": "11.8",
+    "cudnn_version": 8700,
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "threads": 4,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "always_accept": true,
+  "flip_test": false,
+  "cache_fingerprint": "7c12efbb2b9cb7c42632fd360b0f2456882f915d48108bbee5e99abe3509b243",
+  "annotation_sha256": "788e2dae83c86bd547be7fab269d6399df5671063d29a61360cdb2cc370d2b14",
+  "selection_counts": [
+    65652,
+    5353,
+    3841,
+    5878,
+    5807,
+    324,
+    856,
+    2599,
+    2603,
+    1124,
+    1067,
+    4361,
+    3570,
+    598,
+    226,
+    168,
+    98
+  ],
+  "provenance": {
+    "epoch": 10,
+    "label_fingerprint": "ceaa1d59d82b12aef8051e6c2af7e8b81b1ebe972434f35803ad08019a4bc980"
+  }
+}

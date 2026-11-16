@@ -12,7 +12,7 @@
 
 本项目新增的关节选择 MLP 位于 [Module_A](Module_A/README.md)。常用文件为 `model.py`、`config.py`、`train.py` 和 `evaluate.py`，运行方法见目录说明。旧 A 训练入口和模型定义已清理，公共依赖仍保留。
 
-当前 V2 标签已验收，尚未训练 MLP；[完整进展与训练验证方案](docs/fyp/project_status_20261116.md)。原论文介绍及结果如下，不代表新增 A 模块的实验结果。
+当前 V2 标签已验收，用户已完成 seed 42 的 20 轮 MLP 训练；最佳为第 10 轮，val AP 73.5190。见 [训练结果](experiments/module_a/seed42_v2/README.md) 和 [完整进展与训练验证方案](docs/fyp/project_status_20261116.md)。原论文介绍及结果如下，不代表新增 A 模块的实验结果。
 
 ## Abstract
 

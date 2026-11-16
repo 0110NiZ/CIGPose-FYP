@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "best_epoch": 10,
+  "all_20_epochs_in_txt": true,
+  "bracket_free_output": true,
+  "existing_weights_history_settings_unchanged": true,
+  "training": false
+}

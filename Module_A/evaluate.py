@@ -1,5 +1,6 @@
 """单独验证训练好的 MLP；所有检测都进入原来的统一评估入口。"""
 import argparse
+import contextlib
 import json
 from pathlib import Path
 import torch
@@ -7,6 +8,7 @@ import torch
 import common
 import config
 from model import MLP
+from result import metric_text
 from a_contract import CHECKPOINT_SCHEMA, INPUT_SCHEMA
 from a_runtime import EXPECTED_CHECKPOINT, load_frozen_base, require_val_cache, setup
 from detection_cache import ReferenceCache
@@ -45,11 +47,18 @@ def main():
         raise ValueError('train 和 val 图片有重叠')
 
     # 3. A 选关节，固定 alpha=1、始终接受，然后计算完整 val AP/AR。
-    base = load_frozen_base(config.BASE_MODEL, args.device)
-    result = validate_a(model.eval(), base, cache, config.VAL_ANN, args.output,
-                        args.device, dict(a_checkpoint_sha256=hash_file(args.checkpoint),
-                                          epoch=saved['epoch']))
-    print(json.dumps(result['metrics'], indent=2))
+    print('正在验证完整 val2017，共 5,000 张图片，请稍候', flush=True)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    from mmengine.logging import MMLogger
+    MMLogger.get_current_instance()
+    with args.output.with_name(args.output.name + '_console.log').open('a') as log, contextlib.redirect_stdout(log):
+        base = load_frozen_base(config.BASE_MODEL, args.device)
+        result = validate_a(model.eval(), base, cache, config.VAL_ANN, args.output,
+                            args.device, dict(a_checkpoint_sha256=hash_file(args.checkpoint),
+                                              epoch=saved['epoch']))
+    text = '验证完成\n' + metric_text(result['metrics']) + f'\n结果目录：{args.output.resolve()}\n'
+    (args.output / 'result.txt').write_text(text, encoding='utf-8')
+    print(text, flush=True)
 
 
 if __name__ == '__main__':
