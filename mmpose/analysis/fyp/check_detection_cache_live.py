@@ -30,9 +30,9 @@ def main():
     from mmpose.apis import init_model
     from mmpose.datasets.datasets.utils import parse_pose_metainfo
     from mmpose.utils import register_all_modules
-    register_all_modules();torch.set_num_threads(4)
-    torch.manual_seed(42);np.random.seed(42)
-    torch.backends.cudnn.benchmark=False;torch.backends.cudnn.deterministic=True
+    register_all_modules()
+    from precision_policy import configure_legacy_precision
+    configure_legacy_precision()
     cfg=Config.fromfile(str(a.cache/'resolved_config.py'))
     model=init_model(cfg,str(a.checkpoint),device='cuda:0');model.requires_grad_(False).eval()
     meta=parse_pose_metainfo(dict(from_file='configs/_base_/datasets/coco.py'))

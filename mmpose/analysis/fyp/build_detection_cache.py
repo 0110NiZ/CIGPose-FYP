@@ -53,6 +53,8 @@ def main():
     p.add_argument('--smoke', action='store_true')
     p.add_argument('--resume', action='store_true')
     args = p.parse_args()
+    if args.batch_size != 32:
+        p.error('The shared legacy precision profile requires batch-size=32')
     for k in ('detections', 'ann', 'images', 'checkpoint', 'output'):
         setattr(args, k, getattr(args, k).resolve())
     metadata, records = load_detection_instances(args.detections, args.ann, args.images)
@@ -69,11 +71,8 @@ def main():
     from mmpose.datasets.datasets.utils import parse_pose_metainfo
     from mmpose.utils import register_all_modules
     register_all_modules()
-    torch.set_num_threads(4)
-    torch.manual_seed(42)
-    np.random.seed(42)
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
+    from precision_policy import configure_legacy_precision
+    precision_record = configure_legacy_precision()
     cfg_path = ROOT / 'mmpose/projects/cigpose/body_2d_keypoint/cigpose-m_coco-256x192_detection-single-view.py'
     cfg = Config.fromfile(str(cfg_path))
     cfg.test_dataloader.dataset.bbox_file = str(args.detections)
@@ -93,6 +92,8 @@ def main():
                     code_hashes={str(f.relative_to(ROOT)): hash_file(f) for f in codepaths},
                     resolved_config=cfg.pretty_text, sample_only=args.smoke,
                     batch_size=args.batch_size)
+    protocol.update(precision_profile=precision_record['precision_profile'],
+                    precision_profile_sha256=precision_record['precision_profile_sha256'])
     cache = ReferenceCache.create(args.output, protocol,
               [(r['image_id'], r['source_detection_index']) for r in records], args.resume)
     cfg.dump(str(args.output / 'resolved_config.py'))

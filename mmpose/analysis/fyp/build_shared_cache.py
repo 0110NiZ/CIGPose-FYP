@@ -113,6 +113,10 @@ def pack_batch(state, results, expected, images):
 def candidate_from_cache(head, arrays, joint_ids, alphas, device):
     """Reloaded features -> independent candidate -> same codec/original coords."""
     import torch
+    from precision_policy import assert_legacy_precision
+    assert_legacy_precision()
+    if len(arrays['features']) > 32:
+        raise ValueError('Legacy candidate inference must preserve source batches of at most 32')
     features = torch.as_tensor(arrays["features"], device=device)
     modified, _ = head.cim.apply_intervention(features, joint_ids, alphas)
     decoded = head.decode(head.predict_from_joint_features(modified))
@@ -159,7 +163,7 @@ def main():
     args = p.parse_args()
     if args.valid_persons is None:
         args.valid_persons = ROOT / "manifests" / f"{args.split}_valid_persons.json"
-    if args.batch_size <= 0 or args.workers < 0 or (args.max_instances is not None and args.max_instances <= 0):
+    if args.batch_size != 32 or args.workers < 0 or (args.max_instances is not None and args.max_instances <= 0):
         p.error("Invalid batch size/workers/max-instances")
     for key in ["ann", "images", "valid_persons", "output", "config", "checkpoint"]:
         setattr(args, key, getattr(args, key).resolve())
@@ -185,12 +189,8 @@ def main():
     from mmpose.registry import DATASETS
     from mmpose.utils import register_all_modules
     register_all_modules()
-    torch.manual_seed(42)
-    np.random.seed(42)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(42)
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
+    from precision_policy import configure_legacy_precision
+    precision_record = configure_legacy_precision()
     cfg = Config.fromfile(str(args.config))
     cfg.model.setdefault("test_cfg", {})["flip_test"] = False
     if cfg.model.test_cfg.get("output_keypoint_indices") is not None:
@@ -226,6 +226,8 @@ def main():
         "torch_version": torch.__version__, "numpy_version": np.__version__,
         "scope": "smoke" if args.max_instances else "full", "full_valid_person_count": full_count,
     }
+    protocol.update(precision_profile=precision_record['precision_profile'],
+                    precision_profile_sha256=precision_record['precision_profile_sha256'])
     expected = {a["id"]: a["image_id"] for a in selected}
     cache = ReferenceCache.create(args.output, protocol, [(i, a) for a, i in expected.items()], args.resume)
     with CacheWriter(cache) as writer:
