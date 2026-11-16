@@ -1,0 +1,174 @@
+{
+  "schema_version": "b-only-smoke-labels-v1",
+  "smoke_only": true,
+  "sampling": "first N records of first train GT shard; not representative",
+  "instances": 32,
+  "candidate_records": 128,
+  "selection": "uncertainty_top1",
+  "alphas": [
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "always_accept": true,
+  "alpha_zero_is_class": false,
+  "git_commit": "d5873ffb56e0e72ceba1e8f3bf1e2db2e98e53fc",
+  "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+  "annotation_sha256": "7fc1549d934547c470384d8a207c38707ca33fc016d00e33b795e408603af83e",
+  "cache_run_sha256": "310197b81eccae15e74086e5caa34909802c11b3ad87c9d4031783f8c4ae9c60",
+  "source_shard": "/mnt/e/CIGPose_shared_cache_full_20261112/train2017/shard-000000183060.npz",
+  "source_shard_sha256": "75cec605c580d765d9c528de58ac4c25739b439d783ffb95c77f03e33309d116",
+  "cache_protocol": {
+    "dataset_split": "train2017",
+    "data_protocol": "full_train2017_val2017_v1",
+    "bbox_source": "gt",
+    "bbox_format": "xyxy",
+    "coordinate_system": "original_image",
+    "flip_protocol": "single_view",
+    "flip_test": false,
+    "base_model_eval": true,
+    "precision": "float32",
+    "seed": 42,
+    "git_commit": "6fd5b3c310d483c86ae0eeca15486ccfb123d4a2",
+    "tracked_code_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config_sha256": "8bcc57a54b7521dd23e23bfdb288d22aa5687be8491772400c3f32f5409f094b",
+    "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+    "filter_version": "supervision_filter_v2",
+    "annotation_sha256": "7fc1549d934547c470384d8a207c38707ca33fc016d00e33b795e408603af83e",
+    "valid_persons_sha256": "9abe4aa5d7e62fb69ae9956b46d6cebf8b4973c00a96525f3220d5b4b52d2044",
+    "implementation_sha256": {
+      "mmpose/analysis/fyp/build_shared_cache.py": "a0d4a216787bbab8c4843e1004aeed0b74adb091d25fa4e78d038db15dc70b65",
+      "mmpose/analysis/fyp/shared_cache.py": "f7e65a97a16a25aa8af03554e1dad20d9dc54f59e048f0c08d1bf4b7f767cb41",
+      "mmpose/mmpose/models/heads/coord_cls_heads/cig_head.py": "9d2bed0791ee2b36bf403c82c7e2dd9e2463247deee8d65ad7c5596dbea49932",
+      "mmpose/mmpose/models/pose_estimators/topdown.py": "f954aab7f7dd08dae8884894a26b5d3a4baf496e21f12aa687e1f8eb9a58c02f"
+    },
+    "pipeline": [
+      {
+        "type": "LoadImage",
+        "backend_args": {
+          "backend": "local"
+        }
+      },
+      {
+        "type": "GetBBoxCenterScale"
+      },
+      {
+        "type": "TopdownAffine",
+        "input_size": [
+          192,
+          256
+        ]
+      },
+      {
+        "type": "PackPoseInputs"
+      }
+    ],
+    "batch_size": 32,
+    "device": "cuda:0",
+    "torch_version": "2.0.1+cu118",
+    "numpy_version": "1.24.4",
+    "scope": "full",
+    "full_valid_person_count": 149813
+  },
+  "current_runtime": {
+    "seed": 42,
+    "deterministic_algorithms": true,
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "matmul_tf32": false,
+    "cudnn_tf32": true,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "precision": "float32",
+    "flip_test": false,
+    "base_frozen": true,
+    "base_eval": true,
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "versions": {
+    "torch": "2.0.1+cu118",
+    "torchvision": "0.15.2+cu118",
+    "numpy": "1.24.4",
+    "mmcv": "2.1.0",
+    "mmengine": "0.10.7",
+    "mmpose": "1.3.2"
+  },
+  "code_sha256": {
+    "/mnt/f/FYP/CIGPose-FYP-git/scripts/smoke_b_labels.py": "699a99b8c789bbed4056c00ff9ba24fef45f5d230eb6dea6f88eb59249d71c00",
+    "/mnt/f/FYP/CIGPose-FYP-git/mmpose/projects/cigpose/body_2d_keypoint/cigpose-m_1xb384-420e_coco-256x192.py": "1579f990b747a413af2159866e5561a21209d24b940211ed2cedb5c3f989c485",
+    "/mnt/f/FYP/CIGPose-FYP-git/mmpose/analysis/fyp/build_shared_cache.py": "a0d4a216787bbab8c4843e1004aeed0b74adb091d25fa4e78d038db15dc70b65",
+    "/mnt/f/FYP/CIGPose-FYP-git/mmpose/analysis/fyp/oks_utility.py": "b0b937c18f18aeb196e59fa552726215007e75cd103b2ed243412a03242ee113",
+    "/mnt/f/FYP/CIGPose-FYP-git/mmpose/mmpose/models/heads/coord_cls_heads/cig_head.py": "be66b71fbb1cf108adad2a53efe17270a332775b76997b31dcde5419a31a486a"
+  },
+  "alpha0": {
+    "coordinate_max_abs_error": 6.103515625e-05,
+    "score_max_abs_error": 5.0067901611328125e-06,
+    "max_abs_gain": 1.941414929929053e-06
+  },
+  "candidate_order_checks": {
+    "1.0": {
+      "coordinate_max_abs_error": 0.0,
+      "score_max_abs_error": 0.0
+    },
+    "0.75": {
+      "coordinate_max_abs_error": 0.0,
+      "score_max_abs_error": 0.0
+    },
+    "0.5": {
+      "coordinate_max_abs_error": 0.0,
+      "score_max_abs_error": 0.0
+    },
+    "0.25": {
+      "coordinate_max_abs_error": 0.0,
+      "score_max_abs_error": 0.0
+    }
+  },
+  "source_arrays_unchanged": true,
+  "gain_summary": {
+    "0.25": {
+      "mean_gain": -0.0006541681489498144,
+      "min_gain": -0.02615085474702905,
+      "max_gain": 0.008238798699529482,
+      "positive": 18,
+      "negative": 14,
+      "zero": 0
+    },
+    "0.5": {
+      "mean_gain": -7.870547642610873e-05,
+      "min_gain": -0.032864657247244744,
+      "max_gain": 0.028263123009059754,
+      "positive": 15,
+      "negative": 17,
+      "zero": 0
+    },
+    "0.75": {
+      "mean_gain": 0.0004233506757262591,
+      "min_gain": -0.010508077015152884,
+      "max_gain": 0.021221726679639397,
+      "positive": 12,
+      "negative": 20,
+      "zero": 0
+    },
+    "1.0": {
+      "mean_gain": -4.712354263196675e-05,
+      "min_gain": -0.011631968101874057,
+      "max_gain": 0.017128449451850547,
+      "positive": 12,
+      "negative": 20,
+      "zero": 0
+    }
+  },
+  "oracle_best_alpha_counts": {
+    "0.25": 17,
+    "0.5": 6,
+    "0.75": 4,
+    "1.0": 5
+  },
+  "oracle_note": "Offline analysis only. Exact ties choose smallest alpha; all four gains retained.",
+  "limitations": [
+    "No training, no formal AP/AR, no full label coverage.",
+    "Candidate generation and decoding reuse the public helper.",
+    "Order checks do not independently prove alpha=1 replacement mathematics.",
+    "Old cache metadata preserved; current deterministic settings recorded separately."
+  ]
+}
