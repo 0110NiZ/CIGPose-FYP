@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "public_test_count": 13,
+  "full_baseline_modes": 3,
+  "official_cpu_final_paths_match": true,
+  "smoke_instances_per_mode": 32,
+  "training": false
+}

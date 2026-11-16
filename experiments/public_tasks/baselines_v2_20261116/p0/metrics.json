@@ -1,0 +1,103 @@
+{
+  "sample_only": false,
+  "metrics": {
+    "coco/AP": 0.7362229928153036,
+    "coco/AP .5": 0.8974915523808263,
+    "coco/AP .75": 0.8048379197696303,
+    "coco/AP (M)": 0.7034782005723281,
+    "coco/AP (L)": 0.7997554007654557,
+    "coco/AR": 0.7897670025188918,
+    "coco/AR .5": 0.9362405541561712,
+    "coco/AR .75": 0.8507556675062973,
+    "coco/AR (M)": 0.7469270691068014,
+    "coco/AR (L)": 0.851802303976217
+  },
+  "reference_metrics": {
+    "coco/AP": 0.7362229928153036,
+    "coco/AP .5": 0.8974915523808263,
+    "coco/AP .75": 0.8048379197696303,
+    "coco/AP (M)": 0.7034782005723281,
+    "coco/AP (L)": 0.7997554007654557,
+    "coco/AR": 0.7897670025188918,
+    "coco/AR .5": 0.9362405541561712,
+    "coco/AR .75": 0.8507556675062973,
+    "coco/AR (M)": 0.7469270691068014,
+    "coco/AR (L)": 0.851802303976217
+  },
+  "final_json_metrics": {
+    "coco/AP": 0.7362229928153036,
+    "coco/AP .5": 0.8974915523808263,
+    "coco/AP .75": 0.8048379197696303,
+    "coco/AP (M)": 0.7034782005723281,
+    "coco/AP (L)": 0.7997554007654557,
+    "coco/AR": 0.7897670025188918,
+    "coco/AR .5": 0.9362405541561712,
+    "coco/AR .75": 0.8507556675062973,
+    "coco/AR (M)": 0.7469270691068014,
+    "coco/AR (L)": 0.851802303976217
+  },
+  "audit": {
+    "num_output_predictions": 76930,
+    "evaluation_image_count": 5000,
+    "num_unique_images": 3893,
+    "num_input_instances": 104125
+  },
+  "final_audit": {
+    "num_output_predictions": 76930,
+    "evaluation_image_count": 5000,
+    "num_unique_images": 3893
+  },
+  "all_10_metrics_match": true,
+  "postprocessing_records_match": true,
+  "comparison_to_old_cache": {
+    "changed_instances": 0,
+    "max_coordinate_difference": 0.0,
+    "max_score_difference": 0.0
+  },
+  "raw_predictions_sha256": "077885f6367ac848c47365414fdbaffdd2be5d91b6cf5e2d7c78bb79cc4f0ea4",
+  "final_predictions_sha256": "4b40e3e5b9bcf1d520bc0ce55a4c61a99addccf4611fc3c18223df266e22b948",
+  "mode": "p0",
+  "cache_fingerprint": "7c12efbb2b9cb7c42632fd360b0f2456882f915d48108bbee5e99abe3509b243",
+  "annotation_sha256": "788e2dae83c86bd547be7fab269d6399df5671063d29a61360cdb2cc370d2b14",
+  "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+  "precision": {
+    "precision_profile": {
+      "profile_id": "cigpose-legacy-cache-fp32-tf32conv-deterministic-v2",
+      "model_dtype": "float32",
+      "autocast": false,
+      "matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "deterministic_algorithms": true,
+      "cublas_workspace_config": ":4096:8",
+      "base_model_frozen": true,
+      "base_model_eval": true,
+      "flip_test": false,
+      "input_size_wh": [
+        192,
+        256
+      ],
+      "simcc_split_ratio": 2.0,
+      "use_dark": false,
+      "inference_batch_size": 32,
+      "inference_batch_rule": "original source shard order and batch; do not merge 17 actions",
+      "p0_reference": "source_cache.P_0_coords",
+      "candidate_decoder": "public head.decode and shared_cache.restore_coords",
+      "supervision_oks_dtype": "float64"
+    },
+    "precision_profile_sha256": "56be859584de8c0420d7eccba85d2564c5cdba2d6822d06463dff3d611edb330",
+    "torch_version": "2.0.1+cu118",
+    "numpy_version": "1.24.4",
+    "python": "3.8.20 (default, Oct  3 2024, 15:24:27) \n[GCC 11.2.0]",
+    "cuda_build": "11.8",
+    "cudnn_version": 8700,
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "threads": 4,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "elapsed_seconds": 78.43073653900046,
+  "training": false,
+  "optimizer_steps": 0,
+  "inference_source": "fixed_cached_P0"
+}
