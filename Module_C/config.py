@@ -21,3 +21,6 @@ EVAL_EVERY = 5
 
 SEED = 42
 DEVICE = 'cuda:0'
+
+LABELS = WORK / 'labels/train2017_c_labels.npz'
+TRAIN_DATA = WORK / 'data/train2017_c_features.npz'
