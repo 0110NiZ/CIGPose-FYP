@@ -19,6 +19,29 @@ import numpy as np
 import torch
 import torch.nn as nn
 from pycocotools.coco import COCO
+import subprocess
+
+
+def configure_deterministic_runtime() -> None:
+    """Enforce FP32, disable TF32/benchmark, and enable deterministic algorithms."""
+    torch.set_default_dtype(torch.float32)
+    if torch.cuda.is_available():
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True, warn_only=True)
+
+
+def _get_git_commit() -> str:
+    try:
+        out = subprocess.check_output(
+            ['git', 'rev-parse', '--short', 'HEAD'],
+            cwd=str(REPO_ROOT),
+            stderr=subprocess.DEVNULL,
+        )
+        return out.decode('utf-8').strip()
+    except Exception:
+        return 'unknown'
 
 FYP_DIR = Path(__file__).resolve().parent
 REPO_ROOT = FYP_DIR.parents[2]
@@ -367,6 +390,7 @@ def sweep_acceptance_thresholds(
 
 
 def main() -> None:
+    configure_deterministic_runtime()
     parser = argparse.ArgumentParser(description='Module C Audit, Oracle & Threshold Sweep')
     parser.add_argument('--p0-file', type=str, required=True)
     parser.add_argument('--pc-file', type=str, required=True)
@@ -395,7 +419,20 @@ def main() -> None:
     for k, v in audit_res['stats'].items():
         print(f'  {k}: {v:.5f}' if isinstance(v, float) else f'  {k}: {v}')
 
-    payload: Dict[str, Any] = {'label_audit': audit_res['stats']}
+    payload: Dict[str, Any] = {
+        'reproducibility': {
+            'git_commit': _get_git_commit(),
+            'dtype': 'float32',
+            'mixed_precision': False,
+            'tf32_enabled': False,
+            'cudnn_benchmark': False,
+            'deterministic_algorithms': True,
+            'p0_file': args.p0_file,
+            'pc_file': args.pc_file,
+            'ann_file': args.ann_file,
+        },
+        'label_audit': audit_res['stats'],
+    }
 
     if args.run_oracle:
         oracle_accept = audit_res['matched_mask'] & (audit_res['gains'] > 0.0)
