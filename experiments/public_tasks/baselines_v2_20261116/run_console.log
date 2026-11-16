@@ -1,0 +1,195 @@
+p0: 32 detections, batch 1/3254
+p0: 3,200 detections, batch 100/3254
+p0: 6,400 detections, batch 200/3254
+p0: 9,600 detections, batch 300/3254
+p0: 12,800 detections, batch 400/3254
+p0: 16,000 detections, batch 500/3254
+p0: 19,200 detections, batch 600/3254
+p0: 22,400 detections, batch 700/3254
+p0: 25,600 detections, batch 800/3254
+p0: 28,800 detections, batch 900/3254
+p0: 32,000 detections, batch 1000/3254
+p0: 35,200 detections, batch 1100/3254
+p0: 38,400 detections, batch 1200/3254
+p0: 41,600 detections, batch 1300/3254
+p0: 44,800 detections, batch 1400/3254
+p0: 48,000 detections, batch 1500/3254
+p0: 51,200 detections, batch 1600/3254
+p0: 54,400 detections, batch 1700/3254
+p0: 57,600 detections, batch 1800/3254
+p0: 60,800 detections, batch 1900/3254
+p0: 64,000 detections, batch 2000/3254
+p0: 67,200 detections, batch 2100/3254
+p0: 70,400 detections, batch 2200/3254
+p0: 73,600 detections, batch 2300/3254
+p0: 76,800 detections, batch 2400/3254
+p0: 80,000 detections, batch 2500/3254
+p0: 83,200 detections, batch 2600/3254
+p0: 86,400 detections, batch 2700/3254
+p0: 89,600 detections, batch 2800/3254
+p0: 92,800 detections, batch 2900/3254
+p0: 96,000 detections, batch 3000/3254
+p0: 99,200 detections, batch 3100/3254
+p0: 102,400 detections, batch 3200/3254
+p0: 104,125 detections, batch 3254/3254
+p0: evaluating all 5,000 images
+p0: AP 73.6223, AR 78.9767
+top1_alpha1: 32 detections, batch 1/3254
+top1_alpha1: 3,200 detections, batch 100/3254
+top1_alpha1: 6,400 detections, batch 200/3254
+top1_alpha1: 9,600 detections, batch 300/3254
+top1_alpha1: 12,800 detections, batch 400/3254
+top1_alpha1: 16,000 detections, batch 500/3254
+top1_alpha1: 19,200 detections, batch 600/3254
+top1_alpha1: 22,400 detections, batch 700/3254
+top1_alpha1: 25,600 detections, batch 800/3254
+top1_alpha1: 28,800 detections, batch 900/3254
+top1_alpha1: 32,000 detections, batch 1000/3254
+top1_alpha1: 35,200 detections, batch 1100/3254
+top1_alpha1: 38,400 detections, batch 1200/3254
+top1_alpha1: 41,600 detections, batch 1300/3254
+top1_alpha1: 44,800 detections, batch 1400/3254
+top1_alpha1: 48,000 detections, batch 1500/3254
+top1_alpha1: 51,200 detections, batch 1600/3254
+top1_alpha1: 54,400 detections, batch 1700/3254
+top1_alpha1: 57,600 detections, batch 1800/3254
+top1_alpha1: 60,800 detections, batch 1900/3254
+top1_alpha1: 64,000 detections, batch 2000/3254
+top1_alpha1: 67,200 detections, batch 2100/3254
+top1_alpha1: 70,400 detections, batch 2200/3254
+top1_alpha1: 73,600 detections, batch 2300/3254
+top1_alpha1: 76,800 detections, batch 2400/3254
+top1_alpha1: 80,000 detections, batch 2500/3254
+top1_alpha1: 83,200 detections, batch 2600/3254
+top1_alpha1: 86,400 detections, batch 2700/3254
+top1_alpha1: 89,600 detections, batch 2800/3254
+top1_alpha1: 92,800 detections, batch 2900/3254
+top1_alpha1: 96,000 detections, batch 3000/3254
+top1_alpha1: 99,200 detections, batch 3100/3254
+top1_alpha1: 102,400 detections, batch 3200/3254
+top1_alpha1: 104,125 detections, batch 3254/3254
+top1_alpha1: evaluating all 5,000 images
+top1_alpha1: AP 73.5402, AR 78.9704
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1088, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 226, in <module>
+    main()
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 219, in main
+    summary[mode] = run_mode(mode,args,cache,base,cfg,meta,records)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 141, in run_mode
+    reference = dict(official.evaluate(count))
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/mmengine/evaluator/metric.py", line 133, in evaluate
+    _metrics = self.compute_metrics(results)  # type: ignore
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/mmpose/evaluation/metrics/coco_metric.py", line 498, in compute_metrics
+    logger.info(f'Evaluating {self.__class__.__name__}...')
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1589, in _log
+    self.handle(record)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/mmengine/logging/logger.py", line 306, in callHandlers
+    handler.handle(record)
+Message: 'Evaluating CocoMetric...'
+Arguments: ()
+/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/torch/nn/modules/conv.py:459: UserWarning: Applied workaround for CuDNN issue, install nvrtc.so (Triggered internally at ../aten/src/ATen/native/cudnn/Conv_v8.cpp:80.)
+  return F.conv2d(input, weight, bias, self.stride,
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1088, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 226, in <module>
+    main()
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 219, in main
+    summary[mode] = run_mode(mode,args,cache,base,cfg,meta,records)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 141, in run_mode
+    reference = dict(official.evaluate(count))
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/mmengine/evaluator/metric.py", line 133, in evaluate
+    _metrics = self.compute_metrics(results)  # type: ignore
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/mmpose/evaluation/metrics/coco_metric.py", line 498, in compute_metrics
+    logger.info(f'Evaluating {self.__class__.__name__}...')
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1589, in _log
+    self.handle(record)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/mmengine/logging/logger.py", line 306, in callHandlers
+    handler.handle(record)
+Message: 'Evaluating CocoMetric...'
+Arguments: ()
+original: 32 detections, batch 1/3254
+original: 3,200 detections, batch 100/3254
+original: 6,400 detections, batch 200/3254
+original: 9,600 detections, batch 300/3254
+original: 12,800 detections, batch 400/3254
+original: 16,000 detections, batch 500/3254
+original: 19,200 detections, batch 600/3254
+original: 22,400 detections, batch 700/3254
+original: 25,600 detections, batch 800/3254
+original: 28,800 detections, batch 900/3254
+original: 32,000 detections, batch 1000/3254
+original: 35,200 detections, batch 1100/3254
+original: 38,400 detections, batch 1200/3254
+original: 41,600 detections, batch 1300/3254
+original: 44,800 detections, batch 1400/3254
+original: 48,000 detections, batch 1500/3254
+original: 51,200 detections, batch 1600/3254
+original: 54,400 detections, batch 1700/3254
+original: 57,600 detections, batch 1800/3254
+original: 60,800 detections, batch 1900/3254
+original: 64,000 detections, batch 2000/3254
+original: 67,200 detections, batch 2100/3254
+original: 70,400 detections, batch 2200/3254
+original: 73,600 detections, batch 2300/3254
+original: 76,800 detections, batch 2400/3254
+original: 80,000 detections, batch 2500/3254
+original: 83,200 detections, batch 2600/3254
+original: 86,400 detections, batch 2700/3254
+original: 89,600 detections, batch 2800/3254
+original: 92,800 detections, batch 2900/3254
+original: 96,000 detections, batch 3000/3254
+original: 99,200 detections, batch 3100/3254
+original: 102,400 detections, batch 3200/3254
+original: 104,125 detections, batch 3254/3254
+original: evaluating all 5,000 images
+original: AP 73.5402, AR 78.9704
+COMPLETE: inference/evaluation only, no training
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1088, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 226, in <module>
+    main()
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 219, in main
+    summary[mode] = run_mode(mode,args,cache,base,cfg,meta,records)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/analysis/fyp/rerun_baselines.py", line 141, in run_mode
+    reference = dict(official.evaluate(count))
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/mmengine/evaluator/metric.py", line 133, in evaluate
+    _metrics = self.compute_metrics(results)  # type: ignore
+  File "/home/nzd/projects/cig-module-a-n/code/mmpose/mmpose/evaluation/metrics/coco_metric.py", line 498, in compute_metrics
+    logger.info(f'Evaluating {self.__class__.__name__}...')
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1589, in _log
+    self.handle(record)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/logging/__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "/home/nzd/miniconda3/envs/cigpose/lib/python3.8/site-packages/mmengine/logging/logger.py", line 306, in callHandlers
+    handler.handle(record)
+Message: 'Evaluating CocoMetric...'
+Arguments: ()

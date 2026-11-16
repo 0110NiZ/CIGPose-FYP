@@ -62,6 +62,30 @@ be removed after confirming no process is writing. Never edit run.json to bypass
 
 ## CPU/reference cross-check and baseline export
 
+### Current V2 baseline rerun
+
+Use `rerun_baselines.py` for new baseline inference under the
+[public V2 precision settings](precision_policy.md). It has no Module_A dependency.
+It preserves the existing train/val caches and never updates model parameters.
+
+```bash
+python mmpose/analysis/fyp/rerun_baselines.py \
+  --cache /home/nzd/projects/cig-detection-public-20261116/val2017-detection \
+  --data /home/nzd/projects/CIGPose/data/coco \
+  --checkpoint /home/nzd/projects/CIGPose/checkpoints/cigpose-m_coco_256x192.pth \
+  --output /home/nzd/projects/cig-module-a-n/baselines/v2_20261116
+```
+
+The output directory must be new. P0 is the fixed cached prediction, freshly scored;
+Top-1 recomputes its candidate from the same cached features used by ABC; Original
+runs the original model from images. All use the same detection identities, original
+batch order, full 5,000-image annotations, scoring and NMS. Official CocoMetric,
+CPU pre-NMS and final-JSON evaluations are cross-checked for all ten metrics and
+postprocessing records. `--limit-batches 1` is a separate smoke run with no formal
+AP/AR output. Full prediction files remain local; upload only small reports.
+
+### Historical cached-prediction export
+
 ```bash
 python mmpose/analysis/fyp/evaluate_detection_cache.py \
   --cache /outputs/val2017-detection \
@@ -72,6 +96,8 @@ python mmpose/analysis/fyp/evaluate_detection_cache.py \
 This uses the installed MMPose CocoMetric as reference and independently checks M's
 CPU pre-NMS and final-JSON paths: all ten metrics and postprocessed records. No GPU
 forward is repeated. The three raw JSON files retain detection IDs and source indices.
+This older export cannot by itself establish new V2 inference results, because it
+reads the original predictions already stored in the cache.
 
 M can independently evaluate delivered final JSON (no MMCV required):
 

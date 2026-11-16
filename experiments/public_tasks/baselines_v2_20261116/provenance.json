@@ -1,0 +1,52 @@
+{
+  "precision": {
+    "precision_profile": {
+      "profile_id": "cigpose-legacy-cache-fp32-tf32conv-deterministic-v2",
+      "model_dtype": "float32",
+      "autocast": false,
+      "matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "deterministic_algorithms": true,
+      "cublas_workspace_config": ":4096:8",
+      "base_model_frozen": true,
+      "base_model_eval": true,
+      "flip_test": false,
+      "input_size_wh": [
+        192,
+        256
+      ],
+      "simcc_split_ratio": 2.0,
+      "use_dark": false,
+      "inference_batch_size": 32,
+      "inference_batch_rule": "original source shard order and batch; do not merge 17 actions",
+      "p0_reference": "source_cache.P_0_coords",
+      "candidate_decoder": "public head.decode and shared_cache.restore_coords",
+      "supervision_oks_dtype": "float64"
+    },
+    "precision_profile_sha256": "56be859584de8c0420d7eccba85d2564c5cdba2d6822d06463dff3d611edb330",
+    "torch_version": "2.0.1+cu118",
+    "numpy_version": "1.24.4",
+    "python": "3.8.20 (default, Oct  3 2024, 15:24:27) \n[GCC 11.2.0]",
+    "cuda_build": "11.8",
+    "cudnn_version": 8700,
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "threads": 4,
+    "cublas_workspace_config": ":4096:8"
+  },
+  "cache_fingerprint": "7c12efbb2b9cb7c42632fd360b0f2456882f915d48108bbee5e99abe3509b243",
+  "detection_sha256": "53ba0ad8d0fd461c5a000cd90797fa8c39cd8c38cd125125c0412626ff592d59",
+  "annotation_sha256": "788e2dae83c86bd547be7fab269d6399df5671063d29a61360cdb2cc370d2b14",
+  "checkpoint_sha256": "3dd69c8ab4e3c7a923a0183fd9abf844cb7ef13d39d26693baa082ca7931b3d0",
+  "source_hashes": {
+    "rerun_baselines.py": "35eda6ebb144837f82d1ebed83d6d9978df7bcef71809345d3685e3b90138b64",
+    "precision_policy.py": "7ce642bced95b5c7422c1b2f8ea629b53a43e0c217c1113be7c804990da2194f",
+    "build_shared_cache.py": "68e270276718e7eddb47ff6e2727dbd3fe9376061ce698b6117ab228b8b2a85f",
+    "build_detection_cache.py": "ff791af34828967944c79940cca3bd1d7798ad4ba1724ea8ab46e09a5ab452a7",
+    "eval_unified.py": "48efba564aacff4496634f5e1b439dc00f953c23366b1e7e4ee432f630ffc130",
+    "evaluate_detection_cache.py": "12acf450490d85f7d5dd6884ccea331035bfd4db0bc18a1317f5c44f222539ac"
+  },
+  "sample_only": false,
+  "training": false
+}
