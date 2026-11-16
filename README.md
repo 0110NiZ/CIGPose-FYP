@@ -12,7 +12,9 @@
 
 本项目新增的关节选择 MLP 位于 [Module_A](Module_A/README.md)。常用文件为 `model.py`、`config.py`、`train.py` 和 `evaluate.py`，运行方法见目录说明。旧 A 训练入口和模型定义已清理，公共依赖仍保留。
 
-当前 V2 标签已验收，用户已完成 seed 42 的 20 轮 MLP 训练；最佳为第 10 轮，val AP 73.5190。见 [训练结果](experiments/module_a/seed42_v2/README.md) 和 [完整进展与训练验证方案](docs/fyp/project_status_20261116.md)。原论文介绍及结果如下，不代表新增 A 模块的实验结果。
+当前代码为 A2：A1 全局上下文 MLP 加 ranking loss。seed 42、batch 1024、每轮验证的最佳 A2 为第 2 轮，val AP 73.5526；同设置 A1 为 73.6458，本次 A2 未优于 A1。见 [A2 实验报告](experiments/module_a/A2_ranking_seed42_bs1024/README.md)。历史初版 MLP 结果保留在 [seed42_v2](experiments/module_a/seed42_v2/README.md)。
+
+WSL 的 `~/projects/cig-module-a-n/code` 现为 Git 仓库，可直接提交到 `feature/module-a`，见 [WSL 提交说明](docs/fyp/git_usage.md)。当前 `python train.py` 会开始训练，查看结果请使用 `result.py`。原论文介绍及结果如下，不代表新增 A 模块的实验结果。
 
 ## Abstract
 

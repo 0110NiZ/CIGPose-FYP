@@ -15,3 +15,20 @@ __pycache__/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Local FYP runs and large generated artifacts
+/runs/
+/labels/
+/checks/
+/backups/
+/cache/
+/caches/
+*.zip
+*.tar
+*.tar.gz
+*.npz
+*.npy
+raw_predictions_before_nms.json
+predictions.keypoints.json
+official.keypoints.json
+selections.jsonl
