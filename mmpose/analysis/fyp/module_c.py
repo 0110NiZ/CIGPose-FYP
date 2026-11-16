@@ -22,14 +22,9 @@ from pycocotools.coco import COCO
 import subprocess
 
 
-def configure_deterministic_runtime() -> None:
-    """Enforce FP32, disable TF32/benchmark, and enable deterministic algorithms."""
-    torch.set_default_dtype(torch.float32)
-    if torch.cuda.is_available():
-        torch.backends.cuda.matmul.allow_tf32 = False
-        torch.backends.cudnn.allow_tf32 = False
-        torch.backends.cudnn.benchmark = False
-    torch.use_deterministic_algorithms(True, warn_only=True)
+def configure_deterministic_runtime(seed: int = 42) -> Dict[str, Any]:
+    """Use the shared deterministic runtime settings."""
+    return configure_legacy_precision(seed=seed)
 
 
 def _get_git_commit() -> str:
@@ -50,6 +45,7 @@ if str(FYP_DIR) not in sys.path:
 
 from eval_unified import UnifiedPoseEvaluator  # noqa: E402
 from oks_utility import compute_gain  # noqa: E402
+from precision_policy import configure_legacy_precision  # noqa: E402
 
 
 def _box_iou_xyxy(box_a: np.ndarray, box_b: np.ndarray) -> float:
@@ -390,7 +386,7 @@ def sweep_acceptance_thresholds(
 
 
 def main() -> None:
-    configure_deterministic_runtime()
+    precision_record = configure_deterministic_runtime()
     parser = argparse.ArgumentParser(description='Module C Audit, Oracle & Threshold Sweep')
     parser.add_argument('--p0-file', type=str, required=True)
     parser.add_argument('--pc-file', type=str, required=True)
@@ -422,11 +418,7 @@ def main() -> None:
     payload: Dict[str, Any] = {
         'reproducibility': {
             'git_commit': _get_git_commit(),
-            'dtype': 'float32',
-            'mixed_precision': False,
-            'tf32_enabled': False,
-            'cudnn_benchmark': False,
-            'deterministic_algorithms': True,
+            'precision': precision_record,
             'p0_file': args.p0_file,
             'pc_file': args.pc_file,
             'ann_file': args.ann_file,
