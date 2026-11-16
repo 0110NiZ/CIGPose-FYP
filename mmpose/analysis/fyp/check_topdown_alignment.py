@@ -40,6 +40,8 @@ def close(a, b, atol=1e-6):
 
 
 def main():
+    from precision_policy import configure_legacy_precision
+    configure_legacy_precision()
     print("=== Top-down alignment smoke test ===")
 
     os.chdir(MMPOSE_ROOT)

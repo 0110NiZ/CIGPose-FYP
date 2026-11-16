@@ -43,6 +43,8 @@ def pair_close(pair_a, pair_b, atol=1e-7, rtol=1e-6):
 
 
 def main():
+    from precision_policy import configure_legacy_precision
+    configure_legacy_precision()
     print("=== CIGPose public-interface smoke test ===")
     print("Config     :", CONFIG)
     print("Checkpoint :", CHECKPOINT)
