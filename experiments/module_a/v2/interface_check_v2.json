@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "trained": false,
+  "optimizer_steps": 0,
+  "gain_labels_generated": 0,
+  "random_model_for_interface_test_only": true,
+  "train_count": 149813,
+  "val_detection_count": 104125,
+  "parameter_count": 67281,
+  "device": "cuda:0",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "torch_version": "2.0.1+cu118",
+  "cases": [
+    {
+      "split": "train_gt",
+      "shard": "shard-000000183060.npz",
+      "count": 32,
+      "output_shape": [
+        32,
+        17
+      ],
+      "input_keys": [
+        "features",
+        "pose_coords",
+        "pose_scores",
+        "uncertainty"
+      ],
+      "alpha0_max_coordinate_error": 6.103515625e-05,
+      "alpha0_max_score_error": 5.0067901611328125e-06
+    },
+    {
+      "split": "train_gt",
+      "shard": "shard-000000544209.npz",
+      "count": 32,
+      "output_shape": [
+        32,
+        17
+      ],
+      "input_keys": [
+        "features",
+        "pose_coords",
+        "pose_scores",
+        "uncertainty"
+      ],
+      "alpha0_max_coordinate_error": 6.103515625e-05,
+      "alpha0_max_score_error": 1.7881393432617188e-07
+    },
+    {
+      "split": "train_gt",
+      "shard": "shard-000002229475.npz",
+      "count": 32,
+      "output_shape": [
+        32,
+        17
+      ],
+      "input_keys": [
+        "features",
+        "pose_coords",
+        "pose_scores",
+        "uncertainty"
+      ],
+      "alpha0_max_coordinate_error": 6.103515625e-05,
+      "alpha0_max_score_error": 4.470348358154297e-06
+    },
+    {
+      "split": "val_detection",
+      "shard": "shard-000000000000.npz",
+      "count": 32,
+      "output_shape": [
+        32,
+        17
+      ],
+      "input_keys": [
+        "features",
+        "pose_coords",
+        "pose_scores",
+        "uncertainty"
+      ],
+      "alpha0_max_coordinate_error": 6.103515625e-05,
+      "alpha0_max_score_error": 1.4901161193847656e-07
+    },
+    {
+      "split": "val_detection",
+      "shard": "shard-000000052064.npz",
+      "count": 32,
+      "output_shape": [
+        32,
+        17
+      ],
+      "input_keys": [
+        "features",
+        "pose_coords",
+        "pose_scores",
+        "uncertainty"
+      ],
+      "alpha0_max_coordinate_error": 6.103515625e-05,
+      "alpha0_max_score_error": 1.7881393432617188e-06
+    },
+    {
+      "split": "val_detection",
+      "shard": "shard-000000104096.npz",
+      "count": 29,
+      "output_shape": [
+        29,
+        17
+      ],
+      "input_keys": [
+        "features",
+        "pose_coords",
+        "pose_scores",
+        "uncertainty"
+      ],
+      "alpha0_max_coordinate_error": 6.103515625e-05,
+      "alpha0_max_score_error": 2.384185791015625e-07
+    }
+  ],
+  "train_cache_fingerprint": "40ba6b369159a2b25266e19bcdfe959114c205c0f8f64b900df8ac67103ddafb",
+  "val_cache_fingerprint": "7c12efbb2b9cb7c42632fd360b0f2456882f915d48108bbee5e99abe3509b243"
+}

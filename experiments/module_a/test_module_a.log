@@ -1,0 +1,30 @@
+test_checksum_and_extra_shards_rejected (__main__.ModuleATest) ... ok
+test_cross_cache_labels_rejected (__main__.ModuleATest) ... ok
+test_duplicate_id_rejected (__main__.ModuleATest) ... ok
+test_forward_batch_independence_and_state_reload (__main__.ModuleATest) ... ok
+test_gain_definition_and_nonfinite_rejected (__main__.ModuleATest) ... ok
+test_id_join_ignores_file_and_row_order (__main__.ModuleATest) ... ok
+test_incomplete_delivery_rejected (__main__.ModuleATest) ... ok
+test_input_whitelist_and_geometry_invariance (__main__.ModuleATest) ... ok
+test_joint_order_and_alpha_rejected (__main__.ModuleATest) ... ok
+test_loss_gradient_without_optimizer_or_parameter_update (__main__.ModuleATest) ... ok
+test_missing_and_wrong_image_lookup_rejected (__main__.ModuleATest) ... ok
+test_missing_person_rejected (__main__.ModuleATest) ... ok
+test_prediction_export_preserves_detection_identity_and_score (__main__.ModuleATest) ... ok
+test_preflight_never_constructs_model_optimizer_or_output (__main__.ModuleATest) ... {
+  "preflight": "PASS",
+  "train_count": 3,
+  "val_detection_count": 1,
+  "optimization_enabled": false
+}
+ok
+test_signed_output_and_argmax_when_all_negative (__main__.ModuleATest) ... ok
+test_stream_epoch_covers_all_people_including_tail (__main__.ModuleATest) ... ok
+test_untrained_checkpoint_cannot_enter_formal_validation (__main__.ModuleATest) ... ok
+test_wrong_image_rejected (__main__.ModuleATest) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 2.401s
+
+OK
+No training performed. Add --run-training only when ready.
