@@ -1,0 +1,30 @@
+{
+  "module": "Module C acceptance/fallback",
+  "split": "val2017",
+  "num_detections": 104125,
+  "training": {
+    "loss": "gain-magnitude weighted BCE",
+    "gain_scale": 0.001,
+    "seed": 42,
+    "label_rule": "gain > 0"
+  },
+  "selection": {
+    "epoch": 14,
+    "tau": 0.51
+  },
+  "metrics": {
+    "coco/AP": 0.7368329397102082,
+    "coco/AR": 0.7903809823677582
+  },
+  "decision_analysis": {
+    "accept_rate_all": 0.3707563025210084,
+    "accept_rate_matched": 0.26484751203852325,
+    "harmful_elimination_rate": 0.826015592942142,
+    "false_acceptance_rate": 0.3007299270072993,
+    "false_rejection_rate": 0.8047169811320755
+  },
+  "references": {
+    "top1_alpha1_AP": 0.7354021675321071,
+    "p0_AP": 0.7362229928153036
+  }
+}

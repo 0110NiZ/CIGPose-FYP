@@ -172,14 +172,11 @@ def main():
             args.output / "last.pt",
         )
 
-        if (
-            epoch % config.EVAL_EVERY == 0
-            or epoch == args.epochs
-        ):
-            torch.save(
-                checkpoint,
-                args.output / f"epoch_{epoch:03d}.pt",
-            )
+        # Save every epoch so val2017 can select the best checkpoint.
+        torch.save(
+            checkpoint,
+            args.output / f"epoch_{epoch:03d}.pt",
+        )
 
     (args.output / "history.json").write_text(
         json.dumps(history, indent=2),
