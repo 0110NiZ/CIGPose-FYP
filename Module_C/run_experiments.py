@@ -1,7 +1,6 @@
 """
-Module C Experiment Runner (Multi-seed, Multi-task, Soft-target) - CPU & GPU compatible.
-Trains on train2017_c_features.npz and exports val2017 epoch_XXX.npz probabilities
-ready for Module_C/eval_all_ap.py.
+Module C Experiment Runner (Multi-seed, Multi-task, Soft-target, Summary Features)
+Compatible with CPU & GPU.
 """
 
 import argparse
@@ -20,6 +19,42 @@ sys.path.insert(0, str(FYP))
 
 from module_c import ModuleCAcceptanceClassifier  # noqa: E402
 from precision_policy import configure_legacy_precision  # noqa: E402
+
+
+def append_summary_features(x: np.ndarray) -> np.ndarray:
+    """Append 8 selected-joint & whole-pose summary features to the 137-D input."""
+    delta_norm = x[:, 34:68].reshape(-1, 17, 2)
+    p0_scores = x[:, 68:85]
+    delta_scores = x[:, 85:102]
+    joint_onehot = x[:, 102:119]
+    uncertainty = x[:, 120:137]
+
+    disp_norm = np.linalg.norm(delta_norm, axis=-1)  # [N, 17]
+
+    sel_disp = np.sum(disp_norm * joint_onehot, axis=-1, keepdims=True)
+    sel_p0_score = np.sum(p0_scores * joint_onehot, axis=-1, keepdims=True)
+    sel_delta_score = np.sum(delta_scores * joint_onehot, axis=-1, keepdims=True)
+    sel_unc = np.sum(uncertainty * joint_onehot, axis=-1, keepdims=True)
+
+    mean_disp = np.mean(disp_norm, axis=-1, keepdims=True)
+    max_disp = np.max(disp_norm, axis=-1, keepdims=True)
+    mean_p0_score = np.mean(p0_scores, axis=-1, keepdims=True)
+    mean_delta_score = np.mean(delta_scores, axis=-1, keepdims=True)
+
+    return np.concatenate(
+        [
+            x,
+            sel_disp,
+            sel_p0_score,
+            sel_delta_score,
+            sel_unc,
+            mean_disp,
+            max_disp,
+            mean_p0_score,
+            mean_delta_score,
+        ],
+        axis=-1,
+    ).astype(np.float32)
 
 
 class MultiTaskModuleC(nn.Module):
@@ -65,14 +100,15 @@ def parse_args():
     p.add_argument("--val-data", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--mode", type=str, default="weighted_bce", choices=["weighted_bce", "multitask", "soft_target"])
+    p.add_argument("--add-summary-features", action="store_true", help="Append 8 summary features (137->145D)")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--epochs", type=int, default=20)
     p.add_argument("--batch-size", type=int, default=256)
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=1e-4)
     p.add_argument("--gain-scale", type=float, default=1e-3)
-    p.add_argument("--reg-weight", type=float, default=0.5, help="Auxiliary regression loss weight for multitask")
-    p.add_argument("--soft-temp", type=float, default=1e-3, help="Temperature for soft_target sigmoid(gain / temp)")
+    p.add_argument("--reg-weight", type=float, default=0.5)
+    p.add_argument("--soft-temp", type=float, default=1e-3)
     p.add_argument("--device", type=str, default="auto")
     return p.parse_args()
 
@@ -84,7 +120,6 @@ def main():
     device = torch.device(
         ("cuda:0" if torch.cuda.is_available() else "cpu") if args.device == "auto" else args.device
     )
-    print(f"Running mode={args.mode} | seed={args.seed} | device={device}")
 
     ckpt_dir = args.output / "checkpoints"
     prob_dir = args.output / "probs"
@@ -100,10 +135,15 @@ def main():
     val_x = val_npz["x"].astype(np.float32)
     val_ids = val_npz["detection_instance_id"] if "detection_instance_id" in val_npz else None
 
+    if args.add_summary_features:
+        x = append_summary_features(x)
+        val_x = append_summary_features(val_x)
+
+    print(f"Running mode={args.mode} | seed={args.seed} | in_dim={x.shape[1]} | device={device}")
+
     weight = np.minimum(np.abs(gain) / args.gain_scale, 1.0).astype(np.float32)
     weight = weight / float(weight.mean())
 
-    # Target gain scaled by 100 (so typical +/-0.005 becomes +/-0.5)
     scaled_gain = np.clip(gain * 100.0, -5.0, 5.0).astype(np.float32)
     y_soft = (1.0 / (1.0 + np.exp(-np.clip(gain / args.soft_temp, -20.0, 20.0)))).astype(np.float32)
 
@@ -143,7 +183,7 @@ def main():
             elif args.mode == "soft_target":
                 logits = model(bx)
                 loss = bce_none(logits, by_soft).mean()
-            else:  # weighted_bce
+            else:
                 logits = model(bx)
                 loss = (bce_none(logits, by) * bw).mean()
 
