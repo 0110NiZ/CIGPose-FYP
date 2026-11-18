@@ -17,6 +17,8 @@
 | A3：全身摘要128 | model_a3_context128.py | train_a3_context128.py |
 | A3：全身摘要256 | model_a3_context256.py | train_a3_context256.py |
 | A3：小型Transformer | model_a3_transformer.py | train_a3_transformer.py |
+| 直接MLP：带不确定性 | model_direct_with_u.py | train_direct_with_u.py |
+| 直接MLP：不带不确定性 | model_direct_without_u.py | train_direct_without_u.py |
 | A4：A3加风险加权Loss | model_a4.py | train_a4.py |
 | A3弱选择收益Loss（0.1） | model_a3_gain_weak.py | train_a3_gain_weak.py |
 | A3强选择收益Loss（0.5） | model_a3_gain_strong.py | train_a3_gain_strong.py |
@@ -70,3 +72,10 @@ python evaluate.py --baseline fixed
 小型Transformer把每个关节的同样输入（256维特征、不确定性、坐标、置信度和16维关节身份）投影为128维token，经过2层、4头、前馈256维的Transformer，再用128→64→1共享评分器预测17个收益。采用pre-norm、GELU、dropout=0；它替换A3全身压缩和打分部分，不修改冻结的CIGPose，仍argmax选一个关节、alpha=1、始终接受。
 
 三组均从seed42重新初始化，使用原SmoothL1（收益放大100倍）、AdamW lr0.001、weight_decay0.0001、batch1024、原分片缓冲顺序，全量20轮，每轮完整验证，只保留最高AP模型。不同结构无法共享完全相同的初始权重；这里保持种子及训练条件一致。Transformer先使用相同学习率作首轮结构对比，不代表其最优设置。
+
+
+## 直接输出17个收益的MLP
+
+带不确定性版本按固定COCO-17顺序拼接每个关节的256维特征、1维不确定性、2维坐标、1维姿态置信度，得到4420维输入，使用4420→128→64→17全连接网络，前两层后为ReLU，最后一层无激活。无不确定性版本彻底去掉17个不确定性输入，为4403→128→64→17。两者都取消A3的局部分支、关节embedding和逐关节共享评分器，由输出位置对应关节身份。
+
+保留A3输入归一化（特征LayerNorm、训练集标量统计量），坐标处理不变；无不确定性版本只为兼容公共接口接收uncertainty参数，不读取其数值。其保留的标量统计量第0项同样不参与前向计算。其余条件使用原SmoothL1、seed42、lr0.001、batch1024、weight_decay0.0001、原分片训练顺序，全量20轮且每轮完整验证；只保留最高AP模型。两组均从头训练，不是推理时屏蔽输入。CIGPose冻结、仍只选一个关节。
