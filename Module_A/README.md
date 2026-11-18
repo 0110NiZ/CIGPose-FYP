@@ -15,6 +15,8 @@
 | A2：A1加排序Loss | model_a2.py | train_a2.py |
 | A3：展开全身上下文 | model_a3.py | train_a3.py |
 | A4：A3加风险加权Loss | model_a4.py | train_a4.py |
+| A3弱选择收益Loss（0.1） | model_a3_gain_weak.py | train_a3_gain_weak.py |
+| A3强选择收益Loss（0.5） | model_a3_gain_strong.py | train_a3_gain_strong.py |
 | 局部对照128→64 | model_local.py | train_local.py |
 | 小局部64→32 | model_local_small.py | train_local_small.py |
 | 局部模型，学习率0.0003 | model_local_low_lr.py | train_local_low_lr.py |
@@ -54,3 +56,5 @@ python evaluate.py --baseline fixed
 ```
 
 独立验证只显示结果，不产生新的长期结果文件。诊断脚本、诊断模型及旧的重复结果已清理。公共缓存和标签保留。
+
+两档选择收益实验都使用原A3网络、原SmoothL1、lr0.001、batch1024、seed42、分片缓冲打乱，训练20轮。附加项是 softmax(100×预测收益) 下的期望收益遗憾，权重分别0.1和0.5，温度固定1；推理仍为单关节argmax。训练选中收益只作监测，最佳模型只按完整验证AP选择。

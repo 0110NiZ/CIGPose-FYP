@@ -50,7 +50,7 @@ def load_full_inputs(data,device):
     return inputs,torch.as_tensor(labels,device=device),labels,mean,std
 
 
-def run(model_module,title,default_lr=.001,loss_fn=smooth_l1,order='global'):
+def run(model_module,title,default_lr=.001,loss_fn=smooth_l1,order='global',loss_settings=None):
     parser=argparse.ArgumentParser(description=title)
     parser.add_argument('--run-training',action='store_true')
     parser.add_argument('--output',type=Path,default=None)
@@ -96,7 +96,8 @@ def run(model_module,title,default_lr=.001,loss_fn=smooth_l1,order='global'):
         weight_decay=args.weight_decay,seed=args.seed,order=order,loss=loss_fn.__name__,
         train_people=n,train_cache_fingerprint=data.cache.fingerprint,label_fingerprint=data.labels.fingerprint,
         val_cache_fingerprint=val.fingerprint,precision=precision,validation='every epoch, full5000/104125',
-        code_hashes={p.name:hash_file(p) for p in Path(__file__).resolve().parent.glob('*.py')})
+        code_hashes={p.name:hash_file(p) for p in Path(__file__).resolve().parent.glob('*.py')},
+        loss_settings=loss_settings or {})
     history=[];best=-float('inf');best_epoch=None
     for epoch in range(1,args.epochs+1):
         model.train();total=0;loss_sum=0.
@@ -127,6 +128,19 @@ def run(model_module,title,default_lr=.001,loss_fn=smooth_l1,order='global'):
                     choices=pred.argmax(1)
                     gain_sum+=float(y[begin:begin+args.batch_size].gather(1,choices[:,None]).double().sum())
             row['train_mean_gain']=gain_sum/n
+        else:
+            # Fixed end-of-epoch model, evaluated on ALL training people.
+            # This monitor does not choose best.pt; full validation AP does.
+            gain_sum=0.;monitor_count=0;model.eval()
+            with torch.inference_mode():
+                for inputs,labels,ids in data.batches(args.batch_size,args.seed,0,32):
+                    pred=model(**to_device(inputs,args.device))
+                    truth=torch.as_tensor(labels,device=args.device)
+                    gain_sum+=float(truth.gather(1,pred.argmax(1)[:,None]).double().sum())
+                    monitor_count+=len(ids)
+            assert monitor_count==n
+            row['train_mean_gain']=gain_sum/n
+        print('%s epoch%d train_gain=%+.8f; full validation starting'%(title,epoch,row['train_mean_gain']),flush=True)
         validation=evaluate_model(model,base,val,args.device,dict(experiment=model_module,epoch=epoch))
         row['validation']=validation['metrics'];row['audit']=validation['audit'];history.append(row)
         ap=row['validation']['coco/AP']
@@ -138,7 +152,7 @@ def run(model_module,title,default_lr=.001,loss_fn=smooth_l1,order='global'):
                 epoch=epoch,best_epoch=epoch,validation=row['validation'],settings=settings,
                 train_image_ids=train_images,base_checkpoint_sha256=EXPECTED_CHECKPOINT)
             temporary=output/'best.pt.tmp';torch.save(payload,temporary);temporary.replace(output/'best.pt')
-        record=dict(title=title,description='每轮完整验证；同分取最早轮；只保留最佳模型。',
+        record=dict(title=title,description=(loss_settings or {}).get('description','')+' 每轮完整验证；同分取最早轮；只保留最佳模型。',
             settings=settings,history=history,best_epoch=best_epoch,checkpoint=str(output/'best.pt'))
         update_experiment(output.name,record)
         print('%s epoch%d AP=%.6f best=epoch%d %.6f'%(title,epoch,ap*100,best_epoch,best*100),flush=True)

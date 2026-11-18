@@ -12,7 +12,7 @@
 
 模块 A 的实验代码位于 [Module_A](Module_A/README.md)。各实验使用明确命名的 `model_*.py` 与 `train_*.py`；数据、训练循环、完整验证和结果输出共用。
 
-三个局部模型实验已补齐全部20轮的完整验证，和A3一样按最高验证AP选择最佳模型。所有历史实验和本次实验的每轮结果、基线及最终最佳轮次统一保存在 [唯一结果文件](experiments/module_a/results.html)（下载后可在浏览器打开）。不再保留重复诊断报告；每个实验本地只保留 `best.pt`，权重、缓存和标签不上传Git。
+三个局部模型实验和两档A3选择收益Loss实验（权重0.1、0.5）均已完成全部20轮的完整验证，和原A3一样按最高验证AP选择最佳模型。所有历史实验和本次实验的每轮结果、基线及最终最佳轮次统一保存在 [唯一结果文件](experiments/module_a/results.html)（下载后可在浏览器打开）。不再保留重复诊断报告；每个实验本地只保留 `best.pt`，权重、缓存和标签不上传Git。
 
 新实验使用例如 `python train_local_small.py --run-training --output 新目录`；不加 `--run-training` 只显示设置。查看结果使用 `python result.py` 或打开上述结果文件。WSL提交说明见 [Git使用说明](docs/fyp/git_usage.md)。下方原论文介绍及结果不代表新增模块A的实验结果。
 
