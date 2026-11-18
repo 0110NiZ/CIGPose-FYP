@@ -1,6 +1,6 @@
 # A 模块：N/Y 当前交接协议
 
-更新：2026-11-16。Y 已提供原始全量标签；N 完成诊断，在用户批准的“旧 TF32 精度 + 全局确定性”下重生成独立 V2 标签并通过验收。用户已自行完成 seed 42 的 20 轮全量 MLP 训练，最佳第 10 轮，val AP 73.5190。正式对照结论见 [训练结果报告](../../experiments/module_a/seed42_v2/README.md)。
+更新：2026-11-16。Y 已提供原始全量标签；N 完成诊断，在用户批准的“旧 TF32 精度 + 全局确定性”下重生成独立 V2 标签并通过验收。用户已自行完成 seed 42 的 20 轮全量 MLP 训练，最佳第 10 轮，val AP 73.5190。正式对照结论见 [训练结果报告](../../experiments/module_a/results.html)。
 
 代码已整理到仓库根目录 [Module_A](../../Module_A/README.md)：model.py 是实际网络，config.py 配置参数，train.py 训练，evaluate.py 验证。旧 train_a.py 和 gain_predictor.py 已删除；公共数据校验、标签生成验收和评估辅助代码仍保留。历史命令请改用 `python Module_A/train.py`，默认仍仅预检查。
 

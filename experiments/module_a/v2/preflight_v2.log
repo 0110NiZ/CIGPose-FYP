@@ -1,7 +1,0 @@
-{
-  "preflight": "PASS",
-  "train_count": 149813,
-  "val_detection_count": 104125,
-  "optimization_enabled": false
-}
-No training performed. Add --run-training only when ready.

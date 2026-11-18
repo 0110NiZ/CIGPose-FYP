@@ -1,65 +1,68 @@
-"""单独验证训练好的 MLP；所有检测都进入原来的统一评估入口。"""
+"""Shared complete COCO validation; temporary predictions are removed afterward."""
 import argparse
 import contextlib
+import importlib
 import json
+import re
+import tempfile
 from pathlib import Path
 import torch
-
 import common
 import config
-from model import MLP
-from result import metric_text
-from a_contract import CHECKPOINT_SCHEMA, INPUT_SCHEMA
-from a_runtime import EXPECTED_CHECKPOINT, load_frozen_base, require_val_cache, setup
+from a_runtime import setup,load_frozen_base,require_val_cache
 from detection_cache import ReferenceCache
 from predict_a import validate_a
-from shared_cache import hash_file
 
+class Baseline(torch.nn.Module):
+    """Top-1 or a joint chosen from full TRAIN mean gain, never from validation."""
+    def __init__(self,joint=None):
+        super().__init__();self.joint=joint
+    def forward(self,features,uncertainty,pose_coords,pose_scores):
+        if self.joint is None:return uncertainty
+        scores=features.new_zeros(len(features),17);scores[:,self.joint]=1
+        return scores
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--checkpoint', type=Path, default=config.OUTPUT / 'best.pt')
-    parser.add_argument('--output', type=Path, default=config.OUTPUT / 'standalone-val')
-    parser.add_argument('--device', default=config.DEVICE)
-    args = parser.parse_args()
-    setup(config.SEED)
+def evaluate_model(model,base,cache,device,provenance=None):
+    with tempfile.TemporaryDirectory(prefix='module-a-val-') as temp:
+        root=Path(temp)
+        with (root/'console.log').open('w') as log,contextlib.redirect_stdout(log):
+            record=validate_a(model.eval(),base,cache,config.VAL_ANN,root/'predictions',device,provenance)
+    assert record['audit']['evaluation_image_count']==5000
+    assert record['audit']['num_input_instances']==104125
+    return record
 
-    # 1. 读取本项目训练得到的 checkpoint，并检查模型和数据协议。
-    saved = torch.load(args.checkpoint, map_location='cpu')
-    if (saved.get('schema_version') != CHECKPOINT_SCHEMA
-            or saved.get('input_schema') != INPUT_SCHEMA
-            or saved.get('trained') is not True or saved.get('epoch', 0) < 1
-            or saved.get('base_checkpoint_sha256') != EXPECTED_CHECKPOINT):
-        raise ValueError('需要本项目正式训练得到的 A checkpoint')
-    model = MLP(**saved['model_config']).to(args.device)
-    model.load_state_dict(saved['model_state'])
-    if any(not torch.isfinite(x).all() for x in model.state_dict().values()):
-        raise ValueError('模型包含非法数值')
-    if (model.scalar_std <= 0).any():
-        raise ValueError('标准化参数无效')
+def load_model(saved,device):
+    if saved.get('trained') is not True or saved.get('epoch',0)<1:
+        raise ValueError('Expected a trained Module A checkpoint')
+    module=saved.get('model_module')
+    local_module=(isinstance(module,str) and re.fullmatch(r'model_[a-z][a-z0-9_]*',module)
+                  and Path(__file__).resolve().with_name(module+'.py').is_file())
+    if local_module:
+        model=importlib.import_module(module).MLP()
+    elif saved.get('model_config',{}).get('architecture')=='a3_full_joint_context_v1':
+        from model_a3 import MLP
+        model=MLP(**saved['model_config'])
+    elif 'model_config' in saved and saved['model_config'].get('architecture','a0') in ('a0','a1_global'):
+        from model import MLP
+        model=MLP(**saved['model_config'])
+    else:raise ValueError('Unknown model; checkpoint must identify model_module')
+    model.load_state_dict(saved['model_state'],strict=True)
+    return model.to(device).eval()
 
-    # 2. 完整 val 检测缓存，不能根据 GT 预先删除误检。
-    cache = ReferenceCache(config.VAL_CACHE)
-    require_val_cache(cache)
-    cache.verify(True)
-    val_ids = {int(x['id']) for x in json.loads(config.VAL_ANN.read_text())['images']}
-    if set(saved['train_image_ids']).intersection(val_ids):
-        raise ValueError('train 和 val 图片有重叠')
-
-    # 3. A 选关节，固定 alpha=1、始终接受，然后计算完整 val AP/AR。
-    print('正在验证完整 val2017，共 5,000 张图片，请稍候', flush=True)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    from mmengine.logging import MMLogger
-    MMLogger.get_current_instance()
-    with args.output.with_name(args.output.name + '_console.log').open('a') as log, contextlib.redirect_stdout(log):
-        base = load_frozen_base(config.BASE_MODEL, args.device)
-        result = validate_a(model.eval(), base, cache, config.VAL_ANN, args.output,
-                            args.device, dict(a_checkpoint_sha256=hash_file(args.checkpoint),
-                                              epoch=saved['epoch']))
-    text = '验证完成\n' + metric_text(result['metrics']) + f'\n结果目录：{args.output.resolve()}\n'
-    (args.output / 'result.txt').write_text(text, encoding='utf-8')
-    print(text, flush=True)
-
-
-if __name__ == '__main__':
-    main()
+if __name__=='__main__':
+    p=argparse.ArgumentParser();group=p.add_mutually_exclusive_group(required=True)
+    group.add_argument('--checkpoint',type=Path);group.add_argument('--baseline',choices=['top1','fixed'])
+    p.add_argument('--device',default=config.DEVICE)
+    args=p.parse_args();setup(42)
+    if args.checkpoint:
+        saved=torch.load(args.checkpoint,map_location='cpu');model=load_model(saved,args.device)
+    else:
+        joint=None
+        if args.baseline=='fixed':
+            from data import ATrainingData
+            data=ATrainingData(config.TRAIN_CACHE,config.LABELS)
+            joint=int(data.labels.gains.astype('float64').mean(0).argmax())
+        model=Baseline(joint).eval()
+    cache=ReferenceCache(config.VAL_CACHE);require_val_cache(cache);cache.verify(True)
+    with contextlib.redirect_stdout(__import__('sys').stderr):base=load_frozen_base(config.BASE_MODEL,args.device)
+    print(json.dumps(evaluate_model(model,base,cache,args.device)['metrics'],indent=2))

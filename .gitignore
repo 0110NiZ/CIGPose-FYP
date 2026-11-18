@@ -32,3 +32,6 @@ raw_predictions_before_nms.json
 predictions.keypoints.json
 official.keypoints.json
 selections.jsonl
+
+# Windows download markers in Module A
+/Module_A/*:Zone.Identifier

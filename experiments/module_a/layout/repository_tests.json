@@ -1,8 +1,0 @@
-{
-  "module_a_tests": 18,
-  "precision_tests": 6,
-  "passed": true,
-  "optimizer_steps": 0,
-  "training": false,
-  "source": "Windows Git checkout tested in WSL cigpose"
-}

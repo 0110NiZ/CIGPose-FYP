@@ -1,341 +1,170 @@
+"""Shared training loop: full validation every epoch, save best.pt only.
 
-"""Module A / A2 training: A1 Global Context + OKS Gain ranking loss.
-
-Run: python train.py
-Resume the SAME A2 experiment: python train.py --resume
-
-Only the Module A predictor is optimized. CIGPose is frozen. A-only still
-selects one joint with alpha=1 and always accepts its candidate.
+Use train_a3.py, train_local_small.py, etc. to select an experiment.
+Each train_<name>.py supplies only its model, optimizer defaults and optional loss.
 """
-
 import argparse
 import contextlib
+import gc
 import json
-import os
-import time
 from pathlib import Path
-
-import common
-import config
+import importlib
 import numpy as np
 import torch
 from torch.nn import functional as F
-
-from a_contract import CHECKPOINT_SCHEMA, INPUT_SCHEMA
-from a_runtime import (
-    EXPECTED_CHECKPOINT,
-    load_frozen_base,
-    require_cache_model,
-    require_val_cache,
-    save_checkpoint,
-    setup,
-)
-from data import ATrainingData, fit_input_statistics
-from detection_cache import ReferenceCache as DetectionCache
-from model import MLP, to_device
-from result import print_epoch, show_summary
-from shared_cache import atomic_json, hash_file
+import common
+import config
+from a_contract import CHECKPOINT_SCHEMA,INPUT_SCHEMA,INPUT_KEYS,model_inputs
+from a_runtime import setup,require_cache_model,require_val_cache,load_frozen_base,EXPECTED_CHECKPOINT
+from data import ATrainingData,fit_input_statistics
+from detection_cache import ReferenceCache
+from shared_cache import hash_file
+from model import to_device, MLP  # MLP remains an interface-test compatibility export.
+from evaluate import evaluate_model
+from result import update_experiment
 
 
-def gain_loss(prediction, target, gain_scale=100.0):
-    """Original SmoothL1 for the 17 signed OKS Gains (not COCO AP)."""
-    if prediction.shape != target.shape or prediction.ndim != 2 or prediction.shape[1] != 17:
-        raise ValueError('Gain loss requires [B,17] predictions and labels')
-    if not torch.isfinite(prediction).all() or not torch.isfinite(target).all():
-        raise ValueError('Nonfinite prediction or target Gain')
-    return F.smooth_l1_loss(prediction * gain_scale, target * gain_scale)
+def smooth_l1(pred,target):
+    return F.smooth_l1_loss(pred*100,target*100)
 
 
-def top1_ranking_loss(prediction, target, gain_scale=100.0, min_gap=0.05):
-    """Pairwise ranking: the oracle-best joint should beat other joints.
+# Public interface tests still import these historical names.
+gain_loss=smooth_l1
+DetectionCache=ReferenceCache
 
-    For each person: j_best = argmax_j true OKS Gain[j].  Compare that
-    joint with each other joint whose true scaled Gain is lower by more
-    than min_gap.  The target is used ONLY during training.
 
-    This is a differentiable loss; the actual A-only inference still uses
-    argmax of the 17 predicted Gains (no GT or threshold at inference).
-    """
-    if prediction.shape != target.shape or prediction.ndim != 2 or prediction.shape[1] != 17:
-        raise ValueError('Ranking loss requires [B,17] predictions and labels')
-    if not torch.isfinite(prediction).all() or not torch.isfinite(target).all():
-        raise ValueError('Nonfinite prediction or target Gain')
-    if min_gap < 0 or not np.isfinite(min_gap):
-        raise ValueError('min_gap must be finite and nonnegative')
+def load_full_inputs(data,device):
+    n=len(data.labels.ids)
+    raw={k:np.empty((n,)+shape,np.float32) for k,shape in {
+        'features':(17,256),'uncertainty':(17,),'pose_coords':(17,2),'pose_scores':(17,)}.items()}
+    labels=np.empty((n,17),np.float32);seen=[];offset=0
+    for path in data.cache.shards():
+        arrays=data.cache.load_shard(path);inputs=model_inputs(arrays);size=len(arrays['annotation_id'])
+        for key in INPUT_KEYS:raw[key][offset:offset+size]=inputs[key]
+        labels[offset:offset+size]=data.labels.lookup(arrays['annotation_id'],arrays['image_id'])
+        seen.extend(arrays['annotation_id'].tolist());offset+=size
+    assert offset==n and len(set(seen))==n and set(seen)==set(data.labels.ids)
+    stats=np.stack((raw['uncertainty'].astype(np.float64),raw['pose_scores'].astype(np.float64)))
+    mean=stats.mean((1,2)).astype(np.float32);std=np.maximum(stats.std((1,2)),1e-6).astype(np.float32)
+    inputs={key:torch.as_tensor(raw.pop(key),device=device) for key in INPUT_KEYS}
+    return inputs,torch.as_tensor(labels,device=device),labels,mean,std
 
-    scaled_pred = prediction * gain_scale
-    scaled_true = target * gain_scale
 
-    # [B, 1]: index of the highest REAL OKS Gain for each training body.
-    best_index = scaled_true.argmax(dim=1, keepdim=True)
-
-    # [B, 17]: positive if the oracle best joint exceeds candidate j.
-    true_gaps = scaled_true.gather(dim=1, index=best_index) - scaled_true
-    predicted_gaps = scaled_pred.gather(dim=1, index=best_index) - scaled_pred
-
-    # Ignore tiny differences. The best joint itself has gap zero and is ignored.
-    valid_pairs = (true_gaps > min_gap).to(dtype=scaled_pred.dtype)
-
-    # Softplus(-margin) is lower when the oracle-best joint ranks above j.
-    pair_losses = F.softplus(-predicted_gaps)
-    numerator = (pair_losses * valid_pairs).sum()
-    denominator = valid_pairs.sum().clamp(min=1.0)
-    return numerator / denominator
+def run(model_module,title,default_lr=.001,loss_fn=smooth_l1,order='global'):
+    parser=argparse.ArgumentParser(description=title)
+    parser.add_argument('--run-training',action='store_true')
+    parser.add_argument('--output',type=Path,default=None)
+    parser.add_argument('--epochs',type=int,default=20)
+    parser.add_argument('--batch-size',type=int,default=1024)
+    parser.add_argument('--lr',type=float,default=default_lr)
+    parser.add_argument('--weight-decay',type=float,default=.0001)
+    parser.add_argument('--seed',type=int,default=42)
+    parser.add_argument('--device',default=config.DEVICE)
+    args=parser.parse_args()
+    if min(args.epochs,args.batch_size)<1 or args.lr<=0 or args.weight_decay<0 or args.seed<0:
+        parser.error('Invalid training settings')
+    if not np.isfinite([args.lr,args.weight_decay]).all():parser.error('Nonfinite optimizer settings')
+    output=(args.output or config.WORK/'runs'/('%s_seed%d'%(model_module,args.seed))).resolve()
+    if not args.run_training:
+        print(title);print('Output:',output);print('Full validation every epoch; best.pt only. Add --run-training to start.')
+        return
+    if output.exists():raise FileExistsError('Use a new output directory: '+str(output))
+    precision=setup(args.seed)
+    data=ATrainingData(config.TRAIN_CACHE,config.LABELS);require_cache_model(data.cache)
+    val=ReferenceCache(config.VAL_CACHE);require_val_cache(val);val.verify(True)
+    train_images=sorted(set(data.cache.expected.values()))
+    val_images={int(i['id']) for i in json.loads(config.VAL_ANN.read_text())['images']}
+    assert len(val_images)==5000 and not set(train_images).intersection(val_images)
+    assert hash_file(config.BASE_MODEL)==EXPECTED_CHECKPOINT
+    assert hash_file(config.VAL_ANN)==val.run['protocol']['source_annotation_sha256']
+    n=len(data.labels.ids)
+    # Initialize before loading the base so its initialization cannot change A's seed.
+    model=importlib.import_module(model_module).MLP().to(args.device)
+    if order=='global':
+        x,y,target,mean,std=load_full_inputs(data,args.device)
+    elif order=='buffered':
+        mean,std=fit_input_statistics(data.cache)
+    else:raise ValueError('Unknown data order')
+    model.set_input_statistics(mean,std)
+    params=[p for p in model.parameters() if p.requires_grad]
+    optimizer=torch.optim.AdamW(params,lr=args.lr,weight_decay=args.weight_decay)
+    output.mkdir(parents=True)
+    from mmengine.logging import MMLogger
+    MMLogger.get_current_instance()
+    with contextlib.redirect_stdout(__import__('sys').stderr):base=load_frozen_base(config.BASE_MODEL,args.device)
+    settings=dict(model_module=model_module,epochs=args.epochs,batch_size=args.batch_size,lr=args.lr,
+        weight_decay=args.weight_decay,seed=args.seed,order=order,loss=loss_fn.__name__,
+        train_people=n,train_cache_fingerprint=data.cache.fingerprint,label_fingerprint=data.labels.fingerprint,
+        val_cache_fingerprint=val.fingerprint,precision=precision,validation='every epoch, full5000/104125',
+        code_hashes={p.name:hash_file(p) for p in Path(__file__).resolve().parent.glob('*.py')})
+    history=[];best=-float('inf');best_epoch=None
+    for epoch in range(1,args.epochs+1):
+        model.train();total=0;loss_sum=0.
+        if order=='global':
+            permutation=np.random.default_rng(np.random.SeedSequence([args.seed,epoch])).permutation(n)
+            def batches():
+                for begin in range(0,n,args.batch_size):
+                    idx=torch.as_tensor(permutation[begin:begin+args.batch_size],device=args.device)
+                    yield {k:v[idx] for k,v in x.items()},y[idx]
+        else:
+            def batches():
+                for inputs,labels,ids in data.batches(args.batch_size,args.seed,epoch,32):
+                    yield to_device(inputs,args.device),torch.as_tensor(labels,device=args.device)
+        for inputs,labels in batches():
+            prediction=model(**inputs);loss=loss_fn(prediction,labels)
+            if not torch.isfinite(loss):raise ValueError('Nonfinite training loss')
+            optimizer.zero_grad(set_to_none=True);loss.backward()
+            torch.nn.utils.clip_grad_norm_(params,5.,error_if_nonfinite=True);optimizer.step()
+            total+=len(labels);loss_sum+=float(loss.detach())*len(labels)
+        assert total==n
+        row=dict(epoch=epoch,count=total,loss=loss_sum/total)
+        if order=='global':
+            gain_sum=0.
+            with torch.inference_mode():
+                model.eval()
+                for begin in range(0,n,args.batch_size):
+                    pred=model(**{k:v[begin:begin+args.batch_size] for k,v in x.items()})
+                    choices=pred.argmax(1)
+                    gain_sum+=float(y[begin:begin+args.batch_size].gather(1,choices[:,None]).double().sum())
+            row['train_mean_gain']=gain_sum/n
+        validation=evaluate_model(model,base,val,args.device,dict(experiment=model_module,epoch=epoch))
+        row['validation']=validation['metrics'];row['audit']=validation['audit'];history.append(row)
+        ap=row['validation']['coco/AP']
+        if ap>best:
+            best=ap;best_epoch=epoch
+            payload=dict(schema_version=CHECKPOINT_SCHEMA,input_schema=INPUT_SCHEMA,trained=True,
+                model_module=model_module,model_config=getattr(model,'config',{}),
+                model_state={k:v.detach().cpu().clone() for k,v in model.state_dict().items()},
+                epoch=epoch,best_epoch=epoch,validation=row['validation'],settings=settings,
+                train_image_ids=train_images,base_checkpoint_sha256=EXPECTED_CHECKPOINT)
+            temporary=output/'best.pt.tmp';torch.save(payload,temporary);temporary.replace(output/'best.pt')
+        record=dict(title=title,description='每轮完整验证；同分取最早轮；只保留最佳模型。',
+            settings=settings,history=history,best_epoch=best_epoch,checkpoint=str(output/'best.pt'))
+        update_experiment(output.name,record)
+        print('%s epoch%d AP=%.6f best=epoch%d %.6f'%(title,epoch,ap*100,best_epoch,best*100),flush=True)
+        gc.collect()
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--train-cache', type=Path, default=config.TRAIN_CACHE)
-    parser.add_argument('--labels', type=Path, default=config.LABELS)
-    parser.add_argument('--val-cache', type=Path, default=config.VAL_CACHE)
-    parser.add_argument('--val-ann', type=Path, default=config.VAL_ANN)
-    parser.add_argument('--base-checkpoint', type=Path, default=config.BASE_MODEL)
-    parser.add_argument('--output', type=Path, default=config.OUTPUT)
-    parser.add_argument('--resume', action='store_true')
-    parser.add_argument('--epochs', type=int, default=config.EPOCHS)
-    parser.add_argument('--eval-every', type=int, default=config.EVAL_EVERY)
-    parser.add_argument('--batch-size', type=int, default=config.BATCH_SIZE)
-    parser.add_argument('--buffer-shards', type=int, default=32)
-    parser.add_argument('--lr', type=float, default=config.LEARNING_RATE)
-    parser.add_argument('--weight-decay', type=float, default=config.WEIGHT_DECAY)
-    parser.add_argument('--gain-scale', type=float, default=config.GAIN_SCALE)
-    parser.add_argument('--rank-weight', type=float, default=config.RANK_WEIGHT)
-    parser.add_argument('--rank-min-gap', type=float, default=config.RANK_MIN_GAP)
-    parser.add_argument('--seed', type=int, default=config.SEED)
-    parser.add_argument('--device', default=config.DEVICE)
-    args = parser.parse_args()
-
-    if getattr(config, 'MODEL_ARCHITECTURE', None) != 'a1_global':
-        parser.error("config.py must set MODEL_ARCHITECTURE = 'a1_global'")
-    if (min(args.epochs, args.eval_every, args.batch_size, args.buffer_shards) < 1
-            or not np.isfinite([args.lr, args.weight_decay, args.gain_scale,
-                                args.rank_weight, args.rank_min_gap]).all()
-            or args.lr <= 0 or args.weight_decay < 0 or args.gain_scale <= 0
-            or args.rank_weight < 0 or args.rank_min_gap < 0 or args.seed < 0):
-        parser.error('Invalid training hyperparameters')
-
-    output = args.output.resolve()
-    protected_outputs = [
-        config.WORK / 'runs/module_a_mlp_seed42',
-        config.WORK / 'runs/module_a_a1_global_seed42',
-        config.WORK / 'runs/module_a_a1_global_seed42_bs1024_eval1',
-    ]
-    if output in [p.resolve() for p in protected_outputs]:
-        parser.error('A2 must use a NEW output directory; never overwrite A0 or A1')
-
-    # Preserve existing data, label, model and evaluation protocol checks.
-    print('正在初始化 A2 数据与固定评估协议……', flush=True)
-    precision_record = setup(args.seed)
-    data = ATrainingData(args.train_cache, args.labels)
-    require_cache_model(data.cache)
-    val = DetectionCache(args.val_cache)
-    require_val_cache(val)
-    val.verify(True)
-
-    train_images = sorted(set(data.cache.expected.values()))
-    if set(train_images).intersection(val.expected.values()):
-        raise ValueError('Train/val image overlap')
-    if hash_file(args.base_checkpoint) != EXPECTED_CHECKPOINT:
-        raise ValueError('Wrong frozen base checkpoint')
-    val_ann = json.loads(args.val_ann.read_text())
-    if hash_file(args.val_ann) != val.run['protocol']['source_annotation_sha256']:
-        raise ValueError('Wrong val annotation for fixed detection cache')
-    val_images = {int(item['id']) for item in val_ann['images']}
-    if len(val_images) != 5000 or not set(val.expected.values()).issubset(val_images):
-        raise ValueError('Formal val2017 requires all 5000 images')
-    if set(train_images).intersection(val_images):
-        raise ValueError('Train/val image overlap')
-
-    code_paths = {
-        name: Path(__file__).with_name(name)
-        for name in ['common.py', 'config.py', 'data.py', 'model.py',
-                     'train.py', 'evaluate.py', 'result.py']
-    }
-    for name in ['a_contract.py', 'a_dataset.py', 'a_runtime.py',
-                 'predict_a.py', 'eval_unified.py', 'build_shared_cache.py',
-                 'precision_policy.py']:
-        code_paths['public/' + name] = common.PUBLIC / name
-
-    settings = dict(
-        experiment='a2_top1_pairwise_ranking',
-        model_architecture=config.MODEL_ARCHITECTURE,
-        precision_profile=precision_record['precision_profile'],
-        precision_profile_sha256=precision_record['precision_profile_sha256'],
-        epochs=args.epochs, eval_every=args.eval_every,
-        batch_size=args.batch_size, buffer_shards=args.buffer_shards,
-        lr=args.lr, weight_decay=args.weight_decay,
-        gain_scale=args.gain_scale, rank_weight=args.rank_weight,
-        rank_min_gap=args.rank_min_gap, seed=args.seed, device=args.device,
-        train_cache_fingerprint=data.cache.fingerprint,
-        label_fingerprint=data.labels.fingerprint,
-        val_cache_fingerprint=val.fingerprint,
-        val_annotation_sha256=hash_file(args.val_ann),
-        base_checkpoint_sha256=EXPECTED_CHECKPOINT,
-        input_schema=INPUT_SCHEMA,
-        code_hashes={name: hash_file(path) for name, path in code_paths.items()},
-        torch_version=torch.__version__, numpy_version=np.__version__,
-    )
-
-    print('\n======== A2 训练设置 ========', flush=True)
-    print('结构：A1 Global Context（不修改网络）')
-    print('训练人体：{:,}'.format(len(data.cache.expected)))
-    print('验证检测：{:,}'.format(len(val.expected)))
-    print('Epochs：{}，Batch Size：{}'.format(args.epochs, args.batch_size))
-    print('损失：SmoothL1 + {:.3f} × Top-1 Pairwise Ranking'.format(args.rank_weight))
-    print('Ranking 最小差距：{}（乘 {} 后的 Gain）'.format(args.rank_min_gap, args.gain_scale))
-    print('每 {} 轮完整验证一次'.format(args.eval_every))
-    print('结果目录：{}'.format(output), flush=True)
-
-    model = MLP(architecture=config.MODEL_ARCHITECTURE).to(args.device)
-    optimizer = torch.optim.AdamW(
-        model.parameters(), lr=args.lr, weight_decay=args.weight_decay
-    )
-    start_epoch, best_ap, history = 0, None, []
-
-    if args.resume:
-        prior = torch.load(output / 'last.pt', map_location='cpu')
-        if (prior.get('schema_version') != CHECKPOINT_SCHEMA
-                or prior.get('settings') != settings
-                or prior.get('trained') is not True):
-            raise ValueError('Cannot resume with changed code/settings/data; use new output')
-        if prior['model_config'].get('architecture') != config.MODEL_ARCHITECTURE:
-            raise ValueError('Checkpoint architecture mismatch')
-        model.load_state_dict(prior['model_state'])
-        optimizer.load_state_dict(prior['optimizer_state'])
-        start_epoch = int(prior['epoch'])
-        best_ap = prior['best_val_ap']
-        history = prior['history']
-        torch.set_rng_state(prior['torch_rng_state'])
-        if torch.cuda.is_available() and prior.get('cuda_rng_state') is not None:
-            torch.cuda.set_rng_state_all(prior['cuda_rng_state'])
-    else:
-        if output.exists() and any(output.iterdir()):
-            raise FileExistsError('Output not empty; choose a new A2 output directory')
-        output.mkdir(parents=True, exist_ok=True)
-        mean, std = fit_input_statistics(data.cache)
-        model.set_input_statistics(mean, std)
-
-    if start_epoch >= args.epochs:
-        print('已完成全部计划轮次，无需继续训练。')
-        show_summary(history, output, args.epochs)
+    """Legacy data-only preflight. Training always uses a named train_* entry."""
+    import sys
+    if len(sys.argv)==1:
+        print('Use a named experiment: python train_a3.py --run-training --output NEW_DIRECTORY')
         return
-
-    # Load frozen CIGPose only for the val candidate generation.
-    print('正在加载冻结的基础 CIGPose……', flush=True)
-    from mmengine.logging import MMLogger
-    MMLogger.get_current_instance()
-    with (output / 'model_loading.log').open('a') as log:
-        with contextlib.redirect_stdout(log):
-            base = load_frozen_base(args.base_checkpoint, args.device)
-    from predict_a import validate_a
-
-    lock = output / '.training.lock'
-    with lock.open('x') as lock_file:
-        lock_file.write(str(os.getpid()))
-
-    try:
-        atomic_json(output / 'settings.json', settings)
-        for epoch in range(start_epoch + 1, args.epochs + 1):
-            print('\n开始 Epoch {}/{}'.format(epoch, args.epochs), flush=True)
-            started = time.monotonic()
-            model.train()
-            total, sum_total, sum_reg, sum_rank, sum_mae = 0, 0.0, 0.0, 0.0, 0.0
-
-            for inputs, target, ids in data.batches(
-                    args.batch_size, args.seed, epoch, args.buffer_shards):
-                x = to_device(inputs, args.device)
-                y = torch.as_tensor(target, dtype=torch.float32, device=args.device)
-                predicted = model(**x)
-
-                reg = gain_loss(predicted, y, args.gain_scale)
-                rank = top1_ranking_loss(
-                    predicted, y, args.gain_scale, args.rank_min_gap
-                )
-                loss = reg + args.rank_weight * rank
-
-                optimizer.zero_grad(set_to_none=True)
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(
-                    model.parameters(), 5.0, error_if_nonfinite=True
-                )
-                optimizer.step()
-
-                n = len(ids)
-                total += n
-                sum_total += loss.detach().item() * n
-                sum_reg += reg.detach().item() * n
-                sum_rank += rank.detach().item() * n
-                sum_mae += (predicted.detach() - y).abs().mean().item() * n
-
-            if total != len(data.cache.expected):
-                raise ValueError('Training epoch coverage does not match expected count')
-
-            row = dict(
-                epoch=epoch, count=total,
-                loss=sum_total / total,
-                train_reg_loss=sum_reg / total,
-                train_rank_loss=sum_rank / total,
-                train_gain_mae=sum_mae / total,
-                train_seconds=time.monotonic() - started,
-            )
-            improved = False
-
-            if epoch % args.eval_every == 0 or epoch == args.epochs:
-                folder = output / 'val-epoch-{:03d}'.format(epoch)
-                attempt = 0
-                while folder.exists():
-                    attempt += 1
-                    folder = output / 'val-epoch-{:03d}-attempt-{:02d}'.format(
-                        epoch, attempt
-                    )
-
-                print('Epoch {}：完整 val2017 AP 验证中……'.format(epoch), flush=True)
-                with (output / 'validation_console.log').open('a') as log:
-                    with contextlib.redirect_stdout(log):
-                        result = validate_a(
-                            model.eval(), base, val, args.val_ann, folder,
-                            args.device,
-                            dict(epoch=epoch, label_fingerprint=data.labels.fingerprint,
-                                 experiment='A2-top1-ranking'),
-                        )
-                row['validation'] = result['metrics']
-                ap = float(result['metrics']['coco/AP'])
-                if not np.isfinite(ap) or not (0.0 <= ap <= 1.0):
-                    raise ValueError('Invalid val AP: {}'.format(ap))
-                improved = best_ap is None or ap > best_ap
-                if improved:
-                    best_ap = ap
-
-            history.append(row)
-            payload = dict(
-                schema_version=CHECKPOINT_SCHEMA,
-                input_schema=INPUT_SCHEMA,
-                trained=True, epoch=epoch,
-                model_config=model.config,
-                model_state=model.state_dict(),
-                optimizer_state=optimizer.state_dict(),
-                base_checkpoint_sha256=EXPECTED_CHECKPOINT,
-                settings=settings, train_image_ids=train_images,
-                best_val_ap=best_ap, history=history,
-                torch_rng_state=torch.get_rng_state(),
-                cuda_rng_state=(torch.cuda.get_rng_state_all()
-                                if torch.cuda.is_available() else None),
-            )
-            save_checkpoint(output / 'last.pt', payload)
-            if improved:
-                save_checkpoint(output / 'best.pt', payload)
-            atomic_json(output / 'history.json', history)
-            print_epoch(row, args.epochs, improved)
-            print('  SmoothL1：{:.6f} | Ranking：{:.6f} | 总 Loss：{:.6f}'.format(
-                row['train_reg_loss'], row['train_rank_loss'], row['loss']
-            ), flush=True)
-
-        print('\n========== A2 最终实验结果 ==========', flush=True)
-        show_summary(history, output, args.epochs)
-        print('与 A1/P0/Top-1 在相同 val 评估协议下比较，不能只看 Loss。', flush=True)
-    finally:
-        lock.unlink()
+    p=argparse.ArgumentParser(description='Legacy data-only interface check; no training')
+    p.add_argument('--train-cache',type=Path,default=config.TRAIN_CACHE)
+    p.add_argument('--labels',type=Path,default=config.LABELS)
+    p.add_argument('--val-cache',type=Path,default=config.VAL_CACHE)
+    p.add_argument('--val-ann',type=Path,default=config.VAL_ANN)
+    p.add_argument('--base-checkpoint',type=Path,default=config.BASE_MODEL)
+    p.add_argument('--output',type=Path)
+    args=p.parse_args()
+    data=ATrainingData(args.train_cache,args.labels);require_cache_model(data.cache)
+    val=DetectionCache(args.val_cache);require_val_cache(val)
+    ids={int(i['id']) for i in json.loads(args.val_ann.read_text())['images']}
+    assert len(ids)==5000 and not set(data.cache.expected.values()).intersection(ids)
+    assert hash_file(args.base_checkpoint)==EXPECTED_CHECKPOINT
+    print('Data-only checks passed; no model, optimizer or output was created.')
 
 
-if __name__ == '__main__':
-    main()
+if __name__=='__main__':main()

@@ -9,9 +9,8 @@ delete them. The layout cleanup did not train a model or change caches/labels.
 
 ## Scope and status
 
-Update: the user has now completed the full seed-42, 20-epoch run. The best
-validation checkpoint is epoch 10, AP 73.5190 and AR 78.9814 on the 0–100 scale.
-See [run results and controlled comparison](../../experiments/module_a/seed42_v2/README.md).
+Historical A0 result: the seed-42, 20-epoch run selected epoch10, AP73.5190 and AR78.9814. Current A3 and local-model comparisons, with all per-epoch results, are in the unified result below.
+See [run results and controlled comparison](../../experiments/module_a/results.html).
 The label acceptance and layout checks described below were earlier, non-training stages.
 
 N implements the input reader/encoder, MLP, training entry, and detection-val export.
@@ -40,7 +39,7 @@ The daily-use files are under `Module_A/`; shared dependencies stay under
 | Module_A/model.py | Actual MLP definition, class MLP; also used by shared A helpers |
 | Module_A/config.py | Default data paths and training settings |
 | Module_A/data.py | Reuses the audited a_dataset reader |
-| Module_A/train.py | Training loop, preflight by default, explicit opt-in for optimization |
+| Module_A/train.py | Shared loop; named train_*.py entries opt in to training and validate every epoch |
 | Module_A/evaluate.py | Standalone full-val evaluation using this directory's MLP |
 | Module_A/common.py | Locates the shared project code |
 | mmpose/analysis/fyp/a_contract.py | Label format, provenance/identity checks and input whitelist |
@@ -52,8 +51,7 @@ The daily-use files are under `Module_A/`; shared dependencies stay under
 
 `build_a_labels_legacy.py` generates the independent V2 label version;
 `verify_a_labels_legacy.py` audits it before marking metadata complete.
-See [current status and training plan](project_status_20261116.md) and
-`experiments/module_a/v2/` for accepted results and remaining numerical boundaries.
+Label provenance remains in the accepted V2 label metadata. Superseded diagnostic reports have been removed; current training results are in `experiments/module_a/results.html`.
 
 ## Label interface and accepted V2 delivery
 
@@ -200,35 +198,28 @@ The check produces `Y_metadata_template.json` and `interface_check.json`, no mod
 weights. Use a new output path when repeating checks. A standalone template can be
 created with `a_dataset.py --train-cache "$A_TRAIN" --write-contract NEW_FILE.json`.
 
-The full V2 labels have passed preflight. To repeat preflight (still no training):
+The accepted V2 labels and data paths are shared through `Module_A/config.py`.
+Each experiment has a named model and train entry; see `Module_A/README.md`.
+The common `train.py` supplies the training loop and is not an experiment entry.
 
 ```bash
-A_LABELS=/home/nzd/projects/cig-module-a-n/labels/train2017_legacy_deterministic_v2_20261116
-A_RUN=/home/nzd/projects/cig-module-a-n/runs/module_a_mlp_seed42
-$A_PY Module_A/train.py --train-cache "$A_TRAIN" --labels "$A_LABELS" \
-  --val-cache "$A_VAL" --val-ann "$A_ANN" --base-checkpoint "$A_BASE" --output "$A_RUN"
+$A_PY Module_A/train_a3.py --run-training --output NEW_RUN_DIRECTORY
+$A_PY Module_A/train_local_small.py --run-training --output ANOTHER_NEW_DIRECTORY
 ```
 
-Only when training is explicitly intended, add `--run-training`. To resume the
-same run, add both `--run-training --resume` with identical settings. This delivery
-does not enable optimization by default. A stale `.training.lock` after process termination must
-only be removed after verifying no process is writing.
+Without `--run-training`, an experiment entry only displays its settings. A real
+training run validates data and evaluates the full validation set after EVERY epoch.
+Only the highest-AP checkpoint is saved as `best.pt` (earliest epoch on ties).
+There is no last-checkpoint resume mode because non-best checkpoints are not retained.
 
-For this machine, `config.py` already supplies these defaults. From `Module_A/`,
-`python train.py` is sufficient for preflight; `python train.py --run-training`
-starts optimization only when explicitly requested. The new trainer imports the
-actual `Module_A/model.py`; it is not a launcher for the deleted trainer.
+All per-epoch metrics, experiment settings and final best-epoch markings are stored
+in one self-contained result file: `/home/nzd/projects/cig-module-a-n/code/experiments/module_a/results.html`.
+Validation predictions are temporary and are removed after their metrics are collected.
 
-Train outputs: settings.json, history.json, last.pt, best.pt and full validation
-folders. Best is selected among the configured validation epochs. Each val folder
-contains raw_predictions_before_nms.json, selections.jsonl, predictions.keypoints.json,
-metrics.json and evaluation.log. Both raw and final outputs feed existing M tools:
-raw needs scoring/NMS once; final COCO JSON must not be postprocessed again.
-
-Standalone full validation after obtaining a trained checkpoint:
+Standalone complete validation prints its metrics without leaving another report:
 
 ```bash
-$A_PY Module_A/evaluate.py --checkpoint "$A_RUN/best.pt" --output "$A_RUN/standalone-val"
+$A_PY Module_A/evaluate.py --checkpoint RUN_DIRECTORY/best.pt
 ```
 
 The validation input has no annotation IDs. Export preserves source detection index,

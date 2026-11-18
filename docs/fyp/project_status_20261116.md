@@ -4,7 +4,7 @@
 
 目录更新：实际可编辑的 MLP、参数和训练入口已集中到仓库根目录 `Module_A/`。旧 `train_a.py`、`gain_predictor.py` 及其 WSL 字节码缓存已清理，必要的公共依赖保留。原来生成的 Windows 阅读包和 V2 交付 ZIP 是历史快照，不会自动随新目录更新；新代码以本分支为准。
 
-**最新进展：用户已完成第一轮全量 MLP 训练，seed=42，共 20 轮。最佳为第 10 轮，val AP 73.5190、AR 78.9814。** 结果来自真实 history.json，详见 [训练与基线对照报告](../../experiments/module_a/seed42_v2/README.md)。此次结果显示调整和基线复评不重新训练模型；不能仅凭 loss 下降宣称 A 提升。
+**最新进展：用户已完成第一轮全量 MLP 训练，seed=42，共 20 轮。最佳为第 10 轮，val AP 73.5190、AR 78.9814。** 结果来自真实 history.json，详见 [训练与基线对照报告](../../experiments/module_a/results.html)。此次结果显示调整和基线复评不重新训练模型；不能仅凭 loss 下降宣称 A 提升。
 
 ## 1. 项目要做什么
 
