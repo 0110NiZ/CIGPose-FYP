@@ -1,0 +1,160 @@
+{
+  "epoch": 18,
+  "threshold_sweep": [
+    {
+      "tau": 0.48,
+      "metrics": {
+        "coco/AP": 0.7363127770968636,
+        "coco/AP .5": 0.8973124676592422,
+        "coco/AP .75": 0.8047907858827147,
+        "coco/AP (M)": 0.7036922380924601,
+        "coco/AP (L)": 0.7997299690124026,
+        "coco/AR": 0.7901133501259446,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8510705289672544,
+        "coco/AR (M)": 0.7471729035782573,
+        "coco/AR (L)": 0.8522110739502043
+      },
+      "audit": {
+        "num_output_predictions": 77203,
+        "evaluation_image_count": 5000,
+        "num_unique_images": 3893,
+        "num_input_instances": 104125
+      },
+      "decision_analysis": {
+        "accept_rate_all": 0.3888403361344538,
+        "accept_rate_matched": 0.3231139646869984,
+        "harmful_elimination_rate": 0.7542059909725072,
+        "false_acceptance_rate": 0.3557177615571776,
+        "false_rejection_rate": 0.7400943396226415,
+        "mean_realized_gain": -4.521030329236433e-05,
+        "mean_gain_accepted": -0.00013992061078560848,
+        "mean_gain_rejected_if_applied": -0.0007923492232081031
+      }
+    },
+    {
+      "tau": 0.5,
+      "metrics": {
+        "coco/AP": 0.7361220320441281,
+        "coco/AP .5": 0.897373163651913,
+        "coco/AP .75": 0.8049223758870107,
+        "coco/AP (M)": 0.7034005709180986,
+        "coco/AP (L)": 0.7996100461573491,
+        "coco/AR": 0.7897512594458439,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8510705289672544,
+        "coco/AR (M)": 0.7467085495766184,
+        "coco/AR (L)": 0.8520624303232998
+      },
+      "audit": {
+        "num_output_predictions": 77099,
+        "evaluation_image_count": 5000,
+        "num_unique_images": 3893,
+        "num_input_instances": 104125
+      },
+      "decision_analysis": {
+        "accept_rate_all": 0.21381032412965187,
+        "accept_rate_matched": 0.11894060995184591,
+        "harmful_elimination_rate": 0.9216249487074272,
+        "false_acceptance_rate": 0.13576642335766423,
+        "false_rejection_rate": 0.9136792452830189,
+        "mean_realized_gain": -2.183012321379759e-05,
+        "mean_gain_accepted": -0.00018353801298509983,
+        "mean_gain_rejected_if_applied": -0.0006352696659060013
+      }
+    },
+    {
+      "tau": 0.51,
+      "metrics": {
+        "coco/AP": 0.736268316039384,
+        "coco/AP .5": 0.89738170450771,
+        "coco/AP .75": 0.8049069738959993,
+        "coco/AP (M)": 0.7034023052662824,
+        "coco/AP (L)": 0.7997808073583847,
+        "coco/AR": 0.7898299748110832,
+        "coco/AR .5": 0.9360831234256927,
+        "coco/AR .75": 0.8510705289672544,
+        "coco/AR (M)": 0.7467904944004371,
+        "coco/AR (L)": 0.8521367521367521
+      },
+      "audit": {
+        "num_output_predictions": 77063,
+        "evaluation_image_count": 5000,
+        "num_unique_images": 3893,
+        "num_input_instances": 104125
+      },
+      "decision_analysis": {
+        "accept_rate_all": 0.1605282112845138,
+        "accept_rate_matched": 0.06019261637239166,
+        "harmful_elimination_rate": 0.9671727533853098,
+        "false_acceptance_rate": 0.07177615571776155,
+        "false_rejection_rate": 0.9622641509433962,
+        "mean_realized_gain": -1.7317630959602712e-06,
+        "mean_gain_accepted": -2.877035756755338e-05,
+        "mean_gain_rejected_if_applied": -0.0006169441468304301
+      }
+    },
+    {
+      "tau": 0.52,
+      "metrics": {
+        "coco/AP": 0.73618207634657,
+        "coco/AP .5": 0.8973603635598807,
+        "coco/AP .75": 0.804887920293004,
+        "coco/AP (M)": 0.7033545894972574,
+        "coco/AP (L)": 0.7997537437238141,
+        "coco/AR": 0.789735516372796,
+        "coco/AR .5": 0.9362405541561712,
+        "coco/AR .75": 0.8509130982367759,
+        "coco/AR (M)": 0.7467631794591642,
+        "coco/AR (L)": 0.8519509476031214
+      },
+      "audit": {
+        "num_output_predictions": 77025,
+        "evaluation_image_count": 5000,
+        "num_unique_images": 3893,
+        "num_input_instances": 104125
+      },
+      "decision_analysis": {
+        "accept_rate_all": 0.12934453781512606,
+        "accept_rate_matched": 0.0377207062600321,
+        "harmful_elimination_rate": 0.982355354944604,
+        "false_acceptance_rate": 0.044282238442822384,
+        "false_rejection_rate": 0.975,
+        "mean_realized_gain": 6.593320233870131e-06,
+        "mean_gain_accepted": 0.000174793127902174,
+        "mean_gain_rejected_if_applied": -0.0006111881983047559
+      }
+    },
+    {
+      "tau": 0.55,
+      "metrics": {
+        "coco/AP": 0.7362087816684132,
+        "coco/AP .5": 0.8974249666627374,
+        "coco/AP .75": 0.80481518094161,
+        "coco/AP (M)": 0.7034306277227041,
+        "coco/AP (L)": 0.799738463724119,
+        "coco/AR": 0.789735516372796,
+        "coco/AR .5": 0.9362405541561712,
+        "coco/AR .75": 0.8507556675062973,
+        "coco/AR (M)": 0.7468451242829828,
+        "coco/AR (L)": 0.851839464882943
+      },
+      "audit": {
+        "num_output_predictions": 76981,
+        "evaluation_image_count": 5000,
+        "num_unique_images": 3893,
+        "num_input_instances": 104125
+      },
+      "decision_analysis": {
+        "accept_rate_all": 0.08049939975990396,
+        "accept_rate_matched": 0.01637239165329053,
+        "harmful_elimination_rate": 0.993434550677062,
+        "false_acceptance_rate": 0.020437956204379562,
+        "false_rejection_rate": 0.9915094339622641,
+        "mean_realized_gain": 1.0381252619933345e-05,
+        "mean_gain_accepted": 0.0006340706257076934,
+        "mean_gain_rejected_if_applied": -0.0006017741624677194
+      }
+    }
+  ]
+}
