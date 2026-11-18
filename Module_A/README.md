@@ -14,6 +14,9 @@
 | A1：池化全身特征 | model_a1.py | train_a1.py |
 | A2：A1加排序Loss | model_a2.py | train_a2.py |
 | A3：展开全身上下文 | model_a3.py | train_a3.py |
+| A3：全身摘要128 | model_a3_context128.py | train_a3_context128.py |
+| A3：全身摘要256 | model_a3_context256.py | train_a3_context256.py |
+| A3：小型Transformer | model_a3_transformer.py | train_a3_transformer.py |
 | A4：A3加风险加权Loss | model_a4.py | train_a4.py |
 | A3弱选择收益Loss（0.1） | model_a3_gain_weak.py | train_a3_gain_weak.py |
 | A3强选择收益Loss（0.5） | model_a3_gain_strong.py | train_a3_gain_strong.py |
@@ -58,3 +61,12 @@ python evaluate.py --baseline fixed
 独立验证只显示结果，不产生新的长期结果文件。诊断脚本、诊断模型及旧的重复结果已清理。公共缓存和标签保留。
 
 两档选择收益实验都使用原A3网络、原SmoothL1、lr0.001、batch1024、seed42、分片缓冲打乱，训练20轮。附加项是 softmax(100×预测收益) 下的期望收益遗憾，权重分别0.1和0.5，温度固定1；推理仍为单关节argmax。训练选中收益只作监测，最佳模型只按完整验证AP选择。
+
+
+## A3结构实验
+
+摘要128/256实验只将原A3的context_dim从64改为128/256，前面的隐藏层仍为128，评分器因摘要变宽调整输入维度，其余层不变。因此256组仍经过128维中间层，不能单独证明去掉所有压缩瓶颈的效果。
+
+小型Transformer把每个关节的同样输入（256维特征、不确定性、坐标、置信度和16维关节身份）投影为128维token，经过2层、4头、前馈256维的Transformer，再用128→64→1共享评分器预测17个收益。采用pre-norm、GELU、dropout=0；它替换A3全身压缩和打分部分，不修改冻结的CIGPose，仍argmax选一个关节、alpha=1、始终接受。
+
+三组均从seed42重新初始化，使用原SmoothL1（收益放大100倍）、AdamW lr0.001、weight_decay0.0001、batch1024、原分片缓冲顺序，全量20轮，每轮完整验证，只保留最高AP模型。不同结构无法共享完全相同的初始权重；这里保持种子及训练条件一致。Transformer先使用相同学习率作首轮结构对比，不代表其最优设置。
