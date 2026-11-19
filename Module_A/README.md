@@ -79,3 +79,28 @@ python evaluate.py --baseline fixed
 带不确定性版本按固定COCO-17顺序拼接每个关节的256维特征、1维不确定性、2维坐标、1维姿态置信度，得到4420维输入，使用4420→128→64→17全连接网络，前两层后为ReLU，最后一层无激活。无不确定性版本彻底去掉17个不确定性输入，为4403→128→64→17。两者都取消A3的局部分支、关节embedding和逐关节共享评分器，由输出位置对应关节身份。
 
 保留A3输入归一化（特征LayerNorm、训练集标量统计量），坐标处理不变；无不确定性版本只为兼容公共接口接收uncertainty参数，不读取其数值。其保留的标量统计量第0项同样不参与前向计算。其余条件使用原SmoothL1、seed42、lr0.001、batch1024、weight_decay0.0001、原分片训练顺序，全量20轮且每轮完整验证；只保留最高AP模型。两组均从头训练，不是推理时屏蔽输入。CIGPose冻结、仍只选一个关节。
+
+
+## A3 固定、训练 B：A+B 第一版
+
+在 WSL 的 `cigpose` 环境、仓库根目录执行：
+
+```bash
+python Module_A/train_ab.py
+```
+
+如果已进入 `Module_A` 目录，运行 `python train_ab.py` 即可，不需要 `--run-training`。
+只检查真实32人接口、标签、冻结权重和B反向传播：`python Module_A/train_ab.py --check-only`。
+
+- `model_ab.py` 定义B网络及显式接收A选中关节的563维输入；沿用B分支f1df444的563→128→64→4、ReLU、Dropout(0.1)。不需要合并整个B分支。
+- `train_ab.py` 读取统一结果文件中原A3的最佳权重，冻结A3和CIGPose；只训练B。默认seed42、30轮、batch512、AdamW lr0.001/weight_decay0.0001、收益放大1000倍后SmoothL1。模型输出为放大后的收益，选强度只取argmax。
+- 首次运行自动为全149813个训练人体生成A所选关节的四个强度收益（0.25/0.5/0.75/1）。统一以原缓存P0为收益基准，不混用旧Top-1的B标签。GT仅生成监督标签，不输入模型。
+- 已完成的标签分片原子保存，重用时核对权重/源码/缓存来源及分片哈希；标签生成中断可以重用。若模型或代码改变，选择新的`--labels`目录。
+- 每轮完整验证104125个检测、5000张图片；执行A选关节、B选强度、一次干预、始终接受。验证最高AP保存best.pt，同分保留较早轮。
+- 显示标签、训练batch、验证分片进度；每轮写入既有`experiments/module_a/results.html`。结束后重新加载最佳B权重并完整复核，再打印每轮结果、最佳轮和全部10项最终指标。
+- 默认模型输出：`/home/nzd/projects/cig-module-a-n/runs/model_ab_seed42/best.pt`。该权重保存B及归一化参数，A权重路径/hash记录在settings中；部署仍需原A3权重。
+- 默认标签：`/home/nzd/projects/cig-module-a-n/labels/ab_a3_selected_v1`。现有缓存/模型/标签不覆盖。
+- 只保留最佳模型，因此不提供从最后一轮精确续训。训练中断后，用`--output 新目录`重新训练，可复用已生成标签。相同输出目录会拒绝覆盖。
+- 可用`--epochs 20`改变预算，或`--a-checkpoint 路径`显式指定同架构A权重；换A后必须使用对应的新标签目录。数据路径沿用`config.py`。
+
+正式全量A+B训练尚未执行，`--check-only`不代表完整AP验证已经通过。原A/B的AP不能当作A+B结果。
