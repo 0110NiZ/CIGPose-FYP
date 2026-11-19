@@ -1,0 +1,173 @@
+{
+  "seed": 21,
+  "eligible_images": 56599,
+  "full_valid_instances": 149813,
+  "selected_images": 16983,
+  "selected_valid_instances": 44941,
+  "instance_fraction": 0.2999806425343595,
+  "image_fraction": 0.300058304917048,
+  "sampling": "64 seeded candidates, each selecting nearest 30% of images within every stratum; choose closest to 30% valid instances",
+  "selected_candidate": 17,
+  "stratum_definition": {
+    "occlusion": "v=1 / count(v>0), aggregated per image; <=0.2, <=0.5, >0.5; v=0 excluded as unlabeled",
+    "size": "median annotated person area: <32^2, <96^2, >=96^2 pixels",
+    "people": "valid persons per image: 1, 2-4, >=5"
+  },
+  "source_sha256": {
+    "train": "7fc1549d934547c470384d8a207c38707ca33fc016d00e33b795e408603af83e",
+    "val": "788e2dae83c86bd547be7fab269d6399df5671063d29a61360cdb2cc370d2b14"
+  },
+  "subset_sha256": "ec3ff51924cf1be81e73e7b175f33a380b913fa51c1de5b9bd64a235d491aa5a",
+  "validation": "unchanged full val2017 with original GT boxes",
+  "strata": [
+    {
+      "stratum": "high|large|five_plus",
+      "images_all": 4,
+      "images_selected": 1,
+      "instances_all": 26,
+      "instances_selected": 5
+    },
+    {
+      "stratum": "high|large|one",
+      "images_all": 224,
+      "images_selected": 67,
+      "instances_all": 224,
+      "instances_selected": 67
+    },
+    {
+      "stratum": "high|large|two_to_four",
+      "images_all": 75,
+      "images_selected": 23,
+      "instances_all": 167,
+      "instances_selected": 51
+    },
+    {
+      "stratum": "high|medium|five_plus",
+      "images_all": 5,
+      "images_selected": 2,
+      "instances_all": 35,
+      "instances_selected": 13
+    },
+    {
+      "stratum": "high|medium|one",
+      "images_all": 143,
+      "images_selected": 43,
+      "instances_all": 143,
+      "instances_selected": 43
+    },
+    {
+      "stratum": "high|medium|two_to_four",
+      "images_all": 49,
+      "images_selected": 15,
+      "instances_all": 117,
+      "instances_selected": 34
+    },
+    {
+      "stratum": "low|large|five_plus",
+      "images_all": 1325,
+      "images_selected": 398,
+      "instances_all": 8476,
+      "instances_selected": 2609
+    },
+    {
+      "stratum": "low|large|one",
+      "images_all": 17090,
+      "images_selected": 5127,
+      "instances_all": 17090,
+      "instances_selected": 5127
+    },
+    {
+      "stratum": "low|large|two_to_four",
+      "images_all": 9688,
+      "images_selected": 2906,
+      "instances_all": 24175,
+      "instances_selected": 7259
+    },
+    {
+      "stratum": "low|medium|five_plus",
+      "images_all": 5662,
+      "images_selected": 1699,
+      "instances_all": 43226,
+      "instances_selected": 12949
+    },
+    {
+      "stratum": "low|medium|one",
+      "images_all": 6855,
+      "images_selected": 2057,
+      "instances_all": 6855,
+      "instances_selected": 2057
+    },
+    {
+      "stratum": "low|medium|two_to_four",
+      "images_all": 7275,
+      "images_selected": 2183,
+      "instances_all": 20425,
+      "instances_selected": 6078
+    },
+    {
+      "stratum": "medium|large|five_plus",
+      "images_all": 647,
+      "images_selected": 194,
+      "instances_all": 4320,
+      "instances_selected": 1265
+    },
+    {
+      "stratum": "medium|large|one",
+      "images_all": 1565,
+      "images_selected": 470,
+      "instances_all": 1565,
+      "instances_selected": 470
+    },
+    {
+      "stratum": "medium|large|two_to_four",
+      "images_all": 1803,
+      "images_selected": 541,
+      "instances_all": 4744,
+      "instances_selected": 1462
+    },
+    {
+      "stratum": "medium|medium|five_plus",
+      "images_all": 1595,
+      "images_selected": 479,
+      "instances_all": 12991,
+      "instances_selected": 3884
+    },
+    {
+      "stratum": "medium|medium|one",
+      "images_all": 1170,
+      "images_selected": 351,
+      "instances_all": 1170,
+      "instances_selected": 351
+    },
+    {
+      "stratum": "medium|medium|two_to_four",
+      "images_all": 1424,
+      "images_selected": 427,
+      "instances_all": 4064,
+      "instances_selected": 1217
+    }
+  ],
+  "model": {
+    "parameters": 6190372,
+    "original_parameters": 14304732,
+    "reduction_percent": 56.725005403806236,
+    "head_dim": 256,
+    "width": 0.5,
+    "depth": 0.33
+  },
+  "schedule": {
+    "epochs": 100,
+    "lr": 0.001,
+    "batch": 384,
+    "warmup_iterations": 1000,
+    "cosine_begin_epoch": 50,
+    "cosine_end_epoch": 100,
+    "stage2_switch_epoch": 93
+  },
+  "checks": {
+    "dataset_count": 44941,
+    "train_val_disjoint": true,
+    "original_annotations_unchanged": true,
+    "validation_protocol_unchanged": true
+  }
+}

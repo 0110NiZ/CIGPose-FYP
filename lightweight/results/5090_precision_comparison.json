@@ -1,0 +1,111 @@
+{
+  "dataset": {
+    "selected_images": 16983,
+    "selected_valid_instances": 44941,
+    "instance_fraction": 0.2999806425343595,
+    "subset_sha256": "ec3ff51924cf1be81e73e7b175f33a380b913fa51c1de5b9bd64a235d491aa5a",
+    "seed": 21
+  },
+  "model": {
+    "parameters": 6190372,
+    "original_parameters": 14304732,
+    "reduction_percent": 56.725005403806236,
+    "head_dim": 256,
+    "width": 0.5,
+    "depth": 0.33
+  },
+  "fairness_checks": {
+    "same_initial_model_sha256": "ebe62cd85051f7d71ffbb2c58513d3b1a2f89fb9de6151929b1a624778dfd730",
+    "same_first_32_image_ids": true,
+    "same_batch_size": 384,
+    "train_workers": 4,
+    "validation_workers": 2,
+    "val_precision": "FP32 for both",
+    "full_validation_unchanged": true,
+    "sequential_run_order": [
+      "fp32",
+      "amp_fp16"
+    ],
+    "tf32_matmul": false,
+    "tf32_cudnn": true
+  },
+  "modes": {
+    "fp32": {
+      "epoch_train_seconds": [
+        123.56609779410064,
+        122.94022058136761,
+        123.22304600663483
+      ],
+      "all_three_mean_seconds": 123.24312146070103,
+      "steady_epoch2_3_mean_seconds": 123.08163329400122,
+      "steady_seconds_per_iteration": 1.0430646889322137,
+      "mean_validation_seconds": 13.30248273567607,
+      "peak_allocated_GiB": 19.980531215667725,
+      "peak_reserved_GiB": 20.94921875,
+      "gpu_device_peak_GiB": 22.07550048828125,
+      "steady_compute_seconds": 38.653685769066215,
+      "steady_data_wait_and_hook_overhead_seconds": 84.427947524935,
+      "optimizer_steps": 354,
+      "skipped_optimizer_steps": 0,
+      "validation_AP": [
+        1.6091263918696566,
+        47.08437398318879,
+        53.646513335341
+      ],
+      "total_benchmark_wall_seconds": 426.4434755127877,
+      "estimated_100_epochs_train_hours": 3.4189342581667006,
+      "estimated_100_epochs_with_val_and_checkpoint_hours": 3.464247451928289,
+      "checkpoint_overhead_seconds_per_epoch_estimate": 1.8994296087572973,
+      "checkpoints": [
+        "/root/autodl-tmp/cigpose-original/experiments/small_backbone_30_seed21_precision3/work_dirs/fp32_3epochs_20261119_230913/epoch_3.pth",
+        "/root/autodl-tmp/cigpose-original/experiments/small_backbone_30_seed21_precision3/work_dirs/fp32_3epochs_20261119_230913/best_coco_AP_epoch_3.pth"
+      ]
+    },
+    "amp_fp16": {
+      "epoch_train_seconds": [
+        140.79144885763526,
+        125.58050992898643,
+        125.13168041408062
+      ],
+      "all_three_mean_seconds": 130.50121306690076,
+      "steady_epoch2_3_mean_seconds": 125.35609517153352,
+      "steady_seconds_per_iteration": 1.0623397895892672,
+      "mean_validation_seconds": 13.527057300942639,
+      "peak_allocated_GiB": 13.899240016937256,
+      "peak_reserved_GiB": 14.837890625,
+      "gpu_device_peak_GiB": 15.96807861328125,
+      "steady_compute_seconds": 37.570785969961435,
+      "steady_data_wait_and_hook_overhead_seconds": 87.78530920157209,
+      "optimizer_steps": 354,
+      "skipped_optimizer_steps": 0,
+      "validation_AP": [
+        1.5595315817701598,
+        46.80883029449621,
+        53.833051228001914
+      ],
+      "total_benchmark_wall_seconds": 448.9192719226703,
+      "estimated_100_epochs_train_hours": 3.48211375476482,
+      "estimated_100_epochs_with_val_and_checkpoint_hours": 3.52776779810829,
+      "checkpoint_overhead_seconds_per_epoch_estimate": 1.7499317439893882,
+      "checkpoints": [
+        "/root/autodl-tmp/cigpose-original/experiments/small_backbone_30_seed21_precision3/work_dirs/amp_fp16_3epochs_20261119_231623/epoch_3.pth",
+        "/root/autodl-tmp/cigpose-original/experiments/small_backbone_30_seed21_precision3/work_dirs/amp_fp16_3epochs_20261119_231623/best_coco_AP_epoch_3.pth"
+      ]
+    }
+  },
+  "comparison": {
+    "amp_time_reduction_percent": -1.8479295542815688,
+    "amp_throughput_speedup": 0.9818559929262315,
+    "amp_allocated_memory_reduction_percent": 30.436083671097926,
+    "amp_device_memory_reduction_percent": 27.666063010630793
+  },
+  "limitations": [
+    "Three epochs per precision, single sequential trial; not a statistical benchmark.",
+    "FP32 uses existing default cuDNN TF32 allowance, matching the previous baseline.",
+    "AMP is FP16 autocast plus FP32 master parameters and dynamic loss scaling, not pure FP16.",
+    "Every benchmark epoch validates in FP32; 100-epoch forecast assumes validation/checkpoint every 10 epochs.",
+    "First epoch excluded from primary steady-speed average; all three timings retained.",
+    "Data loading/augmentation and host load affect wall time; late-stage augmentation can change speed.",
+    "PyTorch peaks captured before logger resets; device usage sampled through NVML every 200 ms plus batch ends."
+  ]
+}

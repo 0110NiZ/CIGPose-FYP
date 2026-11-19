@@ -1,3 +1,5 @@
+> 本分支保存当前轻量化实验。配置、复现步骤与实测结果见 [lightweight/README.md](lightweight/README.md)。
+
 <div align="center">
 <h1>CIGPose: Causal Intervention Graph Neural Network for Whole-Body Pose Estimation </h1>
 <p>

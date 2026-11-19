@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+/data/
+/checkpoints/
+/work_dirs/
+/lightweight/data/person_keypoints_*.json
+*.pth
+*.pt
+*.log
+.env
