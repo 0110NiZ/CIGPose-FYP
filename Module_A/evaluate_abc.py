@@ -43,12 +43,12 @@ def main():
     p.add_argument('--c-checkpoint',type=Path)
     p.add_argument('--ab-checkpoint',type=Path,default=config.WORK/'runs/model_ab_seed42/best.pt')
     p.add_argument('--a-checkpoint',type=Path)
-    p.add_argument('--tau',type=float,default=.51)
+    p.add_argument('--tau',type=float,default=None)
     p.add_argument('--device',default=config.DEVICE)
     p.add_argument('--output',type=Path,default=config.WORK/'runs/evaluate_abc_frozen')
     p.add_argument('--check-only',action='store_true',help='One real batch; without C weights uses a random C for interface checks ONLY')
     args=p.parse_args()
-    if not 0<=args.tau<=1:p.error('tau must be in [0,1]')
+    if args.tau is not None and not 0<=args.tau<=1:p.error('tau must be in [0,1]')
     if not args.check_only and (args.c_checkpoint is None or not args.c_checkpoint.is_file()):
         p.error('完整验证需要真实 C 权重：--c-checkpoint /path/to/epoch_014.pt')
     if not args.check_only and args.output.exists():raise FileExistsError('Choose a new --output')
@@ -65,8 +65,14 @@ def main():
         c=ModuleCAcceptanceClassifier(saved['input_dim'],saved['hidden_dim'],saved['dropout']).to(args.device)
         c.load_state_dict(saved['model_state'],strict=True)
         c_info=dict(path=str(args.c_checkpoint),sha256=hash_file(args.c_checkpoint),epoch=saved['epoch'],training=saved.get('training'))
+        if saved.get('training')=='ab_gain_weighted_bce':
+            if saved['settings']['identity']['ab_sha256']!=hash_file(args.ab_checkpoint):
+                raise ValueError('C was trained for a different AB checkpoint')
+        if args.tau is None:args.tau=float(saved.get('tau',.51))
     else:
         c=ModuleCAcceptanceClassifier(137,128,.1).to(args.device);c_info=dict(random_interface_check_only=True)
+    if args.tau is None:args.tau=.51
+    if not 0<=args.tau<=1:raise ValueError('Invalid stored threshold')
     c.requires_grad_(False).eval()
     cache=ReferenceCache(config.VAL_CACHE);require_val_cache(cache)
     if hash_file(config.VAL_ANN)!=cache.run['protocol']['source_annotation_sha256']:raise ValueError('Annotation mismatch')

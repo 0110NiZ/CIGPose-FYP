@@ -120,3 +120,35 @@ python Module_A/evaluate_abc.py --c-checkpoint /path/to/epoch_014.pt
 
 仅检查接口：`python Module_A/evaluate_abc.py --check-only`。不提供权重时使用随机C，只检查137维输入、接受/拒绝/等阈值回退，并明确不产生AP结果；正式验证不允许缺少C权重。
 截至接入时已通过32个真实检测的接口检查，尚未取得C权重，尚未运行完整ABC效果评估。桌面的`train2017_c_features.npz`和`val2017_c_features.npz`是输入特征，不能代替训练权重。
+
+## 固定 A+B，重新训练 C
+
+在本机WSL cigpose环境中直接运行：
+
+```bash
+cd /home/nzd/projects/cig-module-a-n/code/Module_A
+python train_abc.py
+```
+
+默认冻结已完成的 `runs/model_ab_seed42/best.pt` 及其对应A3和CIGPose，C采用现有 `model_abc.py` 的137维网络从头初始化；无需旧C权重。训练入口是新增的 `train_abc.py`，共享模型/候选/回退/评分接口。
+
+流程：
+1. 对全部149813个训练人体用固定A+B生成实际候选Pc，计算相对原缓存P0的真实OKS收益。收益>0作为接受标签，其余作为拒绝标签。
+2. 沿用原C的加权BCE：`min(abs(gain)/0.001,1)`，除以全训练集平均权重；仅用训练标签计算。原网络137→128→64→1、LayerNorm/SiLU、Dropout0.1；AdamW lr0.001、weight_decay0.0001、batch256、seed42、默认20轮。
+3. 验证集仅缓存实际A+B候选和合法C输入，没有gain/y等GT标签。A+B固定，候选只需生成一次。先完整复核AB十项指标与保存结果一致。
+4. 固定阈值0.51（`--tau`可在新实验开始前指定；本实验不搜索阈值），每轮对104125检测/5000图完整验证ABC。AP最高保存best.pt，同分取早轮。
+5. 每轮显示训练进度、验证进度、Loss/AP/接受率。最后重新加载最佳C再完整验证，列出每轮、最终10项指标和相对AB的AP变化。
+
+默认结果：`runs/model_abc_seed42/best.pt`；逐轮数据沿用 `experiments/module_a/results.html`。
+候选缓存：`/home/nzd/projects/cig-module-a-n/labels/abc_ab_candidates_v1`，训练/验证分开；分片带来源/内容哈希，可在中断后复用。不同A/B/源码或数据来源必须换`--cache-dir`，不会混用旧Top-1候选。
+模型仅保留最佳一份，因此没有精确断点续训；训练中断后用`--output 新目录`重训，可复用已完成候选。旧输出拒绝覆盖。
+
+真实32人检查（不全量训练、不算完整AP）：`python train_abc.py --check-only`。
+最佳C完整独立复核入口：
+
+```bash
+python evaluate_abc.py --c-checkpoint /home/nzd/projects/cig-module-a-n/runs/model_abc_seed42/best.pt --output /home/nzd/projects/cig-module-a-n/runs/evaluate_abc_retrained
+```
+
+验证入口会读取新C保存的阈值并检查AB权重哈希。显式`--tau`覆盖阈值属于另一个评估设置，须单独报告。
+当前只通过真实小批接口/标签/冻结参数/缓存复用检查，尚未执行新C的全量训练或完整AP；不能预设重训练后一定提升。
