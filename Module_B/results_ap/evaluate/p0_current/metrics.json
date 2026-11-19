@@ -1,0 +1,48 @@
+{
+  "reference_metrics": {
+    "coco/AP": 0.7362229627718928,
+    "coco/AP .5": 0.8974915523808263,
+    "coco/AP .75": 0.8048378781172929,
+    "coco/AP (M)": 0.7034782005723281,
+    "coco/AP (L)": 0.7997551222424641,
+    "coco/AR": 0.7897670025188918,
+    "coco/AR .5": 0.9362405541561712,
+    "coco/AR .75": 0.8507556675062973,
+    "coco/AR (M)": 0.7469270691068014,
+    "coco/AR (L)": 0.851802303976217
+  },
+  "cpu_pre_nms_metrics": {
+    "coco/AP": 0.7362229627718928,
+    "coco/AP .5": 0.8974915523808263,
+    "coco/AP .75": 0.8048378781172929,
+    "coco/AP (M)": 0.7034782005723281,
+    "coco/AP (L)": 0.7997551222424641,
+    "coco/AR": 0.7897670025188918,
+    "coco/AR .5": 0.9362405541561712,
+    "coco/AR .75": 0.8507556675062973,
+    "coco/AR (M)": 0.7469270691068014,
+    "coco/AR (L)": 0.851802303976217
+  },
+  "cpu_final_metrics": {
+    "coco/AP": 0.7362229627718928,
+    "coco/AP .5": 0.8974915523808263,
+    "coco/AP .75": 0.8048378781172929,
+    "coco/AP (M)": 0.7034782005723281,
+    "coco/AP (L)": 0.7997551222424641,
+    "coco/AR": 0.7897670025188918,
+    "coco/AR .5": 0.9362405541561712,
+    "coco/AR .75": 0.8507556675062973,
+    "coco/AR (M)": 0.7469270691068014,
+    "coco/AR (L)": 0.851802303976217
+  },
+  "audit": {
+    "num_output_predictions": 76931,
+    "evaluation_image_count": 5000,
+    "num_unique_images": 3893,
+    "num_input_instances": 104125
+  },
+  "input_count": 104125,
+  "all_10_metrics_match": true,
+  "postprocessing_records_match": true,
+  "final_predictions_sha256": "0a38cf268661bdcd6aeae0a9d17536fe05bed93e87c0bdda6a548ac63b2416fc"
+}

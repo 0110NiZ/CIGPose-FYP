@@ -52,7 +52,9 @@ def make_features(arrays):
 
 
 
-def prepare_data(cache, label_dir, seed, max_instances):
+def prepare_data(cache, label_dir, seed, max_instances, split_mode='internal'):
+    if split_mode not in ('internal', 'all'):
+        raise ValueError('Unknown training split mode')
     run = json.loads((label_dir/'run.json').read_text())
     summary = json.loads((label_dir/'summary.json').read_text())
     if (run.get('schema_version') != 'b-only-labels-v4' or run.get('scope') != 'full'
@@ -120,6 +122,10 @@ def prepare_data(cache, label_dir, seed, max_instances):
             print(f'Loaded verified training rows: {offset}/{n}', flush=True)
     if seen != selected or offset != n:
         raise ValueError('Incomplete training join')
+    if split_mode == 'all':
+        dev = np.zeros(n, dtype=bool)
+        print(f'Data ready: {n} people; all {n} used for training; internal development=0', flush=True)
+        return x, gains, ann_ids, image_ids, dev, used_files, run, summary
     dev = np.asarray([is_development(v, seed) for v in image_ids])
     if not dev.any() or dev.all():
         raise ValueError('Empty train or development partition; increase smoke sample')

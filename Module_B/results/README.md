@@ -1,5 +1,8 @@
 # Module B results
 
+> 历史实验：本目录采用内部开发集选模，不属于当前主协议。当前主结果请看 [results_ap](../results_ap/README.md)，原报告和权重保留供追溯。
+
+
 COCO val2017, fixed detection boxes, single view.
 All four methods use current-runtime predictions and the same scoring protocol.
 

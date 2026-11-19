@@ -1,0 +1,1052 @@
+[
+  {
+    "epoch": 1,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.045460726219478,
+    "validation": {
+      "epoch": 1,
+      "metrics": {
+        "coco/AP": 0.7367262536947832,
+        "coco/AP .5": 0.8982209379395504,
+        "coco/AP .75": 0.8056110065213882,
+        "coco/AP (M)": 0.7036911210548872,
+        "coco/AP (L)": 0.7997773934936198,
+        "coco/AR": 0.7902235516372796,
+        "coco/AR .5": 0.9367128463476071,
+        "coco/AR .75": 0.8521725440806045,
+        "coco/AR (M)": 0.7475553127560776,
+        "coco/AR (L)": 0.8520624303232998
+      },
+      "validation_AP": 0.7367262536947832,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 70798,
+        "0.5": 16654,
+        "0.75": 4494,
+        "1.0": 12179
+      },
+      "flip_test": false,
+      "predictions_sha256": "6c5f620d503108ff67ce6af70f25da0ec6a7c4eb59680b9f931aa2d43dd5a9bf",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 2,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.04293047009267,
+    "validation": {
+      "epoch": 2,
+      "metrics": {
+        "coco/AP": 0.7364675057678681,
+        "coco/AP .5": 0.8975853863469997,
+        "coco/AP .75": 0.8051789085925753,
+        "coco/AP (M)": 0.7034245620827904,
+        "coco/AP (L)": 0.7999614632202143,
+        "coco/AR": 0.7899244332493703,
+        "coco/AR .5": 0.9362405541561712,
+        "coco/AR .75": 0.8515428211586902,
+        "coco/AR (M)": 0.7471182736957116,
+        "coco/AR (L)": 0.8519509476031215
+      },
+      "validation_AP": 0.7364675057678681,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 60319,
+        "0.5": 3500,
+        "0.75": 18316,
+        "1.0": 21990
+      },
+      "flip_test": false,
+      "predictions_sha256": "2f263decf050a27b67d014ae412d9dfc07cb12d9e8d13ea8f254e0307ba71c56",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 3,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.041412282183252,
+    "validation": {
+      "epoch": 3,
+      "metrics": {
+        "coco/AP": 0.7364756911984275,
+        "coco/AP .5": 0.8977642424960509,
+        "coco/AP .75": 0.8052929634270468,
+        "coco/AP (M)": 0.7041448471153295,
+        "coco/AP (L)": 0.7995530750644937,
+        "coco/AR": 0.7901290931989925,
+        "coco/AR .5": 0.9362405541561712,
+        "coco/AR .75": 0.8515428211586902,
+        "coco/AR (M)": 0.7475279978148046,
+        "coco/AR (L)": 0.8518394648829432
+      },
+      "validation_AP": 0.7364756911984275,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 30061,
+        "0.5": 18520,
+        "0.75": 37769,
+        "1.0": 17775
+      },
+      "flip_test": false,
+      "predictions_sha256": "2cb386282871096c61491f6020fe9584d6f0d48d033ecc9c09b3c13f11e5170b",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 4,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.0396296281208173,
+    "validation": {
+      "epoch": 4,
+      "metrics": {
+        "coco/AP": 0.736320426118429,
+        "coco/AP .5": 0.8976139543520799,
+        "coco/AP .75": 0.8057686378883406,
+        "coco/AP (M)": 0.7037840928284885,
+        "coco/AP (L)": 0.7992046647947048,
+        "coco/AR": 0.7900031486146096,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8520151133501259,
+        "coco/AR (M)": 0.7473094782846218,
+        "coco/AR (L)": 0.8518766257896692
+      },
+      "validation_AP": 0.736320426118429,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 41789,
+        "0.5": 17081,
+        "0.75": 24850,
+        "1.0": 20405
+      },
+      "flip_test": false,
+      "predictions_sha256": "91cacaf32be0b4c5512fb3129e449968743c0d92f48526e66812dcd8bdb15e82",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 5,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.03758171606152,
+    "validation": {
+      "epoch": 5,
+      "metrics": {
+        "coco/AP": 0.7366786242339184,
+        "coco/AP .5": 0.8979562551975463,
+        "coco/AP .75": 0.8056209050003695,
+        "coco/AP (M)": 0.7039536267565888,
+        "coco/AP (L)": 0.7999564261439929,
+        "coco/AR": 0.7900188916876575,
+        "coco/AR .5": 0.9362405541561712,
+        "coco/AR .75": 0.8518576826196473,
+        "coco/AR (M)": 0.7473094782846217,
+        "coco/AR (L)": 0.8519137866963954
+      },
+      "validation_AP": 0.7366786242339184,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 52246,
+        "0.5": 43508,
+        "0.75": 1564,
+        "1.0": 6807
+      },
+      "flip_test": false,
+      "predictions_sha256": "fe59b8c169f4e28ea6d5aa941e1bfbc67db8ff0c28b2baa5868f8127ad9e2d84",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 6,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.0349986237028475,
+    "validation": {
+      "epoch": 6,
+      "metrics": {
+        "coco/AP": 0.7367026540403915,
+        "coco/AP .5": 0.8980411964302336,
+        "coco/AP .75": 0.8060304802725131,
+        "coco/AP (M)": 0.7040316632517583,
+        "coco/AP (L)": 0.7998385861547336,
+        "coco/AR": 0.7901133501259446,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8523299748110831,
+        "coco/AR (M)": 0.7475826276973504,
+        "coco/AR (L)": 0.8517651430694908
+      },
+      "validation_AP": 0.7367026540403915,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 84196,
+        "0.5": 1071,
+        "0.75": 16815,
+        "1.0": 2043
+      },
+      "flip_test": false,
+      "predictions_sha256": "c3e12304b9e34287ea1b910c1fcb076bf00d3410b23e2aa7fddbd93eb3f27bf8",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 7,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.0320720065902296,
+    "validation": {
+      "epoch": 7,
+      "metrics": {
+        "coco/AP": 0.736560579694977,
+        "coco/AP .5": 0.8979286495648229,
+        "coco/AP .75": 0.8054440182343362,
+        "coco/AP (M)": 0.7038545045617487,
+        "coco/AP (L)": 0.7999119300668024,
+        "coco/AR": 0.7900818639798489,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8518576826196473,
+        "coco/AR (M)": 0.7471729035782574,
+        "coco/AR (L)": 0.8522482348569305
+      },
+      "validation_AP": 0.736560579694977,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 84681,
+        "0.5": 880,
+        "0.75": 4263,
+        "1.0": 14301
+      },
+      "flip_test": false,
+      "predictions_sha256": "e4f9aa2a8a986aa7f8e969ad30baa22adae8e729288d4c5ac5537ab14d21cd9b",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 8,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.028602260308252,
+    "validation": {
+      "epoch": 8,
+      "metrics": {
+        "coco/AP": 0.7366200165976124,
+        "coco/AP .5": 0.8983478064751099,
+        "coco/AP .75": 0.8050842148532205,
+        "coco/AP (M)": 0.7038619973808847,
+        "coco/AP (L)": 0.8003486482385794,
+        "coco/AR": 0.7899244332493703,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8515428211586902,
+        "coco/AR (M)": 0.7472275334608032,
+        "coco/AR (L)": 0.851802303976217
+      },
+      "validation_AP": 0.7366200165976124,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 99035,
+        "0.5": 1339,
+        "0.75": 1951,
+        "1.0": 1800
+      },
+      "flip_test": false,
+      "predictions_sha256": "2a78fd417e64134924b902397d0ea0bcd36da9cbe5536a75ba34829f86e30192",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 9,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.024349609202596,
+    "validation": {
+      "epoch": 9,
+      "metrics": {
+        "coco/AP": 0.7363491979999602,
+        "coco/AP .5": 0.8980775376414736,
+        "coco/AP .75": 0.8055358758239098,
+        "coco/AP (M)": 0.7034584067729337,
+        "coco/AP (L)": 0.7997624438613288,
+        "coco/AR": 0.7899401763224182,
+        "coco/AR .5": 0.9363979848866498,
+        "coco/AR .75": 0.8520151133501259,
+        "coco/AR (M)": 0.7472275334608031,
+        "coco/AR (L)": 0.8518394648829432
+      },
+      "validation_AP": 0.7363491979999602,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 83382,
+        "0.5": 16402,
+        "0.75": 2499,
+        "1.0": 1842
+      },
+      "flip_test": false,
+      "predictions_sha256": "98b467b82cc390e85d118c58678e3a855ab5fe3801147537fc58ca9dfda812f5",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 10,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.0200677555370152,
+    "validation": {
+      "epoch": 10,
+      "metrics": {
+        "coco/AP": 0.7362226382826053,
+        "coco/AP .5": 0.8982080934985774,
+        "coco/AP .75": 0.8049279484629224,
+        "coco/AP (M)": 0.7036015537777338,
+        "coco/AP (L)": 0.7997145326314501,
+        "coco/AR": 0.7897670025188918,
+        "coco/AR .5": 0.9367128463476071,
+        "coco/AR .75": 0.8513853904282116,
+        "coco/AR (M)": 0.747036328871893,
+        "coco/AR (L)": 0.8516908212560386
+      },
+      "validation_AP": 0.7362226382826053,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 64075,
+        "0.5": 33199,
+        "0.75": 2489,
+        "1.0": 4362
+      },
+      "flip_test": false,
+      "predictions_sha256": "1b73fb67fc446ef22d2d16b393852f3a1202d1ff7d6ac0e923d0612104fb59dd",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 11,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.0152352745656343,
+    "validation": {
+      "epoch": 11,
+      "metrics": {
+        "coco/AP": 0.7364515526447016,
+        "coco/AP .5": 0.8979092869933508,
+        "coco/AP .75": 0.8050744302102695,
+        "coco/AP (M)": 0.7036394319010623,
+        "coco/AP (L)": 0.7994578734490584,
+        "coco/AR": 0.7902707808564232,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8517002518891688,
+        "coco/AR (M)": 0.7476099426386233,
+        "coco/AR (L)": 0.8519881085098475
+      },
+      "validation_AP": 0.7364515526447016,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 15436,
+        "0.5": 17185,
+        "0.75": 7919,
+        "1.0": 63585
+      },
+      "flip_test": false,
+      "predictions_sha256": "a39e359e576f53e3361cdf5f734f9e780bb97954a8e3b705a0148958037d2217",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 12,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.010389963198035,
+    "validation": {
+      "epoch": 12,
+      "metrics": {
+        "coco/AP": 0.7363876977601127,
+        "coco/AP .5": 0.8982747077516161,
+        "coco/AP .75": 0.8051641685793034,
+        "coco/AP (M)": 0.7037138406530697,
+        "coco/AP (L)": 0.7995637744963294,
+        "coco/AR": 0.7898142317380353,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8513853904282116,
+        "coco/AR (M)": 0.7471182736957116,
+        "coco/AR (L)": 0.8515793385358602
+      },
+      "validation_AP": 0.7363876977601127,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 96282,
+        "0.5": 1152,
+        "0.75": 4518,
+        "1.0": 2173
+      },
+      "flip_test": false,
+      "predictions_sha256": "011766b314857f4107aeda5ac9f2e2fac8a42d8642c4726edf3ef079f231954e",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 13,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 2.005245080032428,
+    "validation": {
+      "epoch": 13,
+      "metrics": {
+        "coco/AP": 0.736409661310412,
+        "coco/AP .5": 0.8976550273657731,
+        "coco/AP .75": 0.8053977642877127,
+        "coco/AP (M)": 0.7035167506901274,
+        "coco/AP (L)": 0.7996186211927672,
+        "coco/AR": 0.7900818639798489,
+        "coco/AR .5": 0.9356108312342569,
+        "coco/AR .75": 0.8515428211586902,
+        "coco/AR (M)": 0.7472548484020759,
+        "coco/AR (L)": 0.8521367521367521
+      },
+      "validation_AP": 0.736409661310412,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 28042,
+        "0.5": 19630,
+        "0.75": 54571,
+        "1.0": 1882
+      },
+      "flip_test": false,
+      "predictions_sha256": "c8c6755951c8def4e20fab2271f1ac449c62232c4ae6aedc4ceaf00d3b8a3514",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 14,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9999597877170328,
+    "validation": {
+      "epoch": 14,
+      "metrics": {
+        "coco/AP": 0.7360366332299869,
+        "coco/AP .5": 0.8975281518731262,
+        "coco/AP .75": 0.804930198746441,
+        "coco/AP (M)": 0.7031979164822144,
+        "coco/AP (L)": 0.7992516750018059,
+        "coco/AR": 0.7899874055415618,
+        "coco/AR .5": 0.9362405541561712,
+        "coco/AR .75": 0.8513853904282116,
+        "coco/AR (M)": 0.7471182736957116,
+        "coco/AR (L)": 0.852099591230026
+      },
+      "validation_AP": 0.7360366332299869,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 14299,
+        "0.5": 10059,
+        "0.75": 33840,
+        "1.0": 45927
+      },
+      "flip_test": false,
+      "predictions_sha256": "fd2cb6d63dd99d95ebde748c01f82c9f86ef25983722836d8a49225c92a36a6a",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 15,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9953477826019514,
+    "validation": {
+      "epoch": 15,
+      "metrics": {
+        "coco/AP": 0.7361798635069368,
+        "coco/AP .5": 0.8978985604986751,
+        "coco/AP .75": 0.8051732854818053,
+        "coco/AP (M)": 0.7036288226777511,
+        "coco/AP (L)": 0.799236623554239,
+        "coco/AR": 0.7900661209068011,
+        "coco/AR .5": 0.9363979848866498,
+        "coco/AR .75": 0.8513853904282116,
+        "coco/AR (M)": 0.7473367932258946,
+        "coco/AR (L)": 0.8519881085098475
+      },
+      "validation_AP": 0.7361798635069368,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 13658,
+        "0.5": 84386,
+        "0.75": 3787,
+        "1.0": 2294
+      },
+      "flip_test": false,
+      "predictions_sha256": "2f9236572395fd467ff34059a4a8872b8bab76126f0dc3b18b5fd0f77839c001",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 16,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.990838446697367,
+    "validation": {
+      "epoch": 16,
+      "metrics": {
+        "coco/AP": 0.736089262281658,
+        "coco/AP .5": 0.8977166609766909,
+        "coco/AP .75": 0.8051517994878515,
+        "coco/AP (M)": 0.7038110995153091,
+        "coco/AP (L)": 0.7989577437436586,
+        "coco/AR": 0.7903022670025189,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8517002518891688,
+        "coco/AR (M)": 0.7477192024037149,
+        "coco/AR (L)": 0.8520252694165737
+      },
+      "validation_AP": 0.736089262281658,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 13050,
+        "0.5": 26587,
+        "0.75": 49610,
+        "1.0": 14878
+      },
+      "flip_test": false,
+      "predictions_sha256": "0d869a4aed21812ebc76ee3d4c8e6ff43129d8416b3a97f7d4a47c9da9e18975",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 17,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9850254000272856,
+    "validation": {
+      "epoch": 17,
+      "metrics": {
+        "coco/AP": 0.7362742274380899,
+        "coco/AP .5": 0.8979465816345626,
+        "coco/AP .75": 0.8050439414106686,
+        "coco/AP (M)": 0.7035895057356346,
+        "coco/AP (L)": 0.7994409863903439,
+        "coco/AR": 0.7901448362720404,
+        "coco/AR .5": 0.9363979848866498,
+        "coco/AR .75": 0.8513853904282116,
+        "coco/AR (M)": 0.7474460529909861,
+        "coco/AR (L)": 0.8520252694165737
+      },
+      "validation_AP": 0.7362742274380899,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 14258,
+        "0.5": 71117,
+        "0.75": 3508,
+        "1.0": 15242
+      },
+      "flip_test": false,
+      "predictions_sha256": "e4eb662adaa5d07e31b26c74bbec08e514bff26e15a70fb5a6aca733ae246241",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 18,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9800689013246695,
+    "validation": {
+      "epoch": 18,
+      "metrics": {
+        "coco/AP": 0.7360641535243985,
+        "coco/AP .5": 0.8982135953199724,
+        "coco/AP .75": 0.8045894399888904,
+        "coco/AP (M)": 0.7031423848102573,
+        "coco/AP (L)": 0.7994572590608803,
+        "coco/AR": 0.7894993702770782,
+        "coco/AR .5": 0.9363979848866498,
+        "coco/AR .75": 0.8507556675062973,
+        "coco/AR (M)": 0.7465719748702541,
+        "coco/AR (L)": 0.8516164994425864
+      },
+      "validation_AP": 0.7360641535243985,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 76737,
+        "0.5": 21140,
+        "0.75": 3437,
+        "1.0": 2811
+      },
+      "flip_test": false,
+      "predictions_sha256": "7d5063407017066c5f1e81bafc7dbd4487b882cfb2058f3b0fe8219e846ff975",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 19,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9757441576864017,
+    "validation": {
+      "epoch": 19,
+      "metrics": {
+        "coco/AP": 0.7363222820068426,
+        "coco/AP .5": 0.8979877487911303,
+        "coco/AP .75": 0.8052142796370496,
+        "coco/AP (M)": 0.703516920778336,
+        "coco/AP (L)": 0.7996021488600841,
+        "coco/AR": 0.7902235516372796,
+        "coco/AR .5": 0.9363979848866498,
+        "coco/AR .75": 0.8515428211586902,
+        "coco/AR (M)": 0.7473641081671675,
+        "coco/AR (L)": 0.8523225566703827
+      },
+      "validation_AP": 0.7363222820068426,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 27315,
+        "0.5": 71865,
+        "0.75": 3192,
+        "1.0": 1753
+      },
+      "flip_test": false,
+      "predictions_sha256": "66ac2cebcca113e340e04fcefbb8e5b28bf1fa5d5f87809ea4989405c57cdf0b",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 20,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9720319276113418,
+    "validation": {
+      "epoch": 20,
+      "metrics": {
+        "coco/AP": 0.7359448343721403,
+        "coco/AP .5": 0.8976437677614836,
+        "coco/AP .75": 0.8055765725873563,
+        "coco/AP (M)": 0.7033208452613897,
+        "coco/AP (L)": 0.7988910997544318,
+        "coco/AR": 0.7899401763224182,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8521725440806045,
+        "coco/AR (M)": 0.7470909587544388,
+        "coco/AR (L)": 0.8520252694165737
+      },
+      "validation_AP": 0.7359448343721403,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 12308,
+        "0.5": 1192,
+        "0.75": 89326,
+        "1.0": 1299
+      },
+      "flip_test": false,
+      "predictions_sha256": "95e2c6481ca3714cf50b93fc330efa85606c9354767000569a04687fdb502e8d",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 21,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9676993908590303,
+    "validation": {
+      "epoch": 21,
+      "metrics": {
+        "coco/AP": 0.7363639331631899,
+        "coco/AP .5": 0.8982412744010331,
+        "coco/AP .75": 0.8050272752273333,
+        "coco/AP (M)": 0.7038735435081864,
+        "coco/AP (L)": 0.7997523318318589,
+        "coco/AR": 0.7897512594458439,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.851227959697733,
+        "coco/AR (M)": 0.7470636438131658,
+        "coco/AR (L)": 0.8516164994425864
+      },
+      "validation_AP": 0.7363639331631899,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 97804,
+        "0.5": 1018,
+        "0.75": 2744,
+        "1.0": 2559
+      },
+      "flip_test": false,
+      "predictions_sha256": "7dc70d95d9a2056ea0074b8128e1654556524a92d78046793701d90d12225bcc",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 22,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.962462649652196,
+    "validation": {
+      "epoch": 22,
+      "metrics": {
+        "coco/AP": 0.7359295749515441,
+        "coco/AP .5": 0.8975316051993507,
+        "coco/AP .75": 0.8055502351875702,
+        "coco/AP (M)": 0.7034549915110966,
+        "coco/AP (L)": 0.7989708468558189,
+        "coco/AR": 0.7900188916876575,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8520151133501259,
+        "coco/AR (M)": 0.7472002185195302,
+        "coco/AR (L)": 0.8520624303233
+      },
+      "validation_AP": 0.7359295749515441,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 12340,
+        "0.5": 9012,
+        "0.75": 79969,
+        "1.0": 2804
+      },
+      "flip_test": false,
+      "predictions_sha256": "8e6bd0fa7beae6eea3860f304d75d893b33f8aeeff5cfda0c03bfca0746f6278",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 23,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9582422559796826,
+    "validation": {
+      "epoch": 23,
+      "metrics": {
+        "coco/AP": 0.7359923644710935,
+        "coco/AP .5": 0.8978024651283033,
+        "coco/AP .75": 0.8052884483323849,
+        "coco/AP (M)": 0.7030633588087002,
+        "coco/AP (L)": 0.7992057991380823,
+        "coco/AR": 0.7897197732997482,
+        "coco/AR .5": 0.9357682619647355,
+        "coco/AR .75": 0.8518576826196473,
+        "coco/AR (M)": 0.7467085495766185,
+        "coco/AR (L)": 0.8519509476031214
+      },
+      "validation_AP": 0.7359923644710935,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 63053,
+        "0.5": 12766,
+        "0.75": 25853,
+        "1.0": 2453
+      },
+      "flip_test": false,
+      "predictions_sha256": "cdded78cb034670337dfa8200f2be399103b4d2cc4e0455fff9c7fd342c75332",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 24,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9547293166915392,
+    "validation": {
+      "epoch": 24,
+      "metrics": {
+        "coco/AP": 0.736294558123457,
+        "coco/AP .5": 0.8981343835302018,
+        "coco/AP .75": 0.8048640512758681,
+        "coco/AP (M)": 0.7035344134899768,
+        "coco/AP (L)": 0.7998906052573697,
+        "coco/AR": 0.7897827455919396,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.851227959697733,
+        "coco/AR (M)": 0.7468997541655286,
+        "coco/AR (L)": 0.851839464882943
+      },
+      "validation_AP": 0.736294558123457,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 73755,
+        "0.5": 25220,
+        "0.75": 2801,
+        "1.0": 2349
+      },
+      "flip_test": false,
+      "predictions_sha256": "ee1c351de336540b42bd6106fe9cd1abedbe6694595de5ab2a2c7758486bb800",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 25,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9505385199802507,
+    "validation": {
+      "epoch": 25,
+      "metrics": {
+        "coco/AP": 0.7359204292727329,
+        "coco/AP .5": 0.8974787567780036,
+        "coco/AP .75": 0.8052967561382722,
+        "coco/AP (M)": 0.7033101054126467,
+        "coco/AP (L)": 0.799037400972223,
+        "coco/AR": 0.7897670025188918,
+        "coco/AR .5": 0.9357682619647355,
+        "coco/AR .75": 0.8517002518891688,
+        "coco/AR (M)": 0.7469270691068014,
+        "coco/AR (L)": 0.851839464882943
+      },
+      "validation_AP": 0.7359204292727329,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 28595,
+        "0.5": 886,
+        "0.75": 52732,
+        "1.0": 21912
+      },
+      "flip_test": false,
+      "predictions_sha256": "d73c2817667f5ff7e73800d45fbc5239527a58092718315b30fedc4b612b0840",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 26,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9469124464253367,
+    "validation": {
+      "epoch": 26,
+      "metrics": {
+        "coco/AP": 0.7360232499672307,
+        "coco/AP .5": 0.897576061554731,
+        "coco/AP .75": 0.8054780574045877,
+        "coco/AP (M)": 0.7035137515209317,
+        "coco/AP (L)": 0.7992466290096301,
+        "coco/AR": 0.7898299748110832,
+        "coco/AR .5": 0.9357682619647355,
+        "coco/AR .75": 0.8520151133501259,
+        "coco/AR (M)": 0.7469270691068014,
+        "coco/AR (L)": 0.8519881085098475
+      },
+      "validation_AP": 0.7360232499672307,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 51323,
+        "0.5": 1025,
+        "0.75": 49970,
+        "1.0": 1807
+      },
+      "flip_test": false,
+      "predictions_sha256": "1fca23aad6fa715005f677d68498b868032e3f08a4af143dfe205d89b478bc0e",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 27,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9430352090626697,
+    "validation": {
+      "epoch": 27,
+      "metrics": {
+        "coco/AP": 0.7360754234592927,
+        "coco/AP .5": 0.8977000714583768,
+        "coco/AP .75": 0.8057026738375253,
+        "coco/AP (M)": 0.7035887239839719,
+        "coco/AP (L)": 0.7991751261900354,
+        "coco/AR": 0.7900818639798489,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8523299748110831,
+        "coco/AR (M)": 0.7472821633433488,
+        "coco/AR (L)": 0.852099591230026
+      },
+      "validation_AP": 0.7360754234592927,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 21767,
+        "0.5": 712,
+        "0.75": 79354,
+        "1.0": 2292
+      },
+      "flip_test": false,
+      "predictions_sha256": "6f8a87540534ab90442c8f67af21dfe98cd8c93511a2060a4d3d6bbbeab8ce72",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 28,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.9396496873373843,
+    "validation": {
+      "epoch": 28,
+      "metrics": {
+        "coco/AP": 0.7363911306403824,
+        "coco/AP .5": 0.8983188346599371,
+        "coco/AP .75": 0.8056148985354926,
+        "coco/AP (M)": 0.7036832822541449,
+        "coco/AP (L)": 0.7999907948479873,
+        "coco/AR": 0.7898929471032746,
+        "coco/AR .5": 0.9365554156171285,
+        "coco/AR .75": 0.8517002518891688,
+        "coco/AR (M)": 0.7471182736957116,
+        "coco/AR (L)": 0.851802303976217
+      },
+      "validation_AP": 0.7363911306403824,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 98325,
+        "0.5": 642,
+        "0.75": 3007,
+        "1.0": 2151
+      },
+      "flip_test": false,
+      "predictions_sha256": "d22b00db59f23cec3b8c960f1ff0e2a85f4d202ece7834f96efd25feb22a9213",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 29,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.936238505612996,
+    "validation": {
+      "epoch": 29,
+      "metrics": {
+        "coco/AP": 0.7359978969676585,
+        "coco/AP .5": 0.8976081611399608,
+        "coco/AP .75": 0.8057037434257782,
+        "coco/AP (M)": 0.7034957351410922,
+        "coco/AP (L)": 0.7987182825965422,
+        "coco/AR": 0.7900661209068011,
+        "coco/AR .5": 0.9359256926952141,
+        "coco/AR .75": 0.8524874055415617,
+        "coco/AR (M)": 0.7472821633433487,
+        "coco/AR (L)": 0.8520252694165737
+      },
+      "validation_AP": 0.7359978969676585,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 10963,
+        "0.5": 1164,
+        "0.75": 81222,
+        "1.0": 10776
+      },
+      "flip_test": false,
+      "predictions_sha256": "0055456e46e6c320443768316fdfca16aec40f9473c5a27e9428a11e82f8ca4b",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  },
+  {
+    "epoch": 30,
+    "train_people": 149813,
+    "train_scaled_huber_loss": 1.934737838397661,
+    "validation": {
+      "epoch": 30,
+      "metrics": {
+        "coco/AP": 0.7364044476992425,
+        "coco/AP .5": 0.8979823873701259,
+        "coco/AP .75": 0.8050192336594839,
+        "coco/AP (M)": 0.7036651107473986,
+        "coco/AP (L)": 0.7999339588644793,
+        "coco/AR": 0.7900346347607053,
+        "coco/AR .5": 0.9363979848866498,
+        "coco/AR .75": 0.851227959697733,
+        "coco/AR (M)": 0.7471455886369844,
+        "coco/AR (L)": 0.8521739130434783
+      },
+      "validation_AP": 0.7364044476992425,
+      "detections": 104125,
+      "evaluation_image_count": 5000,
+      "bbox_protocol": "fixed_detection",
+      "selected_alpha_counts": {
+        "0.25": 40838,
+        "0.5": 57994,
+        "0.75": 2978,
+        "1.0": 2315
+      },
+      "flip_test": false,
+      "predictions_sha256": "fee6b670de742d988cec37c38e4f07e1f6f48bf8738958ab7683ca117b5a40ab",
+      "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+      "official_coco_metric": true,
+      "independent_test": false
+    }
+  }
+]

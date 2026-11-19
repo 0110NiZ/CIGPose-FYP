@@ -1,0 +1,30 @@
+{
+  "epoch": 1,
+  "metrics": {
+    "coco/AP": 0.7367262536947832,
+    "coco/AP .5": 0.8982209379395504,
+    "coco/AP .75": 0.8056110065213882,
+    "coco/AP (M)": 0.7036911210548872,
+    "coco/AP (L)": 0.7997773934936198,
+    "coco/AR": 0.7902235516372796,
+    "coco/AR .5": 0.9367128463476071,
+    "coco/AR .75": 0.8521725440806045,
+    "coco/AR (M)": 0.7475553127560776,
+    "coco/AR (L)": 0.8520624303232998
+  },
+  "validation_AP": 0.7367262536947832,
+  "detections": 104125,
+  "evaluation_image_count": 5000,
+  "bbox_protocol": "fixed_detection",
+  "selected_alpha_counts": {
+    "0.25": 70798,
+    "0.5": 16654,
+    "0.75": 4494,
+    "1.0": 12179
+  },
+  "flip_test": false,
+  "predictions_sha256": "6c5f620d503108ff67ce6af70f25da0ec6a7c4eb59680b9f931aa2d43dd5a9bf",
+  "source_cache_run_sha256": "963f3fb315070e8ad03fde860a2aeb3b4abc3b93ca229245e3c7148cc171b450",
+  "official_coco_metric": true,
+  "independent_test": false
+}

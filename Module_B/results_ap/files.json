@@ -1,0 +1,37 @@
+{
+  "protocol": "train2017_all_val2017_ap",
+  "files": {
+    "labels/run.json": "cbfe86e39e1540194587ffab8820418521387c81cd4fbb5545acc9e55a1fcaa6",
+    "labels/summary.json": "75f502d02e867cdfbaef6e8080a88c7525c62118494ff4f631371ed09c45b76b",
+    "labels/resolved_config.py": "e1de9e96cfa2a0664cf3c1d9e320f6b2b781d5861e48d9c693247fa915e722c5",
+    "train/run.json": "b676e760c76979221d6b76cdd862ba2b6375acb502ccd49fa17752c8b09bf93a",
+    "train/summary.json": "93c1c19b7fc43de162e9fa43d3ca721470d43816f47569b9222f1f933d6b272a",
+    "train/split.json": "8aaa10a6f849fb875bd7dd168e79ba1c4b33db03f279f8a67f923e836f37d3ec",
+    "train/history.json": "a265416f888f9ff1ea76de63452eefd29c83d0a2c89e14a66a72a6b5f83899dc",
+    "train/best.pt": "c5a238afd6e15cb86e8efa365dbf4c16a799e828715ebe4370c66ea499085363",
+    "train/best_validation.json": "56c4d65c53fd3901a52534beb1d019b3eacce4b8ef58a2f76f4ae2619c2167d5",
+    "evaluate/run.json": "abebd45b731d3633486459ae007d5cfecd1164663625a443240dfab5a94d42b1",
+    "evaluate/summary.json": "23bbc9f3a45af9cd39eeee04d6f72fe7164d3f152d0ab68a7e9f69be6152244e",
+    "evaluate/p0_current/metrics.json": "2501e67752266b89320f213fdbda2d95eb542c9e6f68479bf9dbec2744285fea",
+    "evaluate/fixed_alpha025/metrics.json": "c88fdee76b1e7b111344d3b75240a5fec0abf1b85cc3f63895adfe02922e7eb1",
+    "evaluate/top1_alpha1_current/metrics.json": "bbbf13cfba928e956e9f234d0ab341ab972b2433112ebcfb48dc66b797a78e45",
+    "evaluate/b_current/metrics.json": "51a310f35fb83befe815dd60bb868bff43fd39828ac295ecc24e9322019712ab"
+  },
+  "source_code": {
+    "train.py": "84ff514edab623860e57f7c0b0e8412f0833f05eb9140ffbcd21d6146c1bc109",
+    "validate.py": "b13f8c47fe5132ca07345a2f2310959d2e0be642f3fe9f61bdc554cdfd912956",
+    "evaluate.py": "5cf7ab7c3fecbc2a5a0f1dd98d91f307dc286add16b674d3aa33c62f88b7fd30",
+    "common.py": "52272f968a549cfa4e1e1f7c99af6a94c9e4cc3ae7428e680234405db4afbcd5",
+    "config.py": "047ee662220ce986139e3eeb3c5adc381f8da851c81491dfd0e2954f4b581114",
+    "data.py": "9bf482658f0809494a58f794c56a8a8c9b96f875782bec60c7b656f680e7afef",
+    "model.py": "7f1934520b8c648ab9b081b377cc594213a6f790c937326dffff7ad24a84fec9"
+  },
+  "source_archive_sha256": "d83bbef485b4be1710e44c660fdb8482b997f8efa0376621ebeadfe8302449ee",
+  "history_sha256": "0a16f516bba41015344d74ad9632a3897bee87e1e4056bf92fbce7e4f67a0837",
+  "original_directories": {
+    "labels": "/mnt/e/fyp_module_b/full_train_v4",
+    "train": "/mnt/e/fyp_module_b/train_b_ap",
+    "evaluate": "/mnt/e/fyp_module_b/eval_b_ap"
+  },
+  "note": "Original reports and weights copied byte for byte; original experiment remains in results/"
+}

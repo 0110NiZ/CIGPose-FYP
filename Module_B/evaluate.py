@@ -14,7 +14,7 @@ import random
 import numpy as np
 os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
 from Module_B.config import (ALPHAS, FEATURE_SPEC, WEIGHT_SHA, EXPECTED_DETECTIONS,
-                             FIXED_BOX_SOURCE, ORIGINAL_TRAIN_SHA, NETWORK)
+                             FIXED_BOX_SOURCE, ORIGINAL_TRAIN_SHA, NETWORK, LEGACY_MODULE_HASHES)
 from Module_B.common import sha, digest, atomic_json, source_hashes
 from Module_B.data import make_features
 from Module_B.model import get_model
@@ -105,19 +105,48 @@ def validate_b_run(folder, trainer_path):
     run = json.loads(run_path.read_text())
     summary = json.loads(summary_path.read_text())
     checkpoint = folder/'best.pt'
-    if (run.get('schema_version') != 'b-gain-regressor-v1' or run.get('scope') != 'full'
+    from Module_B.validate import PROTOCOL, TRAIN_FILES, check_history
+    aligned = run.get('schema_version') == 'b-gain-regressor-ap-v1'
+    if (run.get('schema_version') not in ('b-gain-regressor-v1','b-gain-regressor-ap-v1')
+            or run.get('scope') != 'full'
             or run.get('feature_spec') != FEATURE_SPEC or run.get('alphas') != ALPHAS
-            or run.get('script_sha256') not in (sha(trainer_path), ORIGINAL_TRAIN_SHA)
             or run.get('network') != NETWORK
             or summary.get('run_fingerprint') != digest(run)
             or summary.get('training_completed') is not True
-            or summary.get('scope') != 'full' or summary.get('val2017_used') is not False
+            or summary.get('scope') != 'full'
             or summary.get('gt_in_inputs') is not False
             or summary.get('best_checkpoint_sha256') != sha(checkpoint)):
         raise ValueError('B best checkpoint/training provenance/input schema mismatch')
-    recorded = run.get('code_sha256')
-    if recorded is not None and recorded != source_hashes('train.py','common.py','config.py','data.py','model.py'):
-        raise ValueError('Training dependency code changed')
+    if aligned:
+        if (run.get('protocol') != PROTOCOL or summary.get('protocol') != PROTOCOL
+                or run.get('script_sha256') != sha(trainer_path)
+                or run.get('code_sha256') != source_hashes(*TRAIN_FILES)
+                or run.get('train_people') != 149813 or summary.get('train_people') != 149813
+                or run.get('internal_development_people') != 0 or summary.get('development_people') != 0
+                or summary.get('normalization_train_people') != 149813
+                or run.get('val2017_used') is not True or summary.get('val2017_used') is not True
+                or run.get('val2017_role') != 'epoch_selection_only'
+                or summary.get('val2017_role') != 'epoch_selection_only'
+                or run.get('val2017_updates_parameters') is not False
+                or summary.get('val2017_updates_parameters') is not False
+                or summary.get('independent_test') is not False
+                or summary.get('best_recheck_matches') is not True):
+            raise ValueError('Aligned AP training protocol/code/count mismatch')
+        history=json.loads((folder/'history.json').read_text())
+        if len(history)!=run['epochs']:
+            raise ValueError('Incomplete aligned epoch history')
+        best=check_history(history,149813)
+        if (best['epoch']!=summary['best_epoch'] or best['train_people']!=149813
+                or not 0 <= summary['best_validation_AP'] <= 1):
+            raise ValueError('Best checkpoint does not follow validation AP selection')
+        np.testing.assert_allclose(best['validation']['validation_AP'],summary['best_validation_AP'],rtol=0,atol=1e-12)
+    else:
+        if (run.get('script_sha256') not in (ORIGINAL_TRAIN_SHA,LEGACY_MODULE_HASHES['train.py'])
+                or summary.get('val2017_used') is not False):
+            raise ValueError('Unknown historical training code/protocol')
+        recorded=run.get('code_sha256')
+        if recorded is not None and recorded!=LEGACY_MODULE_HASHES:
+            raise ValueError('Historical training dependency hashes changed')
     return run, summary
 
 
@@ -289,6 +318,7 @@ def main():
         source_cache=str(args.cache),source_cache_run_sha256=sha(args.cache/'run.json'),
         source_protocol=cp,source_shards=source_info,checkpoint_sha256=WEIGHT_SHA,
         b_checkpoint_sha256=sha(args.b_run/'best.pt'),b_training_fingerprint=digest(b_run),
+        b_model_selection_protocol=b_run.get('protocol','internal_development_gain'),
         b_training_summary_sha256=sha(args.b_run/'summary.json'),annotation_sha256=ann_sha,
         code_sha256={str(f):sha(f) for f in code},config_sha256=digest(cfg.to_dict()),
         modes=list(MODES),alphas=ALPHAS,seed=42,deterministic=True,matmul_tf32=False,
@@ -384,6 +414,8 @@ def main():
             historical_p0_coordinate_max_error=max(r['historical_p0_coordinate_max_error'] for r in reports),
             historical_p0_score_max_error=max(r['historical_p0_score_max_error'] for r in reports),
             historical_cache_parity_claim=False,formal_coco_ap_evaluated=False)
+        summary['val2017_used_for_model_selection']=b_run.get('protocol')=='train2017_all_val2017_ap'
+        summary['independent_test']=False
         if args.full:
             if seen!=set(cache.expected):raise ValueError('Incomplete full detection coverage')
             from mmpose.datasets.datasets.utils import parse_pose_metainfo
@@ -394,6 +426,9 @@ def main():
             summary['evaluations']=scores
             summary['formal_coco_ap_evaluated']=True
             ap={mode:float(scores[mode]['reference_metrics']['coco/AP']) for mode in MODES}
+            if b_run.get('protocol')=='train2017_all_val2017_ap':
+                np.testing.assert_allclose(ap['b_current'],b_summary['best_validation_AP'],rtol=0,atol=1e-12)
+                summary['training_selection_AP_matches']=True
             summary['ap_0_to_1']=ap
             summary['b_minus_controls_ap_points']={mode:100*(ap['b_current']-ap[mode]) for mode in MODES if mode!='b_current'}
         atomic_json(args.output/'summary.json',summary)
