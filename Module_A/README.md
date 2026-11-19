@@ -104,3 +104,19 @@ python Module_A/train_ab.py
 - 可用`--epochs 20`改变预算，或`--a-checkpoint 路径`显式指定同架构A权重；换A后必须使用对应的新标签目录。数据路径沿用`config.py`。
 
 正式全量A+B训练尚未执行，`--check-only`不代表完整AP验证已经通过。原A/B的AP不能当作A+B结果。
+
+## 冻结 A+B+C 串联验证（需要 C 的真实权重）
+
+```bash
+python Module_A/evaluate_abc.py --c-checkpoint /path/to/epoch_014.pt
+```
+
+默认加载本机 `model_ab_seed42/best.pt` 以及它记录的A3权重，检查A权重哈希一致；C使用原137维单输出分类器，默认阈值0.51（正式weighted BCE第14轮原配置），不自动搜索阈值，不训练任何模型。
+`model_abc.py` 中特征编码和分类器原样取自C分支commit f5cdf4b；不是145维或多任务版本。
+每批用A选择关节、B选择强度并实际生成候选，再以这个候选的坐标/置信度变化、真实joint/alpha构建C输入。不能使用预存Top-1候选的C特征或概率。
+完整评估同时计算P0、AB、ABC，AB十项指标必须复现已保存的AB最佳结果；全5000图/104125检测，只在最终统一评分时做NMS。
+输出 `runs/evaluate_abc_frozen/results.json` 和逐人体 `decisions.jsonl`；ABC结果追加既有统一HTML。输出目录不覆盖；重复实验需 `--output 新目录`。
+这是C从Top-1/alpha1候选向AB候选的迁移检查，不能保证改善，也不能将其称为重新适配训练后的ABC。
+
+仅检查接口：`python Module_A/evaluate_abc.py --check-only`。不提供权重时使用随机C，只检查137维输入、接受/拒绝/等阈值回退，并明确不产生AP结果；正式验证不允许缺少C权重。
+截至接入时已通过32个真实检测的接口检查，尚未取得C权重，尚未运行完整ABC效果评估。桌面的`train2017_c_features.npz`和`val2017_c_features.npz`是输入特征，不能代替训练权重。
