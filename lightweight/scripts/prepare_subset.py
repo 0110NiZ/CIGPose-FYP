@@ -25,7 +25,7 @@ def main():
     from mmpose.registry import DATASETS
     os.chdir(ROOT / 'mmpose')
     register_all_modules()
-    cfg = Config.fromfile(str(ROOT / 'lightweight/configs/small30_head256_amp100.py'))
+    cfg = Config.fromfile(str(ROOT / 'lightweight/configs/team128_baseline100.py'))
     dataset_cfg = cfg.train_dataloader.dataset.copy()
     dataset_cfg.update(data_root=str(coco), ann_file=str(source), pipeline=[], serialize_data=False)
     ds = DATASETS.build(dataset_cfg)

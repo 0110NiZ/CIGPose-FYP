@@ -687,4 +687,3 @@ visualizer = dict(
         dict(type='LocalVisBackend'),
     ])
 work_dir = '../work_dirs/team128_baseline100'
-

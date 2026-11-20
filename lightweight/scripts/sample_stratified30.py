@@ -1,19 +1,25 @@
 import os,json,pathlib,hashlib,collections,copy,numpy as np,torch
+import argparse,sys
+ROOT=pathlib.Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT/"mmpose"))
+parser=argparse.ArgumentParser(description="Reproduce seeded stratification into a NEW audit directory; team training uses frozen IDs.")
+parser.add_argument("--output",type=pathlib.Path,required=True)
+args=parser.parse_args()
 from mmengine.config import Config
 from mmpose.utils import register_all_modules
 from mmpose.registry import DATASETS,MODELS
-ROOT=pathlib.Path('/root/autodl-tmp/cigpose-original')
-EXP=ROOT/'experiments/small_backbone_30_seed21_precision3'
+EXP=args.output.resolve()
+assert not EXP.exists(), "Choose a new audit directory"
 EXP.mkdir(parents=True,exist_ok=True)
-os.chdir(ROOT/'CIGPose/mmpose')
+os.chdir(ROOT/'mmpose')
 register_all_modules()
-base=Config.fromfile('projects/cigpose/body_2d_keypoint/cigpose-m_1xb384-420e_coco-256x192.py')
+base=Config.fromfile(str(ROOT/'lightweight/configs/team128_baseline100.py'))
 source=ROOT/'data/coco/annotations/person_keypoints_train2017.json'
 val=ROOT/'data/coco/annotations/person_keypoints_val2017.json'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 hashes={'train':sha(source),'val':sha(val)}
 dcfg=copy.deepcopy(base.train_dataloader.dataset)
-dcfg.pipeline=[];dcfg.serialize_data=False
+dcfg.pipeline=[];dcfg.serialize_data=False;dcfg.ann_file=str(source)
 ds=DATASETS.build(dcfg)
 assert len(ds)==149813,len(ds)
 valid={x['id']:x for x in ds.data_list}
@@ -56,33 +62,7 @@ for key,ids in sorted(strata.items()):
     summary['strata'].append({'stratum':key,'images_all':len(ids),'images_selected':len(picked),'instances_all':sum(rows[i]['valid_instances'] for i in ids),'instances_selected':sum(rows[i]['valid_instances'] for i in picked)})
 (EXP/'stratification_audit.json').write_text(json.dumps(summary,indent=2))
 (EXP/'image_strata.json').write_text(json.dumps(list(rows.values())))
-cfg=copy.deepcopy(base)
-cfg.model.backbone.deepen_factor=.33;cfg.model.backbone.widen_factor=.5
-cfg.model.head.in_channels=512
-cfg.model.backbone.init_cfg.checkpoint=str(ROOT/'checkpoints/cspnext-s_udp-aic-coco_210e-256x192-92f5a029_20230130.pth')
-cfg.train_dataloader.dataset.ann_file=str(subpath)
-cfg.train_dataloader.num_workers=4;cfg.val_dataloader.num_workers=2
-cfg.max_epochs=100;cfg.stage2_num_epochs=7
-cfg.train_cfg.max_epochs=100;cfg.train_cfg.val_interval=10
-for sched in cfg.param_scheduler:
-    if sched.type=='CosineAnnealingLR':sched.begin=50;sched.end=100;sched.T_max=50
-for hook in cfg.custom_hooks:
-    if hook.type=='mmdet.PipelineSwitchHook':hook.switch_epoch=93
-cfg.work_dir=str(EXP/'work_dirs/train100')
-cfg.launcher='none'
-assert cfg.val_dataloader.dataset==base.val_dataloader.dataset
-assert cfg.val_evaluator==base.val_evaluator
-small=MODELS.build(cfg.model)
-original=MODELS.build(base.model)
-p_small=sum(p.numel() for p in small.parameters());p_original=sum(p.numel() for p in original.parameters())
-assert round(p_small/1e6,3)==6.190,(p_small,p_original)
-summary['model']={'parameters':p_small,'original_parameters':p_original,'reduction_percent':100*(1-p_small/p_original),'head_dim':256,'width':.5,'depth':.33}
-summary['schedule']={'epochs':100,'lr':.001,'batch':384,'warmup_iterations':1000,'cosine_begin_epoch':50,'cosine_end_epoch':100,'stage2_switch_epoch':93}
-cfg.dump(str(EXP/'cigpose_small30_100e.py'))
-check=copy.deepcopy(cfg.train_dataloader.dataset);check.pipeline=[];check.serialize_data=False
-subset_ds=DATASETS.build(check)
-assert len(subset_ds)==total
-assert hashes=={'train':sha(source),'val':sha(val)}
-summary['checks']={'dataset_count':len(subset_ds),'train_val_disjoint':True,'original_annotations_unchanged':True,'validation_protocol_unchanged':True}
-(EXP/'manifest.json').write_text(json.dumps(summary,indent=2))
-print(json.dumps({k:v for k,v in summary.items() if k!='strata'},indent=2),flush=True)
+
+assert total==44941 and len(chosen)==16983
+assert sha(subpath)=="ec3ff51924cf1be81e73e7b175f33a380b913fa51c1de5b9bd64a235d491aa5a"
+print("Stratification reproduced; matches frozen team subset.")

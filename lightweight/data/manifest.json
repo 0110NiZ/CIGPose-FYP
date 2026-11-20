@@ -155,15 +155,6 @@
     "width": 0.5,
     "depth": 0.33
   },
-  "schedule": {
-    "epochs": 100,
-    "lr": 0.001,
-    "batch": 384,
-    "warmup_iterations": 1000,
-    "cosine_begin_epoch": 50,
-    "cosine_end_epoch": 100,
-    "stage2_switch_epoch": 93
-  },
   "checks": {
     "dataset_count": 44941,
     "train_val_disjoint": true,
