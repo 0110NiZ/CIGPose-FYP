@@ -1,4 +1,4 @@
-> 本分支仅维护当前batch128轻量化实验（训练128、验证64，baseline AP 70.2148）。配置、复现步骤与结果见 [lightweight/README.md](lightweight/README.md)。
+> 本分支仅维护当前batch128轻量化实验（训练128、验证64，baseline AP 70.3364）。配置、复现步骤与结果见 [lightweight/README.md](lightweight/README.md)。
 
 <div align="center">
 <h1>CIGPose: Causal Intervention Graph Neural Network for Whole-Body Pose Estimation </h1>

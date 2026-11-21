@@ -1,7 +1,7 @@
 # CIGPose 当前轻量化实验（统一batch128）
 
 只维护当前团队实验：小骨干、256维Head、30%固定分层训练子集、FP16、训练batch128 / 验证batch64、100轮。
-原版CIM baseline已经完成，最佳AP **70.2148**（第100轮，完整val2017、GT框、开启翻转测试）。
+原版CIM baseline已经完成，最佳AP **70.3364**（第100轮，完整val2017、GT框、开启翻转测试）。
 
 - [统一超参数、四人CIM分工与交付规则](TEAM128.md)
 - [当前唯一训练配置](configs/team128_baseline100.py)
@@ -53,7 +53,7 @@ python lightweight/scripts/sample_stratified30.py --output work_dirs/sampling_au
 ```bash
 mkdir -p work_dirs
 nohup python -u lightweight/scripts/train_team128.py \
-  --work-dir work_dirs/team128_baseline \
+  --track-val-loss --work-dir work_dirs/team128_baseline \
   > work_dirs/team128_baseline_console.log 2>&1 < /dev/null &
 tail -f work_dirs/team128_baseline_console.log
 ```

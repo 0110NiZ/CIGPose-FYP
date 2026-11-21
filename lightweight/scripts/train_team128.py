@@ -15,7 +15,11 @@ def main():
     p.add_argument('--work-dir', type=Path, required=True)
     p.add_argument('--stop-after-epoch', type=int, default=100)
     p.add_argument('--resume', type=Path)
+    p.add_argument('--track-val-loss', action='store_true',
+                   help='Record per-person train and validation keypoint loss for a full 100-epoch run.')
     args = p.parse_args()
+    if args.track_val_loss and (args.resume or args.stop_after_epoch != 100):
+        p.error('--track-val-loss requires a fresh full 100-epoch run.')
     assert args.stop_after_epoch in (20, 100)
     config = args.config.resolve()
     work = args.work_dir.resolve()
@@ -48,7 +52,13 @@ def main():
                 runner.train_loop.stop_training = True
     runner = Runner.from_cfg(cfg)
     runner.register_hook(StopAtEpoch())
+    if args.track_val_loss:
+        from loss_tracking import LossTrackingHook
+        runner.register_hook(LossTrackingHook())
     runner.train()
+    if args.track_val_loss:
+        from plot_curves import plot
+        plot(work)
 
 if __name__ == '__main__':
     main()
