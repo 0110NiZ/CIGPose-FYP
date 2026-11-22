@@ -3,8 +3,9 @@
 只维护当前团队实验：小骨干、256维Head、30%固定分层训练子集、FP16、训练batch128 / 验证batch64、100轮。
 原版CIM baseline已经完成，最佳AP **70.3364**（第100轮，完整val2017、GT框、开启翻转测试）。
 
-- [统一超参数、四人CIM分工与交付规则](TEAM128.md)
-- [当前唯一训练配置](configs/team128_baseline100.py)
+- A 组（无蒸馏基线）：[配置](configs/team128_baseline100.py)、[训练入口](scripts/train_team128.py)、[开始训练](#开始训练)。
+- C 组（基础知识蒸馏）：[教师权重、运行方法和实验设置](group_c_kd/README.md)、[蒸馏实现](group_c_kd/kd.py)。
+- [统一超参数与早期四人 CIM 候选方案](TEAM128.md)
 - [基线结果、loss与AP曲线](results/README.md)
 
 ## 文件与用途
