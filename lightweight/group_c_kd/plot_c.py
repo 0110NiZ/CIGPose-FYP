@@ -2,7 +2,7 @@ import csv
 import json
 from pathlib import Path
 
-def plot(work):
+def plot(work, experiment='C (SimCC KD)'):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -31,8 +31,8 @@ def plot(work):
     axes[2].set_xlabel('Epoch');axes[2].set_ylabel('AP (0–100)');axes[2].grid(alpha=.2)
     if not ap:
         axes[2].text(.5,.5,'First AP evaluation: epoch 10',ha='center',transform=axes[2].transAxes)
-    fig.suptitle('CIGPose C (SimCC KD): batch128 | 30% fixed subset | FP16 | 256-d Head',fontsize=15)
-    fig.text(.05,.025,'Loss: original KL sum divided by number of people; ALL batches included. Training objective unchanged.\nValidation loss: raw weights, eval mode, FP16, no flip; AP: original FP32 EMA + flip evaluation every 10 epochs. Shading: stage-2 augmentation.',fontsize=9)
+    fig.suptitle(f'CIGPose {experiment}: batch128 | 30% fixed subset | FP16 | 256-d Head',fontsize=15)
+    fig.text(.05,.025,'Both loss curves show supervised keypoint KL summed over all batches and divided by the number of people.\nValidation loss uses raw weights, FP16 and a single view. AP uses FP32 EMA and flip testing every 10 epochs. Shading marks stage-2 augmentation.',fontsize=9)
     fig.tight_layout(rect=(0,.13,1,.91))
     for ext in ('png','pdf','svg'):fig.savefig(work/('train_val_loss.'+ext),dpi=180)
     plt.close(fig)
