@@ -3715,5 +3715,7 @@
         }
       }
     }
-  }
+  },
+  "gradient_diagnostic_status": "SUPERSEDED: separate unscaled FP16 backwards failed gradient additivity check; gradient ratios and conflict counts must not be used.",
+  "corrected_E_report": "total_gradient_contribution_report.json (E only; C requires remeasurement)"
 }
