@@ -1,0 +1,40 @@
+{
+  "state": "DONE",
+  "epochs_planned": 100,
+  "batch_size": 128,
+  "work_dir": "/root/autodl-tmp/CIGPose-FYP-light/work_dirs/team128_baseline_coco50",
+  "epoch": 100,
+  "iteration": 550,
+  "iterations": 586,
+  "train_elapsed_seconds": 268.5953028835356,
+  "last_completed_epoch": 100,
+  "latest_loss": {
+    "epoch": 100,
+    "train_people": 74907,
+    "train_loss_kpt_per_person": 0.0043529397030638815,
+    "train_loss_cf_batch_mean": 3.758387040942853e-05,
+    "train_raw_total_sample_weighted": 0.5570528831208111,
+    "train_seconds": 284.74675511568785,
+    "optimizer_steps": 586,
+    "skipped_optimizer_steps": 0,
+    "lr": 1.6666667576803857e-05,
+    "val_people": 6352,
+    "val_loss_kpt_per_person": 0.004244404928219183,
+    "val_loss_cf_batch_mean": 1.3430378127738163e-05,
+    "val_loss_seconds": 22.05748189240694
+  },
+  "elapsed_seconds": 30110.743217140436,
+  "latest_ap": {
+    "epoch": 100,
+    "coco/AP": 0.7094103323277909,
+    "coco/AP .5": 0.9061755128694292,
+    "coco/AP .75": 0.7847472974161487,
+    "coco/AP (M)": 0.6866447814795028,
+    "coco/AP (L)": 0.7488576992295548,
+    "coco/AR": 0.7393419395465994,
+    "coco/AR .5": 0.919867758186398,
+    "coco/AR .75": 0.8038413098236776,
+    "coco/AR (M)": 0.7075662387325867,
+    "coco/AR (L)": 0.7878112225938312
+  }
+}
