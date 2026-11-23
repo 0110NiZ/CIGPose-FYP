@@ -1,0 +1,2 @@
+loss_history.csv -text whitespace=cr-at-eol
+train_val_loss.svg -whitespace

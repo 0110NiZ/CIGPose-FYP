@@ -71,7 +71,8 @@ def evaluate_loss(model, loader, max_batches=None):
 class LossTrackingHook(Hook):
     priority = 'LOW'
 
-    def __init__(self):
+    def __init__(self, extra_losses=()):
+        self.extra_losses = extra_losses
         self.rows = []
         self.ap = []
         self.steps = 0
@@ -100,6 +101,7 @@ class LossTrackingHook(Hook):
         self.raw_sum = 0.
         self.kd_sum = 0.
         self.raw_kd_sum = 0.
+        self.extra_sums = dict.fromkeys(self.extra_losses, 0.)
         self.batches = 0
         self.prev_steps = self.steps
         self.epoch_start = time.perf_counter()
@@ -118,6 +120,12 @@ class LossTrackingHook(Hook):
         self.kd_sum += kd*n
         self.raw_kd_sum += raw_kd*n
         self.raw_sum += (kpt+cf+kd)*n
+        for name in self.extra_losses:
+            value = float(outputs[name].detach())
+            if not math.isfinite(value):
+                raise FloatingPointError(f'Non-finite {name}')
+            self.extra_sums[name] += value*n
+            self.raw_sum += value*n
         self.batches += 1
         if (batch_idx+1) % 50 == 0:
             self.save_status(runner, iteration=batch_idx+1,
@@ -141,6 +149,7 @@ class LossTrackingHook(Hook):
                    optimizer_steps=self.steps-self.prev_steps,
                    skipped_optimizer_steps=self.batches-(self.steps-self.prev_steps),
                    lr=runner.optim_wrapper.optimizer.param_groups[0]['lr'], **result)
+        row.update({f'train_{key}_batch_mean': total/self.n for key, total in self.extra_sums.items()})
         self.rows.append(row)
         with (Path(runner.work_dir)/'loss_history.csv').open('w', newline='') as f:
             w = csv.DictWriter(f, fieldnames=list(row));w.writeheader();w.writerows(self.rows)

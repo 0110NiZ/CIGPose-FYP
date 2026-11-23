@@ -5,6 +5,7 @@
 
 - A 组（无蒸馏基线）：[配置](configs/team128_baseline100.py)、[训练入口](scripts/train_team128.py)、[开始训练](#开始训练)。
 - C 组（基础知识蒸馏）：[教师权重、运行方法和实验设置](group_c_kd/README.md)、[蒸馏实现](group_c_kd/kd.py)。
+- E 组（CIM 前特征蒸馏与教师权重微调）：[实验配置与运行方法](group_e_kd/README.md)。
 - [统一超参数与早期四人 CIM 候选方案](TEAM128.md)
 - [基线结果、loss与AP曲线](results/README.md)
 

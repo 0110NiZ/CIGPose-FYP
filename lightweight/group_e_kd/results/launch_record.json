@@ -1,0 +1,21 @@
+{
+  "time": "2026-11-23 01:18:17 +0800",
+  "pid": 17808,
+  "D_final": {
+    "epoch": 100,
+    "coco/AP": 0.7032409576714945,
+    "coco/AP .5": 0.9055193902418425,
+    "coco/AP .75": 0.7841822039083587,
+    "coco/AP (M)": 0.6810877558193565,
+    "coco/AP (L)": 0.7417523161531612,
+    "coco/AR": 0.7332336272040302,
+    "coco/AR .5": 0.9162468513853904,
+    "coco/AR .75": 0.8011649874055415,
+    "coco/AR (M)": 0.7024037148320131,
+    "coco/AR (L)": 0.779970271274619,
+    "occluded/count": 8365.0,
+    "occluded/mean_px": 17.948162133642548,
+    "occluded/mean_area_normalized": 0.20001254323007822
+  },
+  "work": "/root/autodl-tmp/cigpose-original/group_e_kd/results"
+}

@@ -1,0 +1,9 @@
+{
+  "summary.json": "6863276aa2ad6a1f6d1ebf1e6ec848bab9aaca7c5830418f4d2ba0b7e38829f2",
+  "progress.json": "e65cb48de8db31239657947c0e36e6a710da6c6ee9a195aa71b0f4a7fd7f6377",
+  "loss_history.csv": "c4bf7d67ffd8e1035a9b08b32748ecadf53b4df47401c3821298c7f11dec3a7d",
+  "ap_history.json": "7d5d54c312c3ac7edad146f34df6a0361794824e79af9853c098bc744c1782a3",
+  "train_val_loss.png": "4d6451a8071c136c8ccdc3211140b48d2ce0b55f4e73bd78b4eef0266a3153dd",
+  "train_val_loss.pdf": "521f9094d09909e09fb60b562e554e872deca72bb4b18f4b5ad77bf5f3dd1b0d",
+  "train_val_loss.svg": "de965b4181d392fc5f36d5b4052a85dde61e5de458c5d30976797a24e2a9e468"
+}
