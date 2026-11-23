@@ -1,0 +1,29 @@
+{
+  "experiment_group": 4,
+  "experiment": "Teacher CIM/GNN initialization + backbone feature distillation + first 10 epochs frozen",
+  "epochs_completed": 100,
+  "best_epoch_by_evaluated_coco_AP": 100,
+  "checkpoint_file": "best.pth",
+  "checkpoint_sha256": "9b1ef9e2958e5fe391daecb10909dab6de7d2aa725f74e11a7590b94861ca35f",
+  "epoch100_independent_evaluation": true,
+  "metrics": {
+    "coco/AP": 0.7042724146423271,
+    "coco/AP .5": 0.9060487122763088,
+    "coco/AP .75": 0.7748892767100166,
+    "coco/AP (M)": 0.6811127621093618,
+    "coco/AP (L)": 0.7437936006184634,
+    "coco/AR": 0.7338476070528968,
+    "coco/AR .5": 0.9168765743073047,
+    "coco/AR .75": 0.7986460957178841,
+    "coco/AR (M)": 0.7027861240098334,
+    "coco/AR (L)": 0.7814567075436641,
+    "occluded/count": 8365,
+    "occluded/mean_px": 17.07387137176126,
+    "occluded/mean_area_normalized": 0.1933504219052804
+  },
+  "parameters_inference": null,
+  "flops_inference": null,
+  "visible_joint_error_px": null,
+  "missing_metrics_note": "Not measured/reported in verified HF artifacts; do not invent.",
+  "hf_backup": "https://huggingface.co/datasets/YXX9/cigpose-g4-kaggle-backup"
+}

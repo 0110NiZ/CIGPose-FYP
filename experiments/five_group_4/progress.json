@@ -1,0 +1,29 @@
+{
+  "state": "EPOCH_COMPLETE",
+  "epochs_planned": 100,
+  "batch_size": 128,
+  "work_dir": "/kaggle/working/CIGPose-FYP/work_dirs/five_group_4",
+  "epoch": 100,
+  "iteration": 350,
+  "iterations": 352,
+  "train_elapsed_seconds": 381.778002432,
+  "last_completed_epoch": 100,
+  "latest_loss": {
+    "epoch": 100,
+    "train_people": 44941,
+    "train_loss_kpt_per_person": 0.004357646869582176,
+    "train_loss_cf_batch_mean": 7.762199780433785e-05,
+    "train_raw_total_sample_weighted": 0.5851725018966634,
+    "train_seconds": 382.57358509500045,
+    "train_weighted_kd_batch_mean": 0.012442569273992185,
+    "train_raw_kd_batch_mean": 0.25040388582110396,
+    "optimizer_steps": 352,
+    "skipped_optimizer_steps": 0,
+    "lr": 1.6666669189082995e-05,
+    "val_people": 6352,
+    "val_loss_kpt_per_person": 0.004294946344020385,
+    "val_loss_cf_batch_mean": 1.8263539189111526e-05,
+    "val_loss_seconds": 35.343108145999395
+  },
+  "elapsed_seconds": 2664.515662183
+}
