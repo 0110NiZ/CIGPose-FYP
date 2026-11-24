@@ -1,7 +1,8 @@
 _base_ = '../group_c_kd/config.py'
 
 custom_imports = dict(imports=['feature_kd'], allow_failed_imports=False)
-model = dict(type='FeatureKDStudent', train_cfg=dict(feature_weight=0.1))
+model = dict(type='FeatureKDStudent',
+             train_cfg=dict(feature_weight=0.1, kd_temperature=0.2))
 custom_hooks = _base_.custom_hooks + [
     dict(type='TransferAndFinetuneHook', warm_epochs=10, lr_factor=0.1),
 ]

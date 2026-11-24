@@ -36,16 +36,16 @@ def load_teacher(device, checkpoint_path):
     return model.to(device).requires_grad_(False).eval()
 
 
-def simcc_kd(student, teacher, weights):
-    # Both models use beta=10 to turn final SimCC scores into distributions.
+def simcc_kd(student, teacher, weights, temperature=0.1):
+    beta = 1.0 / temperature
     # x and y have different numbers of bins: sum each KL over bins first.
     valid = (weights > 0).float()
     with torch.autocast("cuda", enabled=False):
         axes = []
         for logits, target in zip(student, teacher):
             assert logits.shape == target.shape
-            log_p = F.log_softmax(logits.float() * 10., dim=-1)
-            q = F.softmax(target.detach().float() * 10., dim=-1)
+            log_p = F.log_softmax(logits.float() * beta, dim=-1)
+            q = F.softmax(target.detach().float() * beta, dim=-1)
             axes.append(F.kl_div(log_p, q, reduction="none").sum(-1))
         return (((axes[0] + axes[1]) * 0.5) * valid).sum() / valid.sum().clamp_min(1.)
 
@@ -104,7 +104,8 @@ class KDHead(CIGHead):
         losses['loss_cf'] = loss_cf
 
         if teacher_target is not None:
-            raw_kd = simcc_kd(pred_simcc_cf, teacher_target, keypoint_weights)
+            raw_kd = simcc_kd(pred_simcc_cf, teacher_target, keypoint_weights,
+                              temperature=train_cfg.get('kd_temperature', 0.1))
             losses['kd_raw'] = raw_kd.detach()
             losses['loss_kd'] = train_cfg['kd_weight'] * raw_kd
 
