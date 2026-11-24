@@ -1,0 +1,25 @@
+{
+  "source_zip_sha256": "70694586c93ebd95f8de564dbe8828fa0f27e61b521346e827368e5c70586a2f",
+  "subset_sha256": "bce0685bc39a2086881b4c434e931637371b68d06c2502438d271873d5a90f46",
+  "subset_version": "COCO50_nested30_fixed_annotations_seed21",
+  "images": 28305,
+  "annotation_instances": 74907,
+  "preserved30_images": 16983,
+  "added_images": 11322,
+  "subset_files_hash_verified": [
+    "README.md",
+    "added_image_ids.json",
+    "extend_coco30_to50.py",
+    "manifest.json",
+    "person_keypoints_train2017_stratified50_nested30_seed21.json",
+    "preserved30_image_ids.json",
+    "selected_image_ids.json"
+  ],
+  "unchanged_source_files": {
+    "model.py": "75f2de7263ee4853e3fdf048235b6a821e18eec54ce1b33d1ca69c9d1ec4ca0a",
+    "gradients.py": "391045708a7cee3ddca856f39e9e3caf92dcfb4caac049b5592c8b6aa474d3a7"
+  },
+  "tests": "16 CPU behavior tests passed; syntax of all Python files checked",
+  "runtime_validation": "Not run: MMPose repository dependencies and Linux CUDA environment are unavailable. Use --check on training host.",
+  "diagnostic_cache": "Not supplied. Optional verified byte-for-byte reuse implemented."
+}

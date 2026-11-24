@@ -1,0 +1,473 @@
+--- a/lightweight/group_e_adaptive/train.py
++++ b/lightweight/group_e_adaptive/train.py
+@@ -1,5 +1,6 @@
+ """Run E with occlusion-gated SimCC and epoch-wise gradient control."""
+ import argparse
++import json
+ import fcntl
+ from importlib import metadata
+ import os
+@@ -23,6 +24,7 @@
+ from kd import DEFAULT_TEACHER
+ import model  # Register the gated head and visible-joint metric.
+ from plot_c import plot
++from subset50 import inspect_annotations, inspect_loader
+ from tracking import AdaptiveTracking, sha256_file, write_json
+ 
+ 
+@@ -45,6 +47,9 @@
+ 
+     train = cfg.train_dataloader.dataset
+     val = cfg.val_dataloader.dataset
++    subset_metadata = json.loads((HERE / 'fixed_subset/manifest.json').read_text())
++    if file_record(Path(val.data_root) / val.ann_file)['sha256'] != subset_metadata['source_sha256']['val']:
++        raise ValueError('Validation annotations differ from the fixed subset manifest full val2017')
+     paths = [
+         *HERE.glob('*.py'),
+         LIGHTWEIGHT / 'group_e_kd/config.py',
+@@ -58,14 +63,18 @@
+     recipe = dict(
+         data=dict(
+             train_annotations=file_record(Path(train.data_root) / train.ann_file),
+-            selected_image_ids=file_record(LIGHTWEIGHT / 'data/selected_image_ids.json'),
+-            subset_manifest=file_record(LIGHTWEIGHT / 'data/manifest.json'),
++            subset_identity=inspect_annotations(train.ann_file)[0],
++            subset_manifest=file_record(HERE / 'fixed_subset/manifest.json'),
+             val_annotations=file_record(Path(val.data_root) / val.ann_file),
+             train_image_root=str((Path(train.data_root) / train.data_prefix.img).resolve()),
+             val_image_root=str((Path(val.data_root) / val.data_prefix.img).resolve()),
+         ),
+         sources={str(path.relative_to(ROOT)): sha256_file(path) for path in sorted(paths)},
+         seed=cfg.randomness.seed,
++        optimizer=cfg.optim_wrapper, param_scheduler=cfg.param_scheduler,
++        custom_hooks=cfg.custom_hooks,
++        validation=dict(dataloader=cfg.val_dataloader, evaluator=cfg.val_evaluator,
++                        val_cfg=cfg.val_cfg, train_loop=cfg.train_cfg),
+         teacher=file_record(teacher),
+         student_backbone=cfg.model.backbone.init_cfg.checkpoint,
+         student_cim_gnn_initialization='copy official teacher modules and buffers at iter 0',
+@@ -103,10 +112,20 @@
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--teacher', type=Path, default=DEFAULT_TEACHER)
+-    parser.add_argument('--work-dir', type=Path, default=ROOT / 'work_dirs/group_e_adaptive')
+-    parser.add_argument('--temperature', type=float, choices=(0.1, 0.2), default=0.1)
++    parser.add_argument('--work-dir', type=Path, default=ROOT / 'work_dirs/group_e_adaptive_50pct_t01')
++    parser.add_argument('--temperature', type=float, choices=(0.1,), default=0.1)
+     parser.add_argument('--resume', action='store_true')
++    parser.add_argument('--train-ann', type=Path, default=HERE / 'fixed_subset/person_keypoints_train2017_stratified50_nested30_seed21.json')
++    parser.add_argument('--coco-root', type=Path, help='Optional existing COCO root; changes paths only')
++    parser.add_argument('--diagnostic-cache', type=Path, help='Trusted teammate diagnostic_batches.pth, beside its run_manifest.json')
++    parser.add_argument('--check', action='store_true', help='Check real dataloader without training or creating the run directory')
+     args = parser.parse_args()
++    ann = args.train_ann.resolve(strict=True)
++    inspect_annotations(ann)
++    coco_root = args.coco_root.resolve(strict=True) if args.coco_root else None
++    diagnostic = args.diagnostic_cache.resolve(strict=True) if args.diagnostic_cache else None
++    if args.resume and (args.check or diagnostic):
++        parser.error('--resume uses this run cache; do not combine with --check/--diagnostic-cache')
+ 
+     teacher = args.teacher.resolve(strict=True)
+     work = args.work_dir.resolve()
+@@ -115,6 +134,14 @@
+     resource.setrlimit(resource.RLIMIT_NOFILE, (soft, hard))
+     os.chdir(ROOT / 'mmpose')
+     cfg = Config.fromfile(str(LIGHTWEIGHT / 'group_e_kd/config.py'), lazy_import=False)
++    cfg.train_dataloader.dataset.ann_file = str(ann)
++    if coco_root:
++        cfg.train_dataloader.dataset.data_root = str(coco_root)
++        cfg.val_dataloader.dataset.data_root = str(coco_root)
++        if cfg.get('test_dataloader'):
++            cfg.test_dataloader.dataset.data_root = str(coco_root)
++    if cfg.train_dataloader.batch_size != 128 or cfg.train_cfg.max_epochs != 100 or cfg.randomness.seed != 21:
++        raise ValueError('Inherited config must retain batch 128, 100 epochs and seed 21')
+     cfg.model.head.type = 'GatedKDHead'
+     cfg.model.train_cfg.kd_temperature = args.temperature
+     cfg.val_evaluator.append(dict(type='VisibleJointError'))
+@@ -125,6 +152,17 @@
+     switch.switch_pipeline[-1].pack_transformed = True
+     stage_one = cfg.train_dataloader.dataset.pipeline
+     cfg.work_dir = str(work)
++
++    if args.check:
++        from mmpose.utils import register_all_modules
++        from mmengine.registry import init_default_scope
++        register_all_modules()
++        init_default_scope(cfg.get('default_scope', 'mmpose'))
++        loader = Runner.build_dataloader(cfg.train_dataloader, seed=cfg.randomness.seed)
++        report, _, _ = inspect_loader(loader, ann)
++        manifest = artifact_manifest(cfg, teacher)
++        print(json.dumps(dict(loader=report, manifest=manifest), indent=2))
++        return
+ 
+     work.parent.mkdir(parents=True, exist_ok=True)
+     with (work.parent / (work.name + '.lock')).open('a') as lock:
+@@ -139,13 +177,13 @@
+             if completed_epoch > switch.switch_epoch:
+                 cfg.train_dataloader.dataset.pipeline = switch.switch_pipeline
+         runner = Runner.from_cfg(cfg)
+-        tracking = AdaptiveTracking(work, manifest, stage_one, args.resume)
++        tracking = AdaptiveTracking(work, manifest, stage_one, args.resume, diagnostic)
+         runner.register_hook(tracking)
+         runner.train()
+         summary = dict(final=tracking.ap[-1],
+                        best=max(tracking.ap, key=lambda row: row['coco/AP']))
+         write_json(work / 'summary.json', summary)
+-        plot(work, experiment=f'E adaptive KD, T={args.temperature:g}')
++        plot(work, experiment=f'E adaptive KD 50%, T={args.temperature:g}')
+ 
+ 
+ if __name__ == '__main__':
+--- a/lightweight/group_e_adaptive/tracking.py
++++ b/lightweight/group_e_adaptive/tracking.py
+@@ -9,6 +9,7 @@
+ import torch
+ from mmengine.hooks import Hook
+ 
++from subset50 import inspect_loader, reuse_diagnostics
+ from c_tracking import build_loss_loader, evaluate_loss, preserve_rng
+ from gradients import (BATCH_COUNT, build_batches, choose_factor, contribution,
+                        probe, summarize_gram)
+@@ -38,19 +39,25 @@
+     return digest.hexdigest()
+ 
+ 
+-def cache_batches(runner, work, manifest, stage_one, resume):
++def cache_batches(runner, work, manifest, stage_one, resume, source=None, loaded=None, annotations=None):
+     path = work / 'diagnostic_batches.pth'
+     if resume:
+         if sha256_file(path) != manifest['diagnostic_sha256']:
+             raise RuntimeError('Diagnostic batch cache differs from the original run.')
+         return torch.load(path, map_location='cpu', weights_only=False)
+ 
+-    batches = build_batches(runner, stage_one)
++    batches = None
++    manifest['diagnostic_provenance'] = dict(status='generated', reason='No 30% augmented cache supplied')
++    if source is not None:
++        batches, manifest['diagnostic_provenance'] = reuse_diagnostics(
++            source, path, manifest, loaded, annotations)
++    if batches is None:
++        batches = build_batches(runner, stage_one)
++        temp = path.with_suffix('.tmp')
++        torch.save(batches, temp)
++        temp.replace(path)
+     if len(batches) != BATCH_COUNT:
+         raise RuntimeError('Expected exactly five diagnostic batches.')
+-    temp = path.with_suffix('.tmp')
+-    torch.save(batches, temp)
+-    temp.replace(path)
+     manifest['diagnostic_sha256'] = sha256_file(path)
+     manifest['diagnostic_batches'] = [
+         dict(batch=i, sample_ids=[str(s.id) for s in batch['data_samples']],
+@@ -72,7 +79,9 @@
+ class AdaptiveTracking(Hook):
+     priority = 'LOW'
+ 
+-    def __init__(self, work, manifest, stage_one, resume):
++    def __init__(self, work, manifest, stage_one, resume, diagnostic_source=None):
++        self.diagnostic_source = diagnostic_source
++        self.total_iterations = 0
+         self.work = work
+         self.manifest = manifest
+         self.stage_one = stage_one
+@@ -93,9 +102,16 @@
+             experiment=self.manifest['recipe'], diagnostic_sha256=self.manifest['diagnostic_sha256'],
+             base_weights=self.base, control=self.control, anneal_start=self.anneal_start,
+             loss_history=self.rows, ap_history=self.ap,
++            cumulative_optimizer_steps=self.steps, cumulative_train_iterations=self.total_iterations,
+         )
+ 
+     def before_train(self, runner):
++        report, loaded, annotations = inspect_loader(
++            runner.train_dataloader, self.manifest['recipe']['data']['train_annotations']['path'])
++        self.expected_people = report['sampler_people']
++        self.expected_iterations = report['batches_per_epoch']
++        self.manifest['actual_train_loader'] = report
++        runner.logger.info('ACTUAL_TRAIN_LOADER ' + json.dumps(report))
+         self.base = {name: runner.model.train_cfg[name] for name in ('kd_weight', 'feature_weight')}
+         manifest_path = self.work / 'run_manifest.json'
+         if self.resume:
+@@ -107,6 +123,10 @@
+                     or state['diagnostic_sha256'] != saved['diagnostic_sha256']
+                     or state['base_weights'] != self.base):
+                 raise RuntimeError('Checkpoint, source, or training recipe differs from the original adaptive run.')
++            if saved['actual_train_loader'] != report:
++                raise RuntimeError('Actual training dataset or loader changed on resume')
++            self.steps = state['cumulative_optimizer_steps']
++            self.total_iterations = state['cumulative_train_iterations']
+             self.manifest = saved
+             self.control = state['control']
+             self.factor = self.control['common_factor']
+@@ -128,7 +148,8 @@
+                     path.unlink()
+         else:
+             self.manifest['student_initialized_sha256'] = state_digest(runner.model)
+-        self.batches = cache_batches(runner, self.work, self.manifest, self.stage_one, self.resume)
++        self.batches = cache_batches(runner, self.work, self.manifest, self.stage_one, self.resume,
++                                    self.diagnostic_source, loaded, annotations)
+         write_json(manifest_path, self.manifest)
+         self.loader = build_loss_loader(runner)
+ 
+@@ -232,11 +253,16 @@
+     def after_train_epoch(self, runner):
+         torch.cuda.synchronize()
+         train_seconds = time.perf_counter() - self.train_start
+-        assert self.people == 44941 and self.iterations == 352
++        if self.people != self.expected_people or self.iterations != self.expected_iterations:
++            raise RuntimeError(f'Epoch population mismatch: people={self.people}, iterations={self.iterations}')
++        self.total_iterations += self.iterations
+         val = evaluate_loss(runner.model, self.loader)
+         assert val['val_people'] == 6352
+         row = dict(epoch=runner.epoch + 1, train_people=self.people,
+                    train_seconds=train_seconds, **val,
++                   train_iterations=self.iterations,
++                   cumulative_train_iterations=self.total_iterations,
++                   cumulative_optimizer_steps=self.steps,
+                    train_loss_kpt_per_person=self.sums['loss_kpt'] / self.people,
+                    optimizer_steps=self.steps - self.first_steps,
+                    skipped_optimizer_steps=self.iterations - (self.steps - self.first_steps),
+--- a/lightweight/group_e_adaptive/README.md
++++ b/lightweight/group_e_adaptive/README.md
+@@ -1,55 +1,76 @@
+-# E 组动态蒸馏实验
++# 固定 50% 数据对照实验
+ 
+-在包含原 E 组的 CIGPose-FYP 仓库根目录解压本包。ZIP 新增
+-`lightweight/group_e_adaptive/`。用此前已能运行 E 组的单 GPU Linux/WSL 环境、
+-官方教师权重、固定 30% 数据及完整 val2017，启动一次独立训练。
++以本次上传的 CIGPose_E_Adaptive_KD.zip 为修改基准。这是覆盖到原 CIGPose-FYP 仓库根目录的增量代码包，仍需原仓库中的 group_e_kd、group_c_kd、configs 和 mmpose，以及队友相同的 Linux 单 GPU 训练环境、COCO 图片和教师权重。
+ 
+-## 启动和恢复
++## 数据身份
++
++包内 fixed_subset/ 是此前上传的固定 50% 标注包的原样副本；没有执行重新抽样。默认训练标注直接指向这里，因此不需要手工搬动标注。
++
++- 版本：COCO50_nested30_fixed_annotations_seed21
++- 标注 SHA256：bce0685bc39a2086881b4c434e931637371b68d06c2502438d271873d5a90f46
++- JSON：28,305 张图片、74,907 条人体标注；保留 16,983 张原 30% 图片。
++- 若实际 dataset 使用全部 74,907 条且不丢尾批，则为 586 batch/epoch，100 轮为 58,600 次训练迭代。实际值由运行时 dataset/sampler/dataloader 核验；AMP 可能使实际优化器更新数更少。
++- 包内没有 COCO JPG、教师 checkpoint、学生预训练权重或队友的诊断缓存。
++
++## 安装及命令
++
++在与队友相同版本的仓库根目录解压。若此前已有 group_e_adaptive，请先备份该目录；不要覆盖正在运行实验使用的代码。
+ 
+ ```bash
+-python -u lightweight/group_e_adaptive/train.py \
+-  --teacher /path/to/cigpose-m_coco_256x192.pth \
+-  --temperature 0.1 \
+-  --work-dir work_dirs/group_e_adaptive_t01
++cd /root/autodl-tmp/CIGPose-FYP-50pct
++unzip /root/autodl-tmp/CIGPose_E_Adaptive_KD_50pct.zip
+ ```
+ 
+-中断后，等原进程退出，将同一条命令加上 `--resume`。保留同一输出目录、
+-温度、代码和数据。每 10 轮保存常规 checkpoint，`last_checkpoint` 指向最近一份。
+-从已保存的轮次继续，未保存的轮次会重跑。新实验从原 E 组初始化流程开始，
+-续训使用本实验生成的 checkpoint。保留输出目录内的 `run_manifest.json`
+-和 `diagnostic_batches.pth`，后者包含实际增强后的五个诊断 batch。
+-原训练加载器的数据增强随机序列在重启后可能变化。诊断批次会逐字节复用。
++以下可直接复制，沿用原仓库配置的图片位置和 DEFAULT_TEACHER。若这些默认路径尚未在你的机器上配置好，请在每条命令上加 `--teacher /实际的队友同款教师权重.pth` 和/或 `--coco-root /实际的COCO根目录`。路径需指向真实文件；不要使用不同教师权重来替代。COCO 根目录内部子路径仍按原配置的 data_prefix 与 val ann_file 解释。
+ 
+-若比较温度 0.2，使用 `--temperature 0.2` 和另一输出目录，从头跑完整对照。
+-两组使用同一套动态目标、门控和退火规则。两组独立建立固定诊断缓存时，
+-在相同数据、种子和软件环境下会采用相同采样和增强设置。
++先检查，不训练、不创建本组正式输出目录：
+ 
+-## 计算和日志
++```bash
++python -u lightweight/group_e_adaptive/train.py --check
++```
+ 
+-- 门控使用原始 COCO 可见性 v=1，并按训练时的水平翻转重排关节。对经过裁剪、
+-  仿射和编码后仍有效的遮挡点，在增强输入图的像素坐标上比较师生的二维欧氏误差。
+-  只有教师误差严格更小才放行。可见点沿用原有规则。SimCC KL 的分母仍为门控前
+-  的有效点总数。
+-- 每轮开始前，在缓存的五批上独立求 GT、CF、加权 SimCC 和加权 Pre-CIM 的梯度。
+-  每批统一用 loss scale 1024，溢出时降低同一批的共同 scale。还原梯度后以 FP64
+-  累计向量内积。日志中的求和校验比较基础权重下的分项梯度之和与直接求总损失的梯度。
+-  调权前后四项范数、投影和余弦从同批内积计算。全模型及骨干、CIM、GNN
+-  和其他层分别记录，分模块投影的分母是该模块总梯度的平方范数。
+-- 前 80 轮以全模型两项蒸馏的平均合计投影贡献为控制量。40%–50% 内沿用系数，
+-  超出时在基础系数的共同倍率 0.01–100 内搜索，优先靠近 45%。没有达标候选
+-  或诊断无效时沿用上一轮倍率并明记原因。第 81 轮使用第 80 轮系数的 95%，
+-  之后线性下降，第 100 轮为 0。退火阶段继续记录诊断数据，供后续分析。
+-- 诊断不做优化器更新，逐批恢复学生缓冲区，结束后恢复模式及随机状态。
+-  调权针对诊断批次每轮开始时的平均值。实际训练批次的贡献会波动。
++独立启动，默认输出为 work_dirs/group_e_adaptive_50pct_t01：
+ 
+-| 文件 | 内容 |
+-|---|---|
+-| `run_manifest.json` | 代码提交和文件哈希、数据文件及版本、训练环境、师生初始化、超参数、诊断增强配置、样本 ID 和批次划分 |
+-| `gradient_epochs/epoch_XXX.json` | 调整前后系数和投影贡献、是否达标、倍率搜索记录、退火状态，以及五批的各模块梯度范数、投影、余弦、loss scale 和求和误差 |
+-| `loss_history.csv` | 每轮训练与验证损失、各 KD 的原始和加权损失、门控统计、分组学习率、耗时和 AMP 跳步数 |
+-| `ap_history.json` | 每 10 轮的 AP、AP50、AP75，以及可见和遮挡关节的原图像素误差、归一化误差和数量 |
+-| `summary.json` | 最终结果与最佳 AP 轮次 |
+-| `epoch_*.pth` | 原训练 checkpoint 状态和动态系数、共同倍率、退火起点、已有损失与 AP 记录 |
++```bash
++python -u lightweight/group_e_adaptive/train.py
++```
+ 
+-日志中的投影贡献和门控放行率用小数表示，如 0.45 表示 45%。
+-门控误差的单位是增强输入图像素，验证误差的单位是原图像素。
++断点续训（与启动保持同样的路径参数）：
++
++```bash
++python -u lightweight/group_e_adaptive/train.py --resume
++```
++
++也可用 `--work-dir work_dirs/你的独立目录`，启动和续训必须相同。新跑拒绝已有目录；续训只接受本目录 last_checkpoint 指向的 epoch_N.pth，不接受其他组 checkpoint。保留 run_manifest.json 和 diagnostic_batches.pth。原来的每 10 轮保存策略不变，中断后未保存轮次会重跑；重启后的训练增强随机序列不保证逐位相同，与原版限制一致。
++
++## 复用队友的五批增强输入
++
++拿到队友同一次 30% Adaptive 实验的 diagnostic_batches.pth 和 run_manifest.json，把两者放在同一目录。首次启动时，例如：
++
++```bash
++python -u lightweight/group_e_adaptive/train.py --diagnostic-cache /root/autodl-tmp/diagnostics30/diagnostic_batches.pth
++```
++
++只提供可信队友生成的缓存。程序在真实 50% dataset 建立后核对缓存 SHA256、种子、温度、初始系数、学习率、batch、轮数、教师哈希、完整验证标注哈希、学生初始化、增强配方，以及未修改的模型/配置/梯度实现文件哈希。五批各 128 个样本必须在实际加载的 50% dataset 中，原始 GT 和 image_id 也要相同。
++
++通过后逐字节复制缓存，直接使用已增强输入；不会根据 ID 再做一次增强。若样本不在实际 dataset 中，按原逻辑生成本组诊断批次并记下原因；若来源哈希、配方或 GT 不匹配则报错。没提供缓存时按原逻辑生成并明确标记，不能声称两组诊断使用相同增强输入。`--check` 检查数据与配置，缓存验证在正式启动的 before_train 中进行。
++
++续训只加 --resume，不再传 --diagnostic-cache；始终读取本组保存的缓存和动态系数。
++
++## 保持原有实验逻辑
++
++model.py、gradients.py 与上传 ZIP 逐字节一致。遮挡门控、五批梯度诊断、前 80 轮动态调权、后 20 轮退火完全沿用。教师路径默认值、学生初始化、初始蒸馏系数、优化器、学习率调度、数据增强、EMA、完整验证和评估由原 E/C 配置继承。启动要求原配置为 seed=21、batch=128、100 轮，温度固定 0.1，不擅自改写不匹配的配置。
++
++原验证损失人数 6,352 的校验保留；完整验证集没有改成训练子集。新增完整 val2017 标注哈希校验，必须符合固定子集 manifest 中记录的来源。
++
++## 清单和日志
++
++run_manifest.json 记录实际训练标注绝对路径、版本和 SHA256、实际 dataset 人数、sampler 人数、过滤数量、每轮 batch 数、100 轮计划迭代数、已加载 annotation ID 集合摘要、教师哈希、依赖源码哈希、实际配置及诊断缓存来源。
++
++loss_history.csv 保留原字段和统计口径，新增 train_iterations、cumulative_train_iterations、cumulative_optimizer_steps；原 optimizer_steps 和 skipped_optimizer_steps 继续由实际 optimizer.step 回调计数。累计值随本组 checkpoint 恢复，不会从零重计。其他梯度日志、AP、summary 与原版一致，绘图标题注明 50%。
++
++## 验证与边界
++
++交付时核对固定数据包全部自带 SHA256、图片集合包含关系、标注 ID 唯一性，检查 Python 语法，执行 16 项 CPU 行为测试。可在包根目录运行 `python tests/test_subset50.py`（需要 PyTorch）。
++
++当前环境未取得原仓库依赖配置，也不能运行你的 Linux CUDA/MMPose 环境，因此没有宣称已验证真实 dataloader、教师加载或 CUDA 前后向。请使用队友同一仓库版本与环境，先在训练机运行 --check。若实际数据加载结果与预期不同，应查看过滤数量和配置，不应硬改成人数 74,907 或批次数 586。启动时会核验实际使用的标注和 loader；精确的两组教师/配置一致性仍需队友的原配置或运行清单佐证。
+--- /dev/null
++++ b/lightweight/group_e_adaptive/subset50.py
+@@ -0,0 +1,119 @@
++"""Identity and runtime checks for the supplied fixed subset (no sampling)."""
++import hashlib
++import json
++from pathlib import Path
++import shutil
++
++EXPECTED_SHA256 = 'bce0685bc39a2086881b4c434e931637371b68d06c2502438d271873d5a90f46'
++VERSION = 'COCO50_nested30_fixed_annotations_seed21'
++
++
++def digest(path):
++    h = hashlib.sha256()
++    with Path(path).open('rb') as f:
++        for chunk in iter(lambda: f.read(1024 * 1024), b''):
++            h.update(chunk)
++    return h.hexdigest()
++
++
++def inspect_annotations(path):
++    path = Path(path).resolve(strict=True)
++    actual = digest(path)
++    if actual != EXPECTED_SHA256:
++        raise ValueError(f'Not the supplied fixed 50% annotations: {path}; SHA256={actual}')
++    data = json.loads(path.read_text(encoding='utf-8'))
++    images = {int(row['id']) for row in data['images']}
++    annotations = {int(row['id']): row for row in data['annotations']}
++    if len(images) != len(data['images']) or len(annotations) != len(data['annotations']):
++        raise ValueError('Duplicate image or annotation IDs')
++    if any(int(row['image_id']) not in images for row in annotations.values()):
++        raise ValueError('Annotation references an absent image')
++    return dict(version=VERSION, path=str(path), sha256=actual,
++                images=len(images), annotation_instances=len(annotations)), annotations
++
++
++def inspect_loader(loader, annotation_path):
++    """Read unaugmented dataset records; never iterate the sampler or training loader."""
++    identity, annotations = inspect_annotations(annotation_path)
++    dataset = loader.dataset
++    if Path(dataset.ann_file).resolve() != Path(annotation_path).resolve():
++        raise ValueError(f'Loaded dataset ann_file differs: {dataset.ann_file}')
++    if getattr(loader.sampler, 'world_size', 1) != 1:
++        raise ValueError('This experiment preserves the original single-GPU setup')
++    if type(loader.sampler).__name__ not in ('DefaultSampler', 'RandomSampler', 'SequentialSampler'):
++        raise ValueError('Unsupported sampler: cannot verify epoch population')
++    if getattr(loader.sampler, 'replacement', False) or len(loader.sampler) != len(dataset):
++        raise ValueError('Expected one pass through the actual dataset per epoch')
++    if loader.batch_size != 128 or loader.drop_last:
++        raise ValueError('Expected batch_size=128 and drop_last=False; do not silently drop people')
++    loaded = set()
++    for i in range(len(dataset)):
++        info = dataset.get_data_info(i)
++        aid = int(info['id'])
++        if aid in loaded or aid not in annotations:
++            raise ValueError(f'Duplicate or foreign loaded annotation ID: {aid}')
++        raw = info.get('raw_ann_info')
++        if raw is None or raw != annotations[aid]:
++            raise ValueError(f'Loaded annotation differs from fixed JSON: {aid}')
++        loaded.add(aid)
++    batches = (len(dataset) + loader.batch_size - 1) // loader.batch_size
++    if len(loader) != batches:
++        raise ValueError('Actual dataloader length differs from sampler/batch-size calculation')
++    report = dict(**identity, dataset_people=len(dataset), sampler_people=len(loader.sampler),
++                  batches_per_epoch=len(loader), planned_train_iterations=100 * len(loader),
++                  filtered_annotation_count=len(annotations) - len(loaded),
++                  loaded_annotation_ids_sha256=hashlib.sha256(
++                      json.dumps(sorted(loaded)).encode()).hexdigest(),
++                  sampler=type(loader.sampler).__name__, batch_size=loader.batch_size,
++                  drop_last=loader.drop_last)
++    return report, loaded, annotations
++
++
++def reuse_diagnostics(source, destination, manifest, loaded, annotations):
++    """Verify provenance, recipe and GT, then copy the augmented input bytes verbatim."""
++    import torch
++    source = Path(source).resolve(strict=True)
++    saved = json.loads((source.parent / 'run_manifest.json').read_text(encoding='utf-8'))
++    if digest(source) != saved['diagnostic_sha256']:
++        raise ValueError('30% diagnostic cache hash does not match its run_manifest.json')
++    old, new = saved['recipe'], manifest['recipe']
++    for key in ('seed', 'temperature', 'simcc_base_weight', 'feature_base_weight',
++                'base_lr', 'batch_size', 'epochs', 'diagnostic_augmentation',
++                'student_backbone', 'student_cim_gnn_initialization'):
++        if old[key] != new[key]:
++            raise ValueError(f'30% diagnostic recipe mismatch: {key}')
++    if old['teacher']['sha256'] != new['teacher']['sha256']:
++        raise ValueError('30% teacher checkpoint mismatch')
++    if old['data']['val_annotations']['sha256'] != new['data']['val_annotations']['sha256']:
++        raise ValueError('30% validation annotations mismatch')
++    for key, value in new['sources'].items():
++        if key.endswith(('/train.py', '/tracking.py', '/subset50.py')):
++            continue
++        if old['sources'].get(key) != value:
++            raise ValueError(f'30% model/config/gradient source mismatch: {key}')
++    batches = torch.load(source, map_location='cpu', weights_only=False)
++    if len(batches) != 5:
++        raise ValueError('Expected five diagnostic batches')
++    for index, batch in enumerate(batches):
++        samples = batch['data_samples']
++        if len(samples) != 128 or len(batch['inputs']) != 128:
++            raise ValueError('Each diagnostic batch must contain 128 augmented inputs')
++        record = saved['diagnostic_batches'][index]
++        if record['sample_ids'] != [str(s.id) for s in samples]:
++            raise ValueError('Diagnostic sample IDs differ from source manifest')
++        for sample in samples:
++            aid = int(sample.id)
++            if aid not in loaded:
++                return None, dict(status='generated', reason=f'30% diagnostic sample {aid} absent from actual 50% dataset')
++            if sample.metainfo.get('raw_ann_info') != annotations[aid]:
++                raise ValueError(f'Diagnostic GT mismatch: {aid}')
++            if int(sample.img_id) != int(annotations[aid]['image_id']):
++                raise ValueError('Diagnostic image ID mismatch')
++            if 'transformed_keypoints' not in sample.gt_instances:
++                raise ValueError('Missing augmented diagnostic ground truth')
++    shutil.copyfile(source, destination)
++    if digest(destination) != saved['diagnostic_sha256']:
++        raise RuntimeError('Diagnostic cache changed while copying')
++    return batches, dict(status='reused_verbatim', source=str(source),
++                         source_manifest_sha256=digest(source.parent / 'run_manifest.json'),
++                         sha256=digest(destination))
