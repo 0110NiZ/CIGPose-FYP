@@ -1,0 +1,7 @@
+{
+  "total_params": 6215013,
+  "trainable_params": 6215013,
+  "flops": "not_measured",
+  "fps": "not_measured",
+  "note": "FLOPs/FPS not measured: cannot assume support for custom CIM operations."
+}
