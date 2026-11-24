@@ -1,0 +1,24 @@
+{
+  "status": "complete",
+  "total_active_seconds": 22212.677760451003,
+  "total_active_hours": 6.170188266791945,
+  "total_active_hms": "06:10:13",
+  "current_session_seconds": 22212.677760451003,
+  "first_start_utc": "2026-11-20T12:46:39.941541+00:00",
+  "last_update_utc": "2026-11-20T18:56:52.619292+00:00",
+  "last_update_hong_kong": "2026-11-21T02:56:52.619292+08:00",
+  "elapsed_including_pauses_seconds": 22212.677751,
+  "elapsed_including_pauses_hms": "06:10:13",
+  "unconfirmed_interruption": false,
+  "heartbeat_seconds": 30,
+  "scope": "Formal run initialization, checkpoint loading, training, validation and saving; excludes preflight and time between sessions.",
+  "sessions": [
+    {
+      "start_utc": "2026-11-20T12:46:39.941541+00:00",
+      "status": "complete",
+      "seconds": 22212.677760451003,
+      "last_update_utc": "2026-11-20T18:56:52.619292+00:00",
+      "end_utc": "2026-11-20T18:56:52.619292+00:00"
+    }
+  ]
+}
