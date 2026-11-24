@@ -30,7 +30,7 @@ def feature_distance(student, teacher, weights):
             or student.shape[:2] != weights.shape):
         raise ValueError('Expected matching [B, 17, 256] features and [B, 17] weights')
     with torch.autocast(device_type=student.device.type, enabled=False):
-        distance = 1 - F.cosine_similarity(student.float(), teacher.detach().float(), dim=-1)
+        distance = F.mse_loss(student.float(), teacher.detach().float(), reduction="none").mean(dim=-1)
         valid = weights > 0
         return distance.masked_fill(~valid, 0).sum() / valid.sum().clamp_min(1)
 
