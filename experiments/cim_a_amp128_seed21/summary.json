@@ -1,0 +1,110 @@
+{
+  "experiment": "cim_a",
+  "status": "complete",
+  "updated_utc": "2026-11-24T10:29:15+00:00",
+  "epochs_requested": 100,
+  "last_validation": {
+    "epoch": "100",
+    "variant": "a",
+    "timestamp_utc": "2026-11-24T10:29:10+00:00",
+    "AP": "0.7025188817455154",
+    "AP50": "0.905227534304517",
+    "AP75": "0.7748050475590726",
+    "APm": "0.6779380288748833",
+    "APl": "0.7463208419078319",
+    "AR": "0.7326668765743073",
+    "best_AP_so_far": "0.7025188817455154",
+    "best_epoch_so_far": "100",
+    "learning_rate": "1.6666669189082995e-05",
+    "selection_total": "12704",
+    "val_loss_kpt": "0.004288226197724716",
+    "val_loss_cf": "3.197651298834599e-05",
+    "val_loss": "0.004320202710713062",
+    "metrics_json": "{\"coco/AP\": 0.7025188817455154, \"coco/AP (L)\": 0.7463208419078319, \"coco/AP (M)\": 0.6779380288748833, \"coco/AP .5\": 0.905227534304517, \"coco/AP .75\": 0.7748050475590726, \"coco/AR\": 0.7326668765743073, \"coco/AR (L)\": 0.7820884429580082, \"coco/AR (M)\": 0.7000546298825457, \"coco/AR .5\": 0.9143576826196473, \"coco/AR .75\": 0.7989609571788413, \"val_loss\": 0.004320202710713062, \"val_loss_cf\": 3.197651298834599e-05, \"val_loss_kpt\": 0.004288226197724716}"
+  },
+  "best_validation": {
+    "epoch": "100",
+    "variant": "a",
+    "timestamp_utc": "2026-11-24T10:29:10+00:00",
+    "AP": "0.7025188817455154",
+    "AP50": "0.905227534304517",
+    "AP75": "0.7748050475590726",
+    "APm": "0.6779380288748833",
+    "APl": "0.7463208419078319",
+    "AR": "0.7326668765743073",
+    "best_AP_so_far": "0.7025188817455154",
+    "best_epoch_so_far": "100",
+    "learning_rate": "1.6666669189082995e-05",
+    "selection_total": "12704",
+    "val_loss_kpt": "0.004288226197724716",
+    "val_loss_cf": "3.197651298834599e-05",
+    "val_loss": "0.004320202710713062",
+    "metrics_json": "{\"coco/AP\": 0.7025188817455154, \"coco/AP (L)\": 0.7463208419078319, \"coco/AP (M)\": 0.6779380288748833, \"coco/AP .5\": 0.905227534304517, \"coco/AP .75\": 0.7748050475590726, \"coco/AR\": 0.7326668765743073, \"coco/AR (L)\": 0.7820884429580082, \"coco/AR (M)\": 0.7000546298825457, \"coco/AR .5\": 0.9143576826196473, \"coco/AR .75\": 0.7989609571788413, \"val_loss\": 0.004320202710713062, \"val_loss_cf\": 3.197651298834599e-05, \"val_loss_kpt\": 0.004288226197724716}"
+  },
+  "train_logged_epochs": 100,
+  "training_time": {
+    "status": "complete",
+    "total_active_seconds": 16123.760946795344,
+    "total_active_hours": 4.478822485220929,
+    "total_active_hms": "04:28:44",
+    "current_session_seconds": 16123.760946795344,
+    "first_start_utc": "2026-11-24T06:00:29.563588+00:00",
+    "last_update_utc": "2026-11-24T10:29:13.324524+00:00",
+    "last_update_hong_kong": "2026-11-24T18:29:13.324524+08:00",
+    "elapsed_including_pauses_seconds": 16123.760936,
+    "elapsed_including_pauses_hms": "04:28:44",
+    "unconfirmed_interruption": false,
+    "heartbeat_seconds": 30,
+    "scope": "Formal run initialization, checkpoint loading, training, validation and saving; excludes preflight and time between sessions.",
+    "sessions": [
+      {
+        "start_utc": "2026-11-24T06:00:29.563588+00:00",
+        "status": "complete",
+        "seconds": 16123.760946795344,
+        "last_update_utc": "2026-11-24T10:29:13.324524+00:00",
+        "end_utc": "2026-11-24T10:29:13.324524+00:00"
+      }
+    ]
+  },
+  "run_metadata": {
+    "variant": "A",
+    "seed": 21,
+    "max_epochs": 100,
+    "initial_checkpoint_path": "/root/autodl-tmp/code/cim_a/lightweight/weights/shared_init_seed21.pth",
+    "initial_checkpoint_sha256": "9cd0ede03001626dc17553aebe25661645cd3bf3e1cb97cc9190c46a88db7774",
+    "train_annotation_path": "/root/autodl-tmp/code/cim_a/lightweight/data/person_keypoints_train2017_stratified30_seed21.json",
+    "train_annotation_sha256": "ec3ff51924cf1be81e73e7b175f33a380b913fa51c1de5b9bd64a235d491aa5a",
+    "protocol": {
+      "package_sha256": "e8e17a23d25787fbd313f02c5d011a54a592def7862a51c2466c71ee1a652a0e",
+      "resolved_config_sha256": "38aa7607a553a5b69d168b062e91c9a75233c77aa8505165369f1d674638a7ec",
+      "environment": {
+        "python": "3.10.8",
+        "torch": "2.1.2+cu121",
+        "mmengine": "0.10.7",
+        "mmcv": "2.1.0",
+        "mmdet": "3.2.0",
+        "mmpose": "1.3.2",
+        "numpy": "1.24.4",
+        "albumentations": "1.3.1",
+        "torchvision": "0.16.2+cu121",
+        "gpu": "NVIDIA GeForce RTX 4090",
+        "cuda": "12.1",
+        "cudnn": 8902,
+        "training_precision": "fp16_amp",
+        "validation_precision": "fp32",
+        "tf32_matmul": false,
+        "tf32_cudnn": true,
+        "deterministic": true
+      }
+    },
+    "created_utc": "2026-11-24T06:00:29+00:00"
+  },
+  "complexity": {
+    "total_params": 6215013,
+    "trainable_params": 6215013,
+    "flops": "not_measured",
+    "fps": "not_measured",
+    "note": "FLOPs/FPS not measured: cannot assume support for custom CIM operations."
+  },
+  "train_vs_val_note": "Train logged AMP step mean; validation loss FP32. Different protocols."
+}
