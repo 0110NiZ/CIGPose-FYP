@@ -1,0 +1,50 @@
+{
+  "state": "COMPLETED",
+  "epochs_completed": 420,
+  "validation_count": 42,
+  "final": {
+    "epoch": 420,
+    "coco/AP": 0.7654759480105389,
+    "coco/AP .5": 0.9260658946398936,
+    "coco/AP .75": 0.837840201902095,
+    "coco/AP (M)": 0.7404609246690912,
+    "coco/AP (L)": 0.8073767328201432,
+    "coco/AR": 0.7928683879093199,
+    "coco/AR .5": 0.9393891687657431,
+    "coco/AR .75": 0.853904282115869,
+    "coco/AR (M)": 0.760038240917782,
+    "coco/AR (L)": 0.8432924563359346
+  },
+  "best": {
+    "epoch": 390,
+    "coco/AP": 0.7661783069570168,
+    "coco/AP .5": 0.926155914791941,
+    "coco/AP .75": 0.8384424257850807,
+    "coco/AP (M)": 0.7414942638369814,
+    "coco/AP (L)": 0.8078378694519798,
+    "coco/AR": 0.7931517632241815,
+    "coco/AR .5": 0.9387594458438288,
+    "coco/AR .75": 0.8545340050377834,
+    "coco/AR (M)": 0.7614859328052445,
+    "coco/AR (L)": 0.8417316982534375
+  },
+  "started_beijing": "2026-11-23T11:39:17",
+  "completed_beijing": "2026-11-25T18:57:38",
+  "successful_log_window_seconds": 199101.0,
+  "training_loss_record": "means of available logger windows; not an exact aggregate over all training batches",
+  "validation_loss_recorded": false,
+  "checkpoint_files": [
+    {
+      "file": "best_coco_AP_epoch_390.pth",
+      "bytes": 140755045,
+      "sha256": "ba921c932b25e655aac692afd7f7f5cb9325f1a1189250a796804ff061252b38",
+      "server_path": "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/results/best_coco_AP_epoch_390.pth"
+    },
+    {
+      "file": "epoch_420.pth",
+      "bytes": 253602157,
+      "sha256": "482186d9c52f1771cef9a5804516b1fe22f3578badcfa13be5f6d26e8c2479d3",
+      "server_path": "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/results/epoch_420.pth"
+    }
+  ]
+}

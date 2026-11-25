@@ -4,10 +4,11 @@
 原版CIM baseline已经完成，最佳AP **70.3364**（第100轮，完整val2017、GT框、开启翻转测试）。
 
 - A 组（无蒸馏基线）：[配置](configs/team128_baseline100.py)、[训练入口](scripts/train_team128.py)、[开始训练](#开始训练)。
-- C 组（基础知识蒸馏）：[教师权重、运行方法和实验设置](group_c_kd/README.md)、[蒸馏实现](group_c_kd/kd.py)。
+- C 组（基础知识蒸馏）：[教师权重、运行方法和实验设置](group_c_kd/README.md)、[蒸馏实现](group_c_kd/kd.py)、[100轮完整结果与曲线](group_c_kd/results/README.md)。
 - E 组（CIM 前特征蒸馏与教师权重微调）：[实验配置与运行方法](group_e_kd/README.md)。
 - [统一超参数与早期四人 CIM 候选方案](TEAM128.md)
 - [基线结果、loss与AP曲线](results/README.md)
+- [原版CIGPose-m全量COCO、batch384、FP32、420轮结果](../experiments/author_cigpose_m_full420/README.md)
 
 ## 文件与用途
 

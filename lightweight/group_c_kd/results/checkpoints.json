@@ -1,0 +1,14 @@
+[
+  {
+    "file": "best_coco_AP_epoch_100.pth",
+    "bytes": 57188309,
+    "sha256": "dbe702751bdfffac4afa7843e3ee3970501b4f06a43873a3f487e7bad6fb9d6b",
+    "server_path": "/root/autodl-tmp/cigpose-original/group_c_kd/results/best_coco_AP_epoch_100.pth"
+  },
+  {
+    "file": "epoch_100.pth",
+    "bytes": 103099751,
+    "sha256": "e0c2369f3b8eadf89908639125ee934d6431317fe8d35c52e10820fea91ea46e",
+    "server_path": "/root/autodl-tmp/cigpose-original/group_c_kd/results/epoch_100.pth"
+  }
+]

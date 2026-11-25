@@ -1,0 +1,14 @@
+[
+  {
+    "file": "best_coco_AP_epoch_390.pth",
+    "bytes": 140755045,
+    "sha256": "ba921c932b25e655aac692afd7f7f5cb9325f1a1189250a796804ff061252b38",
+    "server_path": "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/results/best_coco_AP_epoch_390.pth"
+  },
+  {
+    "file": "epoch_420.pth",
+    "bytes": 253602157,
+    "sha256": "482186d9c52f1771cef9a5804516b1fe22f3578badcfa13be5f6d26e8c2479d3",
+    "server_path": "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/results/epoch_420.pth"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "source_commit": "7086d7907e93fe15dce3ede7967aabe5af8c88ec",
+  "source": "https://github.com/53mins/CIGPose.git",
+  "config": "projects/cigpose/body_2d_keypoint/cigpose-m_1xb384-420e_coco-256x192.py",
+  "config_sha256": "ed1b07a34b0be00f7b73913a4ea17607b12ba76da335a8230a04407471aa127f",
+  "annotations": {
+    "train": {
+      "sha256": "7fc1549d934547c470384d8a207c38707ca33fc016d00e33b795e408603af83e",
+      "annotation_images": 118287,
+      "image_files": 118287,
+      "annotations": 262465,
+      "missing_images": 0
+    },
+    "val": {
+      "sha256": "788e2dae83c86bd547be7fab269d6399df5671063d29a61360cdb2cc370d2b14",
+      "annotation_images": 5000,
+      "image_files": 5000,
+      "annotations": 11004,
+      "missing_images": 0
+    }
+  },
+  "batch_size": 384,
+  "epochs": 420,
+  "precision": "FP32",
+  "student_parameters": 14304732,
+  "started": "2026-11-23 11:36:58 +0800",
+  "command": [
+    "/root/autodl-tmp/cigpose-original/venv/bin/python",
+    "-u",
+    "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/code/mmpose/tools/train.py",
+    "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/code/mmpose/projects/cigpose/body_2d_keypoint/cigpose-m_1xb384-420e_coco-256x192.py",
+    "--work-dir",
+    "/root/autodl-tmp/cigpose-original/author_cigpose_m_full420/results"
+  ]
+}

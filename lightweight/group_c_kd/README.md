@@ -32,4 +32,6 @@ python lightweight/group_c_kd/train.py baseline \
 | A 无蒸馏基线 | 70.34 | 17.633 |
 | C 基础蒸馏 | 70.43 | 17.945 |
 
+[完整100轮结果归档](results/README.md)包含每轮损失、每10轮AP/AP50/AP75与遮挡误差、曲线、实际运行配置、系数标定和原始日志。最佳AP在第100轮，AP为70.4288、AP50为90.5511、AP75为78.4251。
+
 在仓库根目录运行 `python lightweight/group_c_kd/eval_teacher_occlusion.py`，可复测官方教师开启与关闭翻转测试的 AP 和遮挡误差。A、C 均训练到 100 轮后，运行 `python lightweight/group_c_kd/audit_pose_metrics.py` 可在 CPU 上用同一批标注人体框统计教师、A、C 的可见及遮挡关节误差。使用 PyTorch 2.8 环境时可附加 `--flops`，统计 256×192 输入的单人单次前向。默认读取上面两个训练目录中的第 100 轮 checkpoint；自定义目录使用 `--a-work-dir` 和 `--c-work-dir`。

@@ -1,0 +1,12 @@
+{
+  "train.log": "3012e11a8afce393a5b198a8079618e1fdf263f0aa821cd54b1159d4ae3c7cc5",
+  "provenance.json": "377f39ddddce9ed40c382b1c706fa8fb22b60c7b3ebb472125aa0d1df6cd01e5",
+  "retry_system_limit.json": "946a1f18689052b16796a62312e50adc80cbf9feb5792f1517e78aae2c694b09",
+  "initialization_failure_01.log": "11f0522361d106999add1445aeba29df568c9fef8b7f5ebf0270de2493856d53",
+  "recorded_run_config.py": "4c222757e5a5558a55c2518b6dde076bf6a374ee46864403265f25d128b58d35",
+  "scalars.jsonl": "0f3cfcd39394ddcb29e5c16e45d238d525a649f84dfe4ca72a6a605f5df7cd15",
+  "source_snapshot/tools/train.py": "820203b87453e939cf2bb60c39bfa5f7fe6f6df4314fe453e9053a0f65e1cfe3",
+  "source_snapshot/projects/cigpose/body_2d_keypoint/cigpose-m_1xb384-420e_coco-256x192.py": "ed1b07a34b0be00f7b73913a4ea17607b12ba76da335a8230a04407471aa127f",
+  "source_snapshot/mmpose/models/heads/coord_cls_heads/cig_head.py": "da6694163803f870171117d3fbb52c13e2d72aad77ade2b67b66e562051b63cf",
+  "source_snapshot/mmpose/models/utils/hierarchical_gnn.py": "57b7cce9357188914eb5e17dc12e4ca6fbad9546a229989200f5aa695a888d21"
+}

@@ -1,0 +1,10 @@
+{
+  "temperature_equivalent": 0.1,
+  "lambda_kd": 0.04969,
+  "kpt": 1.4680448770523071,
+  "cf": 7.380295755865518e-06,
+  "kd_raw": 2.95451021194458,
+  "weighted_kd": 0.14680961243152618,
+  "people": 128,
+  "student_params": 6190372
+}

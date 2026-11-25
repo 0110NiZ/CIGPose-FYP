@@ -1,0 +1,19 @@
+{
+  "ap_history.json": "2f97e732c1d469d9b7abcb9daf00d8b720ff0845f6d77475efa6c13d0fd1ee72",
+  "loss_history.csv": "778f484af6937bcfe2021015e24ad81af81a3ca66a324bcfba66e87345d1b209",
+  "progress.json": "9220e2ba7fd44c9f865cbd81f7803c1d882530de98c7649f0488a67e0faf2c46",
+  "train_val_loss.png": "0af2ce2a0f8fc6b352ef11bdb6af7ae2ace94eb7d23df56160a0cc7ab330ded3",
+  "train_val_loss.pdf": "201160fb5b4264ec85e23ce38648645e4dc0bdcfaaf70f1b4d0852a7b04da463",
+  "train_val_loss.svg": "a5bfee1af61009e6734ed9cf0fb878263fa2b3e16e4c3e6cd9481d33d92e9506",
+  "train.log": "a4291a788a829cc508ce41133b3f6043f2cf1609e7d53a6d538822ae0daf965c",
+  "comparison.json": "187170b93e3b2bbc3ba3ac524d56c071bc5289f5ddd2f6dc0d166c6ab6536ecb",
+  "calibration.json": "ef147d5898b17e17ef1dc580993289cb3a9672bde7a9614b327700fc74f04750",
+  "baseline_metrics.json": "8a2cb8dcdd78da67b6e33940772ab26e0d6e942f6059671c0887b27833bea0b0",
+  "teacher_preview.jpg": "862c6335584fa9937a05b1d07629e8159e7e482f3a19b63cfcc01a35a397d2b5",
+  "recorded_run_config.py": "21812f6b1201173be95aa515df54f5fc9f1df905e3104e6eff346f48cf68a4ff",
+  "source_snapshot/kd.py": "ce12cb7e1c352cc2cd42a4684cc54e7f0740c9b63d231d7d6d9d3ca5602dba76",
+  "source_snapshot/config.py": "3b64e519356546614e8c537b49e8790316d84d3dab231e5b9ab023763b451469",
+  "source_snapshot/train.py": "6c2604c865e06724ebafa5cc003e320362bf36956527f4fc033d75222547a57f",
+  "source_snapshot/c_tracking.py": "00101e66db674167d264dd54594566da63060095848fd5049c98ee6f21f29f67",
+  "source_snapshot/plot_c.py": "d84bd88ef89f422e8739ea472c5df723755cbb366ec1255fdc7f92ba5ceb56b5"
+}
